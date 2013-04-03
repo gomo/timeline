@@ -1,19 +1,22 @@
 #!/bin/sh
-rm timeline.js
-cat tools/combine/header.txt >> timeline.js
 
-cat src/Util.js >> timeline.js
-echo "\\n" >> timeline.js
+repo_dir=$(cd $(dirname $0);pwd)/../
 
-cat src/View.js >> timeline.js
-echo "\\n" >> timeline.js
+rm ${repo_dir}timeline.js
+cat ${repo_dir}tools/combine/header.txt >> ${repo_dir}timeline.js
 
-for var in `ls src | grep -v "^Util.js$" | grep -v "^View.js$"`
+cat ${repo_dir}src/Util.js >> ${repo_dir}timeline.js
+echo "\\n" >> ${repo_dir}timeline.js
+
+cat ${repo_dir}src/View.js >> ${repo_dir}timeline.js
+echo "\\n" >> ${repo_dir}timeline.js
+
+for var in `ls ${repo_dir}src | grep -v "^Util.js$" | grep -v "^View.js$"`
 do
-    cat src/$var >> timeline.js
-    echo "\\n" >> timeline.js
+    cat ${repo_dir}src/$var >> ${repo_dir}timeline.js
+    echo "\\n" >> ${repo_dir}timeline.js
 done
-cat tools/combine/footer.txt >> timeline.js
+cat ${repo_dir}tools/combine/footer.txt >> ${repo_dir}timeline.js
 
 
-java -jar ~/bin/yuicompressor-2.4.7.jar timeline.js > timeline.min.js
+java -jar ~/lib/yuicompressor-2.4.7.jar ${repo_dir}timeline.js > ${repo_dir}timeline.min.js
