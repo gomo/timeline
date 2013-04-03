@@ -1,0 +1,37 @@
+@import 'nib'
+
+.tmTimelineWrap
+	clearfix();
+	width 80px
+	float: left;
+
+.tmTimelineWrap.hasRuler
+	width 140px
+
+.tmRuler
+	width: 60px
+	float: left
+	text-align: center
+
+.tmTimelineWrap.even .tmTimeline
+	background-color: #f3f3f3;
+
+.tmTimelineWrap.odd .tmTimeline
+	background-color: #fbfbfb;
+
+
+.tmTimeline
+	width 80px
+	float: left
+
+.tmTimeline .tmHour
+	border-top 1px solid #999
+
+.tmTimeline .tmMin._15, .tmTimeline .tmMin._45
+	border-bottom 1px dashed #ddd
+
+.tmTimeline .tmMin._30
+	border-bottom 1px solid #ccc
+
+
+
