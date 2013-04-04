@@ -8,30 +8,38 @@
 .tmTimelineWrap.hasRuler
 	width 140px
 
-.tmRuler
+/* tmRuler */
+.tmTimelineWrap .tmRuler
 	width: 60px
 	float: left
 	text-align: center
 
+/* tmTimeline */
 .tmTimelineWrap.even .tmTimeline
 	background-color: #f3f3f3;
 
 .tmTimelineWrap.odd .tmTimeline
 	background-color: #fbfbfb;
 
-
-.tmTimeline
+.tmTimelineWrap .tmTimeline
 	width 80px
 	float: left
 
-.tmTimeline .tmHour
+.tmTimelineWrap .tmTimeline .tmHour
 	border-top 1px solid #999
 
-.tmTimeline .tmMin._15, .tmTimeline .tmMin._45
+.tmTimelineWrap .tmTimeline .tmMin._15, .tmTimeline .tmMin._45
 	border-bottom 1px dashed #ddd
 
-.tmTimeline .tmMin._30
+.tmTimelineWrap .tmTimeline .tmMin._30
 	border-bottom 1px solid #ccc
 
+/* tmEvent */
+.tmTimelineWrap .tmTimeline .tmEvent
+	opacity: 0.7
+	border-radius: 8px
+	border: 1px solid #444;
 
+.tmTimelineWrap .tmTimeline .tmEvent.gray
+	background-color gray
 

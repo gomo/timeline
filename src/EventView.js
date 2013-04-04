@@ -20,9 +20,9 @@ Timeline.EventView.prototype.setLineView = function(lineView){
 };
 
 Timeline.EventView.prototype._build = function(){
-    this._lineView.getElement().append(this._element);
+    this._lineView.getLineElement().append(this._element);
     this._element
-        .width(this._lineView.getLineElement().width())
+        .outerWidth(this._lineView.getLineElement().width())
         .height(100)
         ;
 

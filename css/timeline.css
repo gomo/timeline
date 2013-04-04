@@ -2,10 +2,12 @@
 .tmTimelineWrap:before,.tmTimelineWrap:after{content:"";display:table}
 .tmTimelineWrap:after{clear:both}
 .tmTimelineWrap.hasRuler{width:140px}
-.tmRuler{width:60px;float:left;text-align:center}
+.tmTimelineWrap .tmRuler{width:60px;float:left;text-align:center}
 .tmTimelineWrap.even .tmTimeline{background-color:#f3f3f3}
 .tmTimelineWrap.odd .tmTimeline{background-color:#fbfbfb}
-.tmTimeline{width:80px;float:left}
-.tmTimeline .tmHour{border-top:1px solid #999}
-.tmTimeline .tmMin._15,.tmTimeline .tmMin._45{border-bottom:1px dashed #ddd}
-.tmTimeline .tmMin._30{border-bottom:1px solid #ccc}
+.tmTimelineWrap .tmTimeline{width:80px;float:left}
+.tmTimelineWrap .tmTimeline .tmHour{border-top:1px solid #999}
+.tmTimelineWrap .tmTimeline .tmMin._15,.tmTimeline .tmMin._45{border-bottom:1px dashed #ddd}
+.tmTimelineWrap .tmTimeline .tmMin._30{border-bottom:1px solid #ccc}
+.tmTimelineWrap .tmTimeline .tmEvent{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #444}
+.tmTimelineWrap .tmTimeline .tmEvent.gray{background-color:#808080}
