@@ -8,7 +8,13 @@ Timeline.View.prototype.getElement = function(){
     return this._element;
 };
 
+Timeline.View.prototype._build = function(){};
+
+Timeline.View.prototype._position = function(){};
+
 Timeline.View.prototype.render = function(){
-    var elem = this._render();
-    return elem.show();
+    this._build();
+    this._element.show();
+    this._position();
+    return this._element;
 };

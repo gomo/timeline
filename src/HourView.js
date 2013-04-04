@@ -6,16 +6,17 @@ Timeline.HourView = function(timeLineView, hour){
 };
 
 Timeline.Util.inherits(Timeline.HourView, Timeline.View);
+Timeline.HourView.CLASS_ELEM = 'tmHour';
 
 Timeline.HourView.prototype._getClassName = function(){
-    return 'tmHour';
+    return Timeline.HourView.CLASS_ELEM;
 };
 
 Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
 
-Timeline.HourView.prototype._render = function(){
+Timeline.HourView.prototype._build = function(){
     var minUnit = 15;
     var count = 60/minUnit;
     for (var i = 0; i < count; i++) {
@@ -24,6 +25,4 @@ Timeline.HourView.prototype._render = function(){
     }
 
     this._element.addClass('_'+this._hour);
-
-    return this._element;
 };

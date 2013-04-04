@@ -35,9 +35,50 @@ Timeline.View.prototype.getElement = function(){
     return this._element;
 };
 
+Timeline.View.prototype._build = function(){};
+
+Timeline.View.prototype._position = function(){};
+
 Timeline.View.prototype.render = function(){
-    var elem = this._render();
-    return elem.show();
+    this._build();
+    this._element.show();
+    this._position();
+    return this._element;
+};
+
+//EventView
+Timeline.EventView = function(timeSpan, color){
+    Timeline.EventView.super_.prototype.constructor.call(this);
+    this._timeSpan = timeSpan;
+    this._lineView = null;
+    this._element.css('position', 'relative');
+    this._element.addClass(color);
+};
+
+Timeline.Util.inherits(Timeline.EventView, Timeline.View);
+Timeline.EventView.CLASS_ELEM = 'tmEvent';
+
+Timeline.EventView.prototype._getClassName = function(){
+    return Timeline.EventView.CLASS_ELEM;
+};
+
+Timeline.EventView.prototype.setLineView = function(lineView){
+    this._lineView = lineView;
+    return this;
+};
+
+Timeline.EventView.prototype._build = function(){
+    this._lineView.getElement().append(this._element);
+    this._element
+        .width(this._lineView.getLineElement().width())
+        .height(100)
+        ;
+
+    return this._element;
+};
+
+Timeline.EventView.prototype._position = function(){
+    this._element.offset(this._lineView.getLineElement().offset());
 };
 
 //Hour
@@ -48,16 +89,17 @@ Timeline.HourView = function(timeLineView, hour){
 };
 
 Timeline.Util.inherits(Timeline.HourView, Timeline.View);
+Timeline.HourView.CLASS_ELEM = 'tmHour';
 
 Timeline.HourView.prototype._getClassName = function(){
-    return 'tmHour';
+    return Timeline.HourView.CLASS_ELEM;
 };
 
 Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
 
-Timeline.HourView.prototype._render = function(){
+Timeline.HourView.prototype._build = function(){
     var minUnit = 15;
     var count = 60/minUnit;
     for (var i = 0; i < count; i++) {
@@ -66,8 +108,6 @@ Timeline.HourView.prototype._render = function(){
     }
 
     this._element.addClass('_'+this._hour);
-
-    return this._element;
 };
 
 //Line
@@ -75,23 +115,32 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.prototype.constructor.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
+    this._eventViews = [];
+    this._lineElement;
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
+Timeline.LineView.CLASS_LINE = 'tmTimeline';
+Timeline.LineView.CLASS_ELEM = 'tmTimelineWrap';
+
 
 Timeline.LineView.prototype._getClassName = function(){
-    return 'tmTimelineWrap';
+    return Timeline.LineView.CLASS_ELEM;
 };
 
-Timeline.LineView.prototype._render = function(){
-    var timeLine = $('<div class="tmTimeline" />').appendTo(this._element);
+Timeline.LineView.prototype.getLineElement = function(){
+    return this._lineElement;
+};
+
+Timeline.LineView.prototype._build = function(){
+    this._lineElement = $('<div class="'+ Timeline.LineView.CLASS_LINE +'" />').appendTo(this._element);
     //分は無視する
     var time = this._timeSpan.getStartTime().getHour();
     var end = this._timeSpan.getEndTime().getHour();
     while(true)
     {
         var hourView = new Timeline.HourView(this, time);
-        timeLine.append(hourView.render());
+        this._lineElement.append(hourView.render());
         this._hourViews.push(hourView);
 
         if(time === end)
@@ -105,8 +154,13 @@ Timeline.LineView.prototype._render = function(){
             time = 0;
         }
     }
+};
 
-    return this._element;
+Timeline.LineView.prototype.addEventView = function(eventView){
+    eventView.setLineView(this);
+    this._eventViews.push(eventView);
+    eventView.render();
+    return this;
 };
 
 Timeline.LineView.prototype.refreshRuler = function(){
@@ -131,15 +185,15 @@ Timeline.MinView = function(hourView, min, minUnit){
 };
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
+Timeline.MinView.CLASS_ELEM = 'tmMin';
 
 Timeline.MinView.prototype._getClassName = function(){
-    return 'tmMin';
+    return Timeline.MinView.CLASS_ELEM;
 };
 
-Timeline.MinView.prototype._render = function(){
+Timeline.MinView.prototype._build = function(){
     this._element.addClass('_'+ (this._min + this._minUnit));
     this._element.height(this._minUnit);
-    return this._element;
 };
 
 //Time
