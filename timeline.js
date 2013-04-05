@@ -86,6 +86,10 @@ Timeline.EventView = function(timeSpan, color){
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
 Timeline.EventView.CLASS_ELEM = 'tmEvent';
 
+Timeline.EventView.create = function(start, end, type){
+    return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
+};
+
 Timeline.EventView.prototype._getClassName = function(){
     return Timeline.EventView.CLASS_ELEM;
 };
@@ -121,7 +125,7 @@ Timeline.EventView.prototype._position = function(){
     var lineOffset = this._lineView.getLineElement().offset();
     lineOffset.top = startTop;
     this._element.offset(lineOffset);
-    this._element.height(endTop - startTop);
+    this._element.height(endTop - startTop -1);
 };
 
 //Hour
@@ -320,6 +324,10 @@ Timeline.Time.prototype.getDistance = function(targetTime){
 Timeline.TimeSpan = function(startTime, endTime){
     this._startTime = startTime;
     this._endTime = endTime;
+};
+
+Timeline.TimeSpan.create = function(start, end){
+    return new Timeline.TimeSpan(new Timeline.Time(start[0], start[1]), new Timeline.Time(end[0], end[1]));
 };
 
 Timeline.TimeSpan.prototype.getDistance = function(){

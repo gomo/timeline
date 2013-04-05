@@ -12,6 +12,10 @@ Timeline.EventView = function(timeSpan, color){
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
 Timeline.EventView.CLASS_ELEM = 'tmEvent';
 
+Timeline.EventView.create = function(start, end, type){
+    return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
+};
+
 Timeline.EventView.prototype._getClassName = function(){
     return Timeline.EventView.CLASS_ELEM;
 };
@@ -47,5 +51,5 @@ Timeline.EventView.prototype._position = function(){
     var lineOffset = this._lineView.getLineElement().offset();
     lineOffset.top = startTop;
     this._element.offset(lineOffset);
-    this._element.height(endTop - startTop);
+    this._element.height(endTop - startTop -1);
 };
