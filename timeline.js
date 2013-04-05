@@ -53,6 +53,8 @@ Timeline.EventView = function(timeSpan, color){
     this._lineView = null;
     this._element.css('position', 'relative');
     this._element.addClass(color);
+    this._startMinView = null;
+    this._endMinView = null;
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -62,30 +64,46 @@ Timeline.EventView.prototype._getClassName = function(){
     return Timeline.EventView.CLASS_ELEM;
 };
 
+Timeline.EventView.prototype.getTimeSpan = function(){
+    return this._timeSpan;
+};
+
 Timeline.EventView.prototype.setLineView = function(lineView){
     this._lineView = lineView;
     return this;
 };
 
+Timeline.EventView.prototype.setStartMinView = function(minView){
+    this._startMinView = minView;
+    return this;
+};
+
+Timeline.EventView.prototype.setEndMinView = function(minView){
+    this._endMinView = minView;
+    return this;
+};
+
 Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
-    this._element
-        .outerWidth(this._lineView.getLineElement().width())
-        .height(100)
-        ;
-
+    this._element.outerWidth(this._lineView.getLineElement().width());
     return this._element;
 };
 
 Timeline.EventView.prototype._position = function(){
-    this._element.offset(this._lineView.getLineElement().offset());
+    var startTop = this._startMinView.getTopPosition(this._timeSpan.getStartTime().getMin());
+    var endTop = this._endMinView.getTopPosition(this._timeSpan.getEndTime().getMin());
+    var lineOffset = this._lineView.getLineElement().offset();
+    lineOffset.top = startTop;
+    this._element.offset(lineOffset);
+    this._element.height(endTop - startTop);
 };
 
 //Hour
-Timeline.HourView = function(timeLineView, hour){
+Timeline.HourView = function(lineView, hour){
     Timeline.HourView.super_.prototype.constructor.call(this);
     this._hour = hour;
-    this._timeLineView = timeLineView;
+    this._lineView = lineView;
+    this._minViews = [];
 };
 
 Timeline.Util.inherits(Timeline.HourView, Timeline.View);
@@ -99,11 +117,28 @@ Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
 
+Timeline.HourView.prototype.getMinView = function(min){
+    var result;
+    this._minViews.forEach(function(minView){
+        if(minView.contains(min))
+        {
+            result = minView;
+        }
+    });
+
+    return result;
+};
+
+Timeline.HourView.prototype.getLineView = function(){
+    return this._lineView;
+};
+
 Timeline.HourView.prototype._build = function(){
     var minUnit = 15;
     var count = 60/minUnit;
     for (var i = 0; i < count; i++) {
         var min = new Timeline.MinView(this, i*minUnit, minUnit);
+        this._minViews.push(min);
         this._element.append(min.render());
     }
 
@@ -116,7 +151,7 @@ Timeline.LineView = function(timeSpan){
     this._timeSpan = timeSpan;
     this._hourViews = [];
     this._eventViews = [];
-    this._lineElement;
+    this._lineElement = null;
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
@@ -158,9 +193,23 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.addEventView = function(eventView){
     eventView.setLineView(this);
+    var timeSpan = eventView.getTimeSpan();
+    eventView.setStartMinView(this._getMinView(timeSpan.getStartTime()));
+    eventView.setEndMinView(this._getMinView(timeSpan.getEndTime()));
     this._eventViews.push(eventView);
     eventView.render();
     return this;
+};
+
+Timeline.LineView.prototype._getMinView = function(time){
+    var result;
+    this._hourViews.forEach(function(hourView){
+        if(hourView.getHour() === time.getHour()){
+            result = hourView.getMinView(time.getMin());
+        }
+    });
+
+    return result;
 };
 
 Timeline.LineView.prototype.refreshRuler = function(){
@@ -189,6 +238,22 @@ Timeline.MinView.CLASS_ELEM = 'tmMin';
 
 Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
+};
+
+Timeline.MinView.prototype.contains = function(min){
+    var less = this._min === 0 ? 0 : this._min;
+    var max = this._min + this._minUnit - 1;
+    return less <= min && min <= max;
+};
+
+Timeline.MinView.prototype.getHourView = function(){
+    return this._hourView;
+};
+
+Timeline.MinView.prototype.getTopPosition = function(min){
+    var offset = this._element.offset();
+    var percent = (min % this._minUnit) / this._minUnit;
+    return offset.top + (this._element.outerHeight() * percent) - 1;
 };
 
 Timeline.MinView.prototype._build = function(){

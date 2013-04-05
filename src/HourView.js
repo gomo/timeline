@@ -1,8 +1,9 @@
 //Hour
-Timeline.HourView = function(timeLineView, hour){
+Timeline.HourView = function(lineView, hour){
     Timeline.HourView.super_.prototype.constructor.call(this);
     this._hour = hour;
-    this._timeLineView = timeLineView;
+    this._lineView = lineView;
+    this._minViews = [];
 };
 
 Timeline.Util.inherits(Timeline.HourView, Timeline.View);
@@ -16,11 +17,28 @@ Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
 
+Timeline.HourView.prototype.getMinView = function(min){
+    var result;
+    this._minViews.forEach(function(minView){
+        if(minView.contains(min))
+        {
+            result = minView;
+        }
+    });
+
+    return result;
+};
+
+Timeline.HourView.prototype.getLineView = function(){
+    return this._lineView;
+};
+
 Timeline.HourView.prototype._build = function(){
     var minUnit = 15;
     var count = 60/minUnit;
     for (var i = 0; i < count; i++) {
         var min = new Timeline.MinView(this, i*minUnit, minUnit);
+        this._minViews.push(min);
         this._element.append(min.render());
     }
 

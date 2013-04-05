@@ -4,7 +4,7 @@ Timeline.LineView = function(timeSpan){
     this._timeSpan = timeSpan;
     this._hourViews = [];
     this._eventViews = [];
-    this._lineElement;
+    this._lineElement = null;
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
@@ -46,9 +46,23 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.addEventView = function(eventView){
     eventView.setLineView(this);
+    var timeSpan = eventView.getTimeSpan();
+    eventView.setStartMinView(this._getMinView(timeSpan.getStartTime()));
+    eventView.setEndMinView(this._getMinView(timeSpan.getEndTime()));
     this._eventViews.push(eventView);
     eventView.render();
     return this;
+};
+
+Timeline.LineView.prototype._getMinView = function(time){
+    var result;
+    this._hourViews.forEach(function(hourView){
+        if(hourView.getHour() === time.getHour()){
+            result = hourView.getMinView(time.getMin());
+        }
+    });
+
+    return result;
 };
 
 Timeline.LineView.prototype.refreshRuler = function(){
