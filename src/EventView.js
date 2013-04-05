@@ -1,6 +1,6 @@
 //EventView
 Timeline.EventView = function(timeSpan, color){
-    Timeline.EventView.super_.prototype.constructor.call(this);
+    Timeline.EventView.super_.call(this);
     this._timeSpan = timeSpan;
     this._lineView = null;
     this._element.css('position', 'relative');

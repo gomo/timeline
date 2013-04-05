@@ -1,6 +1,6 @@
 //Hour
 Timeline.HourView = function(lineView, hour){
-    Timeline.HourView.super_.prototype.constructor.call(this);
+    Timeline.HourView.super_.call(this);
     this._hour = hour;
     this._lineView = lineView;
     this._minViews = [];

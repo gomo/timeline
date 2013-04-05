@@ -2,27 +2,53 @@
 
 Timeline = {};
 
+if ( Array.prototype.forEach === undefined ) {
+  Array.prototype.forEach = function(fn, scope) {
+    for(var i = 0, len = this.length; i < len; ++i) {
+      fn.call(scope, this[i], i, this);
+    }
+  };
+}
+
+if( Object.create === undefined ) {
+    Object.create = function(o, props) {
+        var newObj;
+
+        if (typeof(o) !== "object" && o !== null) throw new TypeError();
+
+        function F() {}
+        F.prototype = o;
+        newObj = new F();
+
+        if (typeof(props) === "object") {
+            for (var prop in props) {
+                if (props.hasOwnProperty((prop))) {
+                    newObj[prop] = props[prop];
+                }
+            }
+        }
+
+        return newObj;
+    };
+}
+
+if ( Object.getPrototypeOf === undefined ) {
+    if ( typeof "test".__proto__ === "object" ) {
+        Object.getPrototypeOf = function(object){
+            return object.__proto__;
+        };
+    } else {
+        Object.getPrototypeOf = function(object){
+            return object.constructor.prototype;
+        };
+    }
+}
+
 //Util
 Timeline.Util = {};
-Timeline.Util.inherits = function(ctor, superCtor) {
-    ctor.super_ = superCtor;
-    if(Object.create){
-        ctor.prototype = Object.create(superCtor.prototype, {
-            constructor: {
-                value: ctor,
-                enumerable: false,
-                writable: true,
-                configurable: true
-            }
-        });
-    }
-    else
-    {
-        var f = function (){};
-        f.prototype = superCtor.prototype;
-        ctor.prototype = new f();
-        ctor.constructor = ctor;
-    }
+Timeline.Util.inherits = function(childClass, superClass){
+    childClass.super_ = superClass;
+    childClass.prototype = Object.create(superClass.prototype);
 };
 
 //View
@@ -48,7 +74,7 @@ Timeline.View.prototype.render = function(){
 
 //EventView
 Timeline.EventView = function(timeSpan, color){
-    Timeline.EventView.super_.prototype.constructor.call(this);
+    Timeline.EventView.super_.call(this);
     this._timeSpan = timeSpan;
     this._lineView = null;
     this._element.css('position', 'relative');
@@ -100,7 +126,7 @@ Timeline.EventView.prototype._position = function(){
 
 //Hour
 Timeline.HourView = function(lineView, hour){
-    Timeline.HourView.super_.prototype.constructor.call(this);
+    Timeline.HourView.super_.call(this);
     this._hour = hour;
     this._lineView = lineView;
     this._minViews = [];
@@ -147,7 +173,7 @@ Timeline.HourView.prototype._build = function(){
 
 //Line
 Timeline.LineView = function(timeSpan){
-    Timeline.LineView.super_.prototype.constructor.call(this);
+    Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
     this._eventViews = [];
@@ -235,7 +261,7 @@ Timeline.LineView.prototype.refreshRuler = function(){
 
 //Min
 Timeline.MinView = function(hourView, min, minUnit){
-    Timeline.MinView.super_.prototype.constructor.call(this);
+    Timeline.MinView.super_.call(this);
     this._hourView = hourView;
     this._min = min;
     this._minUnit = minUnit;

@@ -1,6 +1,6 @@
 //Line
 Timeline.LineView = function(timeSpan){
-    Timeline.LineView.super_.prototype.constructor.call(this);
+    Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
     this._eventViews = [];
