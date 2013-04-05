@@ -44,6 +44,14 @@ Timeline.LineView.prototype._build = function(){
     }
 };
 
+Timeline.LineView.prototype._position = function(){
+    var height = this._element.height();
+    this._element.css({
+        height: height,
+        overflow: "hidden"
+    });
+};
+
 Timeline.LineView.prototype.addEventView = function(eventView){
     eventView.setLineView(this);
     var timeSpan = eventView.getTimeSpan();
