@@ -1,7 +1,7 @@
 .tlLineView{zoom:1;float:left}
 .tlLineView:before,.tlLineView:after{content:"";display:table}
 .tlLineView:after{clear:both}
-.tlLineView .tlRuler{float:left;text-align:center}
+.tlLineView .tlRulerView{float:left;text-align:center}
 .tlLineView.even .tlTimeline{background-color:#f3f3f3}
 .tlLineView.odd .tlTimeline{background-color:#fbfbfb}
 .tlLineView .tlTimeline{float:left}
