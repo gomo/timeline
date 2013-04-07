@@ -14,3 +14,24 @@ Timeline.TimeSpan.prototype.getDistance = function(){
 
 Timeline.TimeSpan.prototype.getStartTime = function(){ return this._startTime; };
 Timeline.TimeSpan.prototype.getEndTime = function(){ return this._endTime; };
+
+Timeline.TimeSpan.prototype.forEachHour = function(callback){
+    var hour = this.getStartTime().getHour();
+    var end = this.getEndTime().getHour();
+
+    while(true)
+    {
+        callback(hour);
+
+        if(hour === end)
+        {
+            break;
+        }
+
+        hour += 1;
+        if(hour == 24)
+        {
+            hour = 0;
+        }
+    }
+};

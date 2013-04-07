@@ -37,29 +37,15 @@ Timeline.LineView.prototype.getLineElement = function(){
 };
 
 Timeline.LineView.prototype._build = function(){
-    this._lineElement = $('<div class="tlTimeline" />').appendTo(this._element);
-    this._hoursWrapper = $('<div class="inner" />').appendTo(this._lineElement);
-    //分は無視する
-    var time = this._timeSpan.getStartTime().getHour();
-    var end = this._timeSpan.getEndTime().getHour();
-    //TODO this._timeSpan.forEachHourに変える
-    while(true)
-    {
-        var hourView = new Timeline.HourView(this, time);
-        this._hoursWrapper.append(hourView.render());
-        this._hourViews.push(hourView);
+    var self = this;
+    self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
+    self._hoursWrapper = $('<div class="inner" />').appendTo(self._lineElement);
 
-        if(time === end)
-        {
-            break;
-        }
-
-        time += 1;
-        if(time == 24)
-        {
-            time = 0;
-        }
-    }
+    self._timeSpan.forEachHour(function(hour){
+        var hourView = new Timeline.HourView(self, hour);
+        self._hoursWrapper.append(hourView.render());
+        self._hourViews.push(hourView);
+    });
 };
 
 Timeline.LineView.prototype._position = function(){
