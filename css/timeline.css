@@ -1,17 +1,17 @@
-.tlTimelineWrap{zoom:1;float:left}
-.tlTimelineWrap:before,.tlTimelineWrap:after{content:"";display:table}
-.tlTimelineWrap:after{clear:both}
-.tlTimelineWrap .tlRuler{float:left;text-align:center}
-.tlTimelineWrap.even .tlTimeline{background-color:#f3f3f3}
-.tlTimelineWrap.odd .tlTimeline{background-color:#fbfbfb}
-.tlTimelineWrap .tlTimeline{float:left}
-.tlTimelineWrap .tlTimeline .tlHour{border-top:1px solid #999}
-.tlTimelineWrap .tlTimeline .tlMin._15,.tlTimeline .tlMin._45{border-bottom:1px dashed #ddd}
-.tlTimelineWrap .tlTimeline .tlMin._30{border-bottom:1px solid #ccc}
-.tlTimelineWrap .tlTimeline .tlEvent{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;width:85%;margin:0 auto}
-.tlTimelineWrap .tlTimeline .tlEvent.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
-.tlTimelineWrap .tlTimeline .tlEvent.blue{background-color:#a3cde1}
-.tlTimelineWrap .tlTimeline .tlEvent.pink{background-color:#ffb6b6}
-.tlTimelineWrap .tlTimeline .tlEvent.green{background-color:#b8f1ac}
-.tlTimelineWrap .tlTimeline .tlEvent.yellow{background-color:#ffffb6}
-.tlTimelineWrap .tlTimeline .tlEvent.orange{background-color:#ffdcb6}
+.tlLineView{zoom:1;float:left}
+.tlLineView:before,.tlLineView:after{content:"";display:table}
+.tlLineView:after{clear:both}
+.tlLineView .tlRuler{float:left;text-align:center}
+.tlLineView.even .tlTimeline{background-color:#f3f3f3}
+.tlLineView.odd .tlTimeline{background-color:#fbfbfb}
+.tlLineView .tlTimeline{float:left}
+.tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
+.tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
+.tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
+.tlLineView .tlTimeline .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;width:85%;margin:0 auto}
+.tlLineView .tlTimeline .tlEventView.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
+.tlLineView .tlTimeline .tlEventView.blue{background-color:#a3cde1}
+.tlLineView .tlTimeline .tlEventView.pink{background-color:#ffb6b6}
+.tlLineView .tlTimeline .tlEventView.green{background-color:#b8f1ac}
+.tlLineView .tlTimeline .tlEventView.yellow{background-color:#ffffb6}
+.tlLineView .tlTimeline .tlEventView.orange{background-color:#ffdcb6}

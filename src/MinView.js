@@ -9,7 +9,7 @@ Timeline.MinView = function(hourView, min, minUnit){
 };
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
-Timeline.MinView.CLASS_ELEM = 'tlMin';
+Timeline.MinView.CLASS_ELEM = 'tlMinView';
 
 Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;

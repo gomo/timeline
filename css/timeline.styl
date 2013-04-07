@@ -1,59 +1,59 @@
 @import 'nib'
 
-.tlTimelineWrap
+.tlLineView
 	clearfix();
 	float: left;
 
 
 /* tlRuler */
-.tlTimelineWrap .tlRuler
+.tlLineView .tlRuler
 	float: left
 	text-align: center
 
 /* tlTimeline */
-.tlTimelineWrap.even .tlTimeline
+.tlLineView.even .tlTimeline
 	background-color: #f3f3f3;
 
-.tlTimelineWrap.odd .tlTimeline
+.tlLineView.odd .tlTimeline
 	background-color: #fbfbfb;
 
-.tlTimelineWrap .tlTimeline
+.tlLineView .tlTimeline
 	float: left
 
-.tlTimelineWrap .tlTimeline .tlHour
+.tlLineView .tlTimeline .tlHourView
 	border-top 1px solid #999
 
-.tlTimelineWrap .tlTimeline .tlMin._15, .tlTimeline .tlMin._45
+.tlLineView .tlTimeline .tlMinView._15, .tlTimeline .tlMinView._45
 	border-bottom 1px dashed #ddd
 
-.tlTimelineWrap .tlTimeline .tlMin._30
+.tlLineView .tlTimeline .tlMinView._30
 	border-bottom 1px solid #ccc
 
-/* tlEvent */
-.tlTimelineWrap .tlTimeline .tlEvent
+/* tlEventView */
+.tlLineView .tlTimeline .tlEventView
 	opacity: 0.7
 	border-radius: 8px
 	border: 1px solid #555;
 	width 85%
 	margin: 0 auto
 
-.tlTimelineWrap .tlTimeline .tlEvent.disable
+.tlLineView .tlTimeline .tlEventView.disable
 	background-color #999
 	border-radius 0
 	width 100%
 
 /* color variation */
-.tlTimelineWrap .tlTimeline .tlEvent.blue
+.tlLineView .tlTimeline .tlEventView.blue
 	background-color #A3CDE1
 
-.tlTimelineWrap .tlTimeline .tlEvent.pink
+.tlLineView .tlTimeline .tlEventView.pink
 	background-color #FFB6B6
 
-.tlTimelineWrap .tlTimeline .tlEvent.green
+.tlLineView .tlTimeline .tlEventView.green
 	background-color #B8F1AC
 
-.tlTimelineWrap .tlTimeline .tlEvent.yellow
+.tlLineView .tlTimeline .tlEventView.yellow
 	background-color #FFFFB6
 
-.tlTimelineWrap .tlTimeline .tlEvent.orange
+.tlLineView .tlTimeline .tlEventView.orange
 	background-color #FFDCB6

@@ -11,7 +11,7 @@ Timeline.LineView = function(timeSpan){
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
-Timeline.LineView.CLASS_ELEM = 'tlTimelineWrap';
+Timeline.LineView.CLASS_ELEM = 'tlLineView';
 Timeline.LineView.DEFAULT_RULER_WIDTH = 50;
 
 
