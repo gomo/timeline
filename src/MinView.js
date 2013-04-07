@@ -5,7 +5,6 @@ Timeline.MinView = function(hourView, min, minUnit){
     this._min = min;
     this._minUnit = minUnit;
     this._heightPerMin = 1;
-    this._relatedEventView = null;
 };
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
@@ -31,10 +30,6 @@ Timeline.MinView.prototype.getTopPosition = function(min){
     return offset.top + (this._element.outerHeight() * percent) - 1;
 };
 
-Timeline.MinView.prototype.setEventView = function(eventView){
-    this._relatedEventView = eventView;
-};
-
 Timeline.MinView.prototype.updateHeightPerMin = function(amount){
     var current = this._heightPerMin;
     current += amount;
@@ -57,11 +52,6 @@ Timeline.MinView.prototype.setHeightPerMin = function(height){
 
     this._heightPerMin = height;
     this._updateSize();
-
-    if(this._relatedEventView)
-    {
-        this._relatedEventView.updatePosition();
-    }
 
     return this;
 };

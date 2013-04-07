@@ -105,13 +105,11 @@ Timeline.EventView.prototype.setLineView = function(lineView){
 
 Timeline.EventView.prototype.setStartMinView = function(minView){
     this._startMinView = minView;
-    minView.setEventView(this);
     return this;
 };
 
 Timeline.EventView.prototype.setEndMinView = function(minView){
     this._endMinView = minView;
-    minView.setEventView(this);
     return this;
 };
 
@@ -121,14 +119,12 @@ Timeline.EventView.prototype._build = function(){
 
 Timeline.EventView.prototype.updatePosition = function(){
     var self = this;
-    setTimeout(function(){
-        var startTop = self._startMinView.getTopPosition(self._timeSpan.getStartTime().getMin());
-        var endTop = self._endMinView.getTopPosition(self._timeSpan.getEndTime().getMin());
-        var offset = self._element.offset();
-        offset.top = startTop;
-        self._element.offset(offset);
-        self._element.height(endTop - startTop -1);
-    }, 0);
+    var startTop = self._startMinView.getTopPosition(self._timeSpan.getStartTime().getMin());
+    var endTop = self._endMinView.getTopPosition(self._timeSpan.getEndTime().getMin());
+    var offset = self._element.offset();
+    offset.top = startTop;
+    self._element.offset(offset);
+    self._element.height(endTop - startTop -1);
 };
 
 Timeline.EventView.prototype._position = function(){
@@ -301,8 +297,8 @@ Timeline.LineView.prototype.updateHeightPerMin = function(amount){
     this._hourViews.forEach(function(hourView){
         hourView.updateHeightPerMin(amount);
     });
-    this._refreshRulerHeight();
-
+    this._updateRulerHeight();
+    this._updateEventsHeight();
     return this;
 };
 
@@ -310,7 +306,8 @@ Timeline.LineView.prototype.setHeightPerMin = function(height){
     this._hourViews.forEach(function(hourView){
         hourView.setHeightPerMin(height);
     });
-    this._refreshRulerHeight();
+    this._updateRulerHeight();
+    this._updateEventsHeight();
     return this;
 };
 
@@ -337,7 +334,13 @@ Timeline.LineView.prototype._updateSize = function(){
     }, 0);
 };
 
-Timeline.LineView.prototype._refreshRulerHeight = function(){
+Timeline.LineView.prototype._updateEventsHeight = function(){
+    this._eventViews.forEach(function(eventView){
+        eventView.updatePosition();
+    });
+};
+
+Timeline.LineView.prototype._updateRulerHeight = function(){
     var self = this;
     if(self._rulerView === null)
     {
@@ -356,7 +359,6 @@ Timeline.MinView = function(hourView, min, minUnit){
     this._min = min;
     this._minUnit = minUnit;
     this._heightPerMin = 1;
-    this._relatedEventView = null;
 };
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
@@ -382,10 +384,6 @@ Timeline.MinView.prototype.getTopPosition = function(min){
     return offset.top + (this._element.outerHeight() * percent) - 1;
 };
 
-Timeline.MinView.prototype.setEventView = function(eventView){
-    this._relatedEventView = eventView;
-};
-
 Timeline.MinView.prototype.updateHeightPerMin = function(amount){
     var current = this._heightPerMin;
     current += amount;
@@ -408,11 +406,6 @@ Timeline.MinView.prototype.setHeightPerMin = function(height){
 
     this._heightPerMin = height;
     this._updateSize();
-
-    if(this._relatedEventView)
-    {
-        this._relatedEventView.updatePosition();
-    }
 
     return this;
 };
