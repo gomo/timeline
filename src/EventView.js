@@ -43,7 +43,6 @@ Timeline.EventView.prototype.setEndMinView = function(minView){
 
 Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
-    return this._element;
 };
 
 Timeline.EventView.prototype.updatePosition = function(){

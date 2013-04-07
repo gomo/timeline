@@ -117,7 +117,6 @@ Timeline.EventView.prototype.setEndMinView = function(minView){
 
 Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
-    return this._element;
 };
 
 Timeline.EventView.prototype.updatePosition = function(){
@@ -448,7 +447,6 @@ Timeline.RulerView.prototype._getClassName = function(){
 };
 
 Timeline.RulerView.prototype._build = function(){
-    this._lineView.getLineElement().append(this._element);
     return this._element;
 };
 
@@ -470,8 +468,7 @@ Timeline.TemplateView.prototype._getClassName = function(){
 };
 
 Timeline.TemplateView.prototype._build = function(){
-    this._lineView.getLineElement().append(this._element);
-    return this._element;
+
 };
 
 
