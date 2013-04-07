@@ -7,7 +7,7 @@ Timeline.HourView = function(lineView, hour){
 };
 
 Timeline.Util.inherits(Timeline.HourView, Timeline.View);
-Timeline.HourView.CLASS_ELEM = 'tmHour';
+Timeline.HourView.CLASS_ELEM = 'tlHour';
 
 Timeline.HourView.prototype._getClassName = function(){
     return Timeline.HourView.CLASS_ELEM;

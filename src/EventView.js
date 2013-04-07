@@ -10,7 +10,7 @@ Timeline.EventView = function(timeSpan, color){
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
-Timeline.EventView.CLASS_ELEM = 'tmEvent';
+Timeline.EventView.CLASS_ELEM = 'tlEvent';
 
 Timeline.EventView.create = function(start, end, type){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);

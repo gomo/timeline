@@ -11,7 +11,7 @@ Timeline.LineView = function(timeSpan){
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
-Timeline.LineView.CLASS_ELEM = 'tmTimelineWrap';
+Timeline.LineView.CLASS_ELEM = 'tlTimelineWrap';
 Timeline.LineView.DEFAULT_RULER_WIDTH = 50;
 
 
@@ -24,7 +24,7 @@ Timeline.LineView.prototype.getLineElement = function(){
 };
 
 Timeline.LineView.prototype._build = function(){
-    this._lineElement = $('<div class="tmTimeline" />').appendTo(this._element);
+    this._lineElement = $('<div class="tlTimeline" />').appendTo(this._element);
     this._hoursWrapper = $('<div class="inner" />').appendTo(this._lineElement);
     //分は無視する
     var time = this._timeSpan.getStartTime().getHour();
@@ -128,7 +128,7 @@ Timeline.LineView.prototype.enableRuler = function(){
     var self = this;
     self._element.addClass('hasRuler');
 
-    self._rulerElement = $('<div class="tmRuler" />').prependTo(self._element);
+    self._rulerElement = $('<div class="tlRuler" />').prependTo(self._element);
     self._rulerElement.width(Timeline.LineView.DEFAULT_RULER_WIDTH);
     self._hourViews.forEach(function(hourView){
         var hourRuler = $('<div class="hour">'+hourView.getHour()+':00'+'</div>');

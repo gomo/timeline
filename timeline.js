@@ -84,7 +84,7 @@ Timeline.EventView = function(timeSpan, color){
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
-Timeline.EventView.CLASS_ELEM = 'tmEvent';
+Timeline.EventView.CLASS_ELEM = 'tlEvent';
 
 Timeline.EventView.create = function(start, end, type){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
@@ -145,7 +145,7 @@ Timeline.HourView = function(lineView, hour){
 };
 
 Timeline.Util.inherits(Timeline.HourView, Timeline.View);
-Timeline.HourView.CLASS_ELEM = 'tmHour';
+Timeline.HourView.CLASS_ELEM = 'tlHour';
 
 Timeline.HourView.prototype._getClassName = function(){
     return Timeline.HourView.CLASS_ELEM;
@@ -210,7 +210,7 @@ Timeline.LineView = function(timeSpan){
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
-Timeline.LineView.CLASS_ELEM = 'tmTimelineWrap';
+Timeline.LineView.CLASS_ELEM = 'tlTimelineWrap';
 Timeline.LineView.DEFAULT_RULER_WIDTH = 50;
 
 
@@ -223,7 +223,7 @@ Timeline.LineView.prototype.getLineElement = function(){
 };
 
 Timeline.LineView.prototype._build = function(){
-    this._lineElement = $('<div class="tmTimeline" />').appendTo(this._element);
+    this._lineElement = $('<div class="tlTimeline" />').appendTo(this._element);
     this._hoursWrapper = $('<div class="inner" />').appendTo(this._lineElement);
     //分は無視する
     var time = this._timeSpan.getStartTime().getHour();
@@ -327,7 +327,7 @@ Timeline.LineView.prototype.enableRuler = function(){
     var self = this;
     self._element.addClass('hasRuler');
 
-    self._rulerElement = $('<div class="tmRuler" />').prependTo(self._element);
+    self._rulerElement = $('<div class="tlRuler" />').prependTo(self._element);
     self._rulerElement.width(Timeline.LineView.DEFAULT_RULER_WIDTH);
     self._hourViews.forEach(function(hourView){
         var hourRuler = $('<div class="hour">'+hourView.getHour()+':00'+'</div>');
@@ -369,7 +369,7 @@ Timeline.MinView = function(hourView, min, minUnit){
 };
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
-Timeline.MinView.CLASS_ELEM = 'tmMin';
+Timeline.MinView.CLASS_ELEM = 'tlMin';
 
 Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
@@ -433,6 +433,50 @@ Timeline.MinView.prototype._updateSize = function(){
 Timeline.MinView.prototype._build = function(){
     this._element.addClass('_'+ (this._min + this._minUnit));
     this._updateSize();
+};
+
+//RulerView
+Timeline.RulerView = function(){
+    Timeline.RulerView.super_.call(this);
+};
+
+Timeline.Util.inherits(Timeline.RulerView, Timeline.View);
+Timeline.RulerView.CLASS_ELEM = 'tlEvent';
+
+Timeline.RulerView.prototype._getClassName = function(){
+    return Timeline.RulerView.CLASS_ELEM;
+};
+
+Timeline.RulerView.prototype._build = function(){
+    this._lineView.getLineElement().append(this._element);
+    return this._element;
+};
+
+
+Timeline.RulerView.prototype._position = function(){
+
+};
+
+//TemplateView
+Timeline.TemplateView = function(){
+    Timeline.TemplateView.super_.call(this);
+};
+
+Timeline.Util.inherits(Timeline.TemplateView, Timeline.View);
+Timeline.TemplateView.CLASS_ELEM = 'tlEvent';
+
+Timeline.TemplateView.prototype._getClassName = function(){
+    return Timeline.TemplateView.CLASS_ELEM;
+};
+
+Timeline.TemplateView.prototype._build = function(){
+    this._lineView.getLineElement().append(this._element);
+    return this._element;
+};
+
+
+Timeline.TemplateView.prototype._position = function(){
+
 };
 
 //Time
