@@ -1,16 +1,15 @@
-.tmTimelineWrap{zoom:1;width:60px;float:left}
+.tmTimelineWrap{zoom:1;float:left}
 .tmTimelineWrap:before,.tmTimelineWrap:after{content:"";display:table}
 .tmTimelineWrap:after{clear:both}
-.tmTimelineWrap.hasRuler{width:110px}
-.tmTimelineWrap .tmRuler{width:50px;float:left;text-align:center}
+.tmTimelineWrap .tmRuler{float:left;text-align:center}
 .tmTimelineWrap.even .tmTimeline{background-color:#f3f3f3}
 .tmTimelineWrap.odd .tmTimeline{background-color:#fbfbfb}
-.tmTimelineWrap .tmTimeline{width:60px;float:left}
+.tmTimelineWrap .tmTimeline{float:left}
 .tmTimelineWrap .tmTimeline .tmHour{border-top:1px solid #999}
 .tmTimelineWrap .tmTimeline .tmMin._15,.tmTimeline .tmMin._45{border-bottom:1px dashed #ddd}
 .tmTimelineWrap .tmTimeline .tmMin._30{border-bottom:1px solid #ccc}
-.tmTimelineWrap .tmTimeline .tmEvent{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:10px;border-radius:10px;border:1px solid #777}
-.tmTimelineWrap .tmTimeline .tmEvent.disable{background-color:#999;-webkit-border-radius:0;border-radius:0}
+.tmTimelineWrap .tmTimeline .tmEvent{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;width:85%;margin:0 auto}
+.tmTimelineWrap .tmTimeline .tmEvent.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
 .tmTimelineWrap .tmTimeline .tmEvent.blue{background-color:#a3cde1}
 .tmTimelineWrap .tmTimeline .tmEvent.pink{background-color:#ffb6b6}
 .tmTimelineWrap .tmTimeline .tmEvent.green{background-color:#b8f1ac}

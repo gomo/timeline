@@ -2,15 +2,11 @@
 
 .tmTimelineWrap
 	clearfix();
-	width 60px
 	float: left;
 
-.tmTimelineWrap.hasRuler
-	width 110px
 
 /* tmRuler */
 .tmTimelineWrap .tmRuler
-	width: 50px
 	float: left
 	text-align: center
 
@@ -22,7 +18,6 @@
 	background-color: #fbfbfb;
 
 .tmTimelineWrap .tmTimeline
-	width 60px
 	float: left
 
 .tmTimelineWrap .tmTimeline .tmHour
@@ -37,12 +32,15 @@
 /* tmEvent */
 .tmTimelineWrap .tmTimeline .tmEvent
 	opacity: 0.7
-	border-radius: 10px
-	border: 1px solid #777;
+	border-radius: 8px
+	border: 1px solid #555;
+	width 85%
+	margin: 0 auto
 
 .tmTimelineWrap .tmTimeline .tmEvent.disable
 	background-color #999
 	border-radius 0
+	width 100%
 
 /* color variation */
 .tmTimelineWrap .tmTimeline .tmEvent.blue

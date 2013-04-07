@@ -31,25 +31,33 @@ Timeline.EventView.prototype.setLineView = function(lineView){
 
 Timeline.EventView.prototype.setStartMinView = function(minView){
     this._startMinView = minView;
+    minView.setEventView(this);
     return this;
 };
 
 Timeline.EventView.prototype.setEndMinView = function(minView){
     this._endMinView = minView;
+    minView.setEventView(this);
     return this;
 };
 
 Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
-    this._element.outerWidth(this._lineView.getLineElement().width());
     return this._element;
 };
 
+Timeline.EventView.prototype.updatePosition = function(){
+    var self = this;
+    setTimeout(function(){
+        var startTop = self._startMinView.getTopPosition(self._timeSpan.getStartTime().getMin());
+        var endTop = self._endMinView.getTopPosition(self._timeSpan.getEndTime().getMin());
+        var offset = self._element.offset();
+        offset.top = startTop;
+        self._element.offset(offset);
+        self._element.height(endTop - startTop -1);
+    }, 0);
+};
+
 Timeline.EventView.prototype._position = function(){
-    var startTop = this._startMinView.getTopPosition(this._timeSpan.getStartTime().getMin());
-    var endTop = this._endMinView.getTopPosition(this._timeSpan.getEndTime().getMin());
-    var lineOffset = this._lineView.getLineElement().offset();
-    lineOffset.top = startTop;
-    this._element.offset(lineOffset);
-    this._element.height(endTop - startTop -1);
+    this.updatePosition();
 };
