@@ -15,6 +15,6 @@ Timeline.TemplateView.prototype._build = function(){
 };
 
 
-Timeline.TemplateView.prototype._position = function(){
+Timeline.TemplateView.prototype._postShow = function(){
 
 };

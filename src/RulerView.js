@@ -27,11 +27,11 @@ Timeline.RulerView.prototype._build = function(){
 };
 
 
-Timeline.RulerView.prototype._position = function(){
+Timeline.RulerView.prototype._postShow = function(){
 
 };
 
-Timeline.RulerView.prototype.updateHeight = function(){
+Timeline.RulerView.prototype.updateDisplay = function(){
     
     this._element.children().each(function(){
         var hourRuler = $(this);

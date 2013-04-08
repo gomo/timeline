@@ -30,7 +30,7 @@ Timeline.MinView.prototype.getTopPosition = function(min){
     return offset.top + (this._element.outerHeight() * percent) - 1;
 };
 
-Timeline.MinView.prototype.updateHeightPerMin = function(amount){
+Timeline.MinView.prototype.addHeightPerMin = function(amount){
     var current = this._heightPerMin;
     current += amount;
     if(current < 0.1)
@@ -51,16 +51,16 @@ Timeline.MinView.prototype.setHeightPerMin = function(height){
     }
 
     this._heightPerMin = height;
-    this._updateSize();
+    this._updateDisplay();
 
     return this;
 };
 
-Timeline.MinView.prototype._updateSize = function(){
+Timeline.MinView.prototype._updateDisplay = function(){
     this._element.height(this._heightPerMin * this._minUnit);
 };
 
 Timeline.MinView.prototype._build = function(){
     this._element.addClass('_'+ (this._min + this._minUnit));
-    this._updateSize();
+    this._updateDisplay();
 };

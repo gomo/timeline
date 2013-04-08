@@ -2,6 +2,7 @@
 
 Timeline = {};
 
+//Compatibility for ecma3
 if ( Array.prototype.forEach === undefined ) {
   Array.prototype.forEach = function(fn, scope) {
     for(var i = 0, len = this.length; i < len; ++i) {
@@ -63,12 +64,12 @@ Timeline.View.prototype.getElement = function(){
 
 Timeline.View.prototype._build = function(){};
 
-Timeline.View.prototype._position = function(){};
+Timeline.View.prototype._postShow = function(){};
 
 Timeline.View.prototype.render = function(){
     this._build();
     this._element.show();
-    this._position();
+    this._postShow();
     return this._element;
 };
 
@@ -117,7 +118,7 @@ Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
 };
 
-Timeline.EventView.prototype.updatePosition = function(){
+Timeline.EventView.prototype.updateDisplay = function(){
     var self = this;
     var startTop = self._startMinView.getTopPosition(self._timeSpan.getStartTime().getMin());
     var endTop = self._endMinView.getTopPosition(self._timeSpan.getEndTime().getMin());
@@ -127,8 +128,8 @@ Timeline.EventView.prototype.updatePosition = function(){
     self._element.height(endTop - startTop -1);
 };
 
-Timeline.EventView.prototype._position = function(){
-    this.updatePosition();
+Timeline.EventView.prototype._postShow = function(){
+    this.updateDisplay();
 };
 
 //Hour
@@ -162,9 +163,9 @@ Timeline.HourView.prototype.getMinView = function(min){
     return result;
 };
 
-Timeline.HourView.prototype.updateHeightPerMin = function(amount){
+Timeline.HourView.prototype.addHeightPerMin = function(amount){
     this._minViews.forEach(function(minView){
-        minView.updateHeightPerMin(amount);
+        minView.addHeightPerMin(amount);
     });
     return this;
 };
@@ -217,7 +218,7 @@ Timeline.LineView.prototype.setRulerView = function(rulerView){
     this._rulerView = rulerView;
     this._rulerView.setLineView(this);
     this._rulerView.render();
-    this._updateSize();
+    this._updateDisplay();
 };
 
 Timeline.LineView.prototype.forEachHourView = function(callback){
@@ -233,7 +234,7 @@ Timeline.LineView.prototype.getLineElement = function(){
 Timeline.LineView.prototype._build = function(){
     var self = this;
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
-    self._hoursWrapper = $('<div class="inner" />').appendTo(self._lineElement);
+    self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
 
     self._timeSpan.forEachHour(function(hour){
         var hourView = new Timeline.HourView(self, hour);
@@ -242,8 +243,8 @@ Timeline.LineView.prototype._build = function(){
     });
 };
 
-Timeline.LineView.prototype._position = function(){
-    this._updateSize();
+Timeline.LineView.prototype._postShow = function(){
+    this._updateDisplay();
 };
 
 Timeline.LineView.prototype.addEventView = function(eventView){
@@ -267,24 +268,25 @@ Timeline.LineView.prototype._getMinView = function(time){
     return result;
 };
 
-Timeline.LineView.prototype.updateLineWidth = function(amount){
+Timeline.LineView.prototype.addLineWidth = function(amount){
     this._lineWidth += amount;
-    this._updateSize();
+    this._updateDisplay();
     return this;
 };
 
 Timeline.LineView.prototype.setLineWidth = function(width){
     this._lineWidth = width;
-    this._updateSize();
+    this._updateDisplay();
     return this;
 };
 
-Timeline.LineView.prototype.updateHeightPerMin = function(amount){
+Timeline.LineView.prototype.addHeightPerMin = function(amount){
     this._hourViews.forEach(function(hourView){
-        hourView.updateHeightPerMin(amount);
+        hourView.addHeightPerMin(amount);
     });
-    this._updateRulerHeight();
-    this._updateEventsHeight();
+    this._updateRulerDisplay();
+    this._updateEventsDisplay();
+    this._updateDisplay();
     return this;
 };
 
@@ -292,12 +294,13 @@ Timeline.LineView.prototype.setHeightPerMin = function(height){
     this._hourViews.forEach(function(hourView){
         hourView.setHeightPerMin(height);
     });
-    this._updateRulerHeight();
-    this._updateEventsHeight();
+    this._updateRulerDisplay();
+    this._updateEventsDisplay();
+    this._updateDisplay();
     return this;
 };
 
-Timeline.LineView.prototype._updateSize = function(){
+Timeline.LineView.prototype._updateDisplay = function(){
     var self = this;
     self._lineElement.width(self._lineWidth);
 
@@ -320,22 +323,19 @@ Timeline.LineView.prototype._updateSize = function(){
     }, 0);
 };
 
-Timeline.LineView.prototype._updateEventsHeight = function(){
+Timeline.LineView.prototype._updateEventsDisplay = function(){
     this._eventViews.forEach(function(eventView){
-        eventView.updatePosition();
+        eventView.updateDisplay();
     });
 };
 
-Timeline.LineView.prototype._updateRulerHeight = function(){
-    var self = this;
-    if(self._rulerView === null)
+Timeline.LineView.prototype._updateRulerDisplay = function(){
+    if(this._rulerView === null)
     {
-        self._updateSize();
         return;
     }
 
-    self._rulerView.updateHeight();
-    self._updateSize();
+    this._rulerView.updateDisplay();
 };
 
 //Min
@@ -370,7 +370,7 @@ Timeline.MinView.prototype.getTopPosition = function(min){
     return offset.top + (this._element.outerHeight() * percent) - 1;
 };
 
-Timeline.MinView.prototype.updateHeightPerMin = function(amount){
+Timeline.MinView.prototype.addHeightPerMin = function(amount){
     var current = this._heightPerMin;
     current += amount;
     if(current < 0.1)
@@ -391,18 +391,18 @@ Timeline.MinView.prototype.setHeightPerMin = function(height){
     }
 
     this._heightPerMin = height;
-    this._updateSize();
+    this._updateDisplay();
 
     return this;
 };
 
-Timeline.MinView.prototype._updateSize = function(){
+Timeline.MinView.prototype._updateDisplay = function(){
     this._element.height(this._heightPerMin * this._minUnit);
 };
 
 Timeline.MinView.prototype._build = function(){
     this._element.addClass('_'+ (this._min + this._minUnit));
-    this._updateSize();
+    this._updateDisplay();
 };
 
 //RulerView
@@ -434,11 +434,11 @@ Timeline.RulerView.prototype._build = function(){
 };
 
 
-Timeline.RulerView.prototype._position = function(){
+Timeline.RulerView.prototype._postShow = function(){
 
 };
 
-Timeline.RulerView.prototype.updateHeight = function(){
+Timeline.RulerView.prototype.updateDisplay = function(){
     
     this._element.children().each(function(){
         var hourRuler = $(this);
@@ -472,7 +472,7 @@ Timeline.TemplateView.prototype._build = function(){
 };
 
 
-Timeline.TemplateView.prototype._position = function(){
+Timeline.TemplateView.prototype._postShow = function(){
 
 };
 

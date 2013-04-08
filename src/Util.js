@@ -1,3 +1,4 @@
+//Compatibility for ecma3
 if ( Array.prototype.forEach === undefined ) {
   Array.prototype.forEach = function(fn, scope) {
     for(var i = 0, len = this.length; i < len; ++i) {

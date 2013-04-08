@@ -29,9 +29,9 @@ Timeline.HourView.prototype.getMinView = function(min){
     return result;
 };
 
-Timeline.HourView.prototype.updateHeightPerMin = function(amount){
+Timeline.HourView.prototype.addHeightPerMin = function(amount){
     this._minViews.forEach(function(minView){
-        minView.updateHeightPerMin(amount);
+        minView.addHeightPerMin(amount);
     });
     return this;
 };

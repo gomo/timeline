@@ -43,7 +43,7 @@ Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
 };
 
-Timeline.EventView.prototype.updatePosition = function(){
+Timeline.EventView.prototype.updateDisplay = function(){
     var self = this;
     var startTop = self._startMinView.getTopPosition(self._timeSpan.getStartTime().getMin());
     var endTop = self._endMinView.getTopPosition(self._timeSpan.getEndTime().getMin());
@@ -53,6 +53,6 @@ Timeline.EventView.prototype.updatePosition = function(){
     self._element.height(endTop - startTop -1);
 };
 
-Timeline.EventView.prototype._position = function(){
-    this.updatePosition();
+Timeline.EventView.prototype._postShow = function(){
+    this.updateDisplay();
 };

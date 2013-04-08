@@ -10,11 +10,11 @@ Timeline.View.prototype.getElement = function(){
 
 Timeline.View.prototype._build = function(){};
 
-Timeline.View.prototype._position = function(){};
+Timeline.View.prototype._postShow = function(){};
 
 Timeline.View.prototype.render = function(){
     this._build();
     this._element.show();
-    this._position();
+    this._postShow();
     return this._element;
 };
