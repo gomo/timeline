@@ -3,7 +3,6 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
-    this._eventViews = [];
     this._lineElement = null;
     this._hoursWrapper = null;
     this._rulerElement = null;
@@ -41,11 +40,48 @@ Timeline.LineView.prototype._build = function(){
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
 
+    self._hoursWrapper.droppable({
+        accept: ".tlEventView",
+        drop: function( event, ui ) {
+            var lineView = self._hoursWrapper.closest('.tlLineView').data('view');
+            var eventView = ui.draggable.data('view');
+            var targetY = ui.helper.offset().top;
+            var time = lineView
+                .getHourViewUnderY(targetY)
+                .getMinViewUnderY(targetY)
+                .getTimeUnderY(targetY);
+
+            var prevLineView = eventView.getLineView();
+
+            eventView.shiftStartTime(time);
+            lineView.addEventView(eventView);
+
+            prevLineView.eachEventView(function(key, eventView){
+                eventView.updateDisplay();
+            });
+        }
+    });
+
     self._timeSpan.forEachHour(function(hour){
         var hourView = new Timeline.HourView(self, hour);
         self._hoursWrapper.append(hourView.render());
         self._hourViews.push(hourView);
     });
+};
+
+Timeline.LineView.prototype.getHourViewUnderY = function(y){
+    var self = this;
+    var hourView = null;
+
+    $.each(self._hourViews, function(){
+        hourView = this;
+        if(hourView.isContainsY(y))
+        {
+            return false;
+        }
+    });
+
+    return hourView;
 };
 
 Timeline.LineView.prototype._postShow = function(){
@@ -57,7 +93,6 @@ Timeline.LineView.prototype.addEventView = function(eventView){
     var timeSpan = eventView.getTimeSpan();
     eventView.setStartMinView(this._getMinView(timeSpan.getStartTime()));
     eventView.setEndMinView(this._getMinView(timeSpan.getEndTime()));
-    this._eventViews.push(eventView);
     eventView.render();
     return this;
 };
@@ -128,8 +163,15 @@ Timeline.LineView.prototype._updateDisplay = function(){
     }, 0);
 };
 
+Timeline.LineView.prototype.eachEventView = function(callback){
+    this._element.find('.tlEventView:not(.ui-draggable-dragging)').each(function(key){
+        var view = $(this).data('view');
+        callback.call(view, key, view);
+    });
+};
+
 Timeline.LineView.prototype._updateEventsDisplay = function(){
-    this._eventViews.forEach(function(eventView){
+    this.eachEventView(function(key, eventView){
         eventView.updateDisplay();
     });
 };

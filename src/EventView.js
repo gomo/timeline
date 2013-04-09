@@ -1,12 +1,26 @@
 //EventView
 Timeline.EventView = function(timeSpan, color){
-    Timeline.EventView.super_.call(this);
-    this._timeSpan = timeSpan;
-    this._lineView = null;
-    this._element.css('position', 'relative');
-    this._element.addClass(color);
-    this._startMinView = null;
-    this._endMinView = null;
+    var self = this;
+    Timeline.EventView.super_.call(self);
+    self._timeSpan = timeSpan;
+    self._lineView = null;
+    self._element.css('position', 'relative');
+    self._element.addClass(color);
+    self._startMinView = null;
+    self._endMinView = null;
+
+    var prevLineView = null;
+    self._element.draggable({
+        helper: "clone",
+        start: function( event, ui ) {
+            var elem = $(this);
+            prevLineView = self.getLineView();
+            ui.helper.width(elem.width());
+        },
+        stop: function(event, ui){
+
+        }
+    });
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -26,6 +40,15 @@ Timeline.EventView.prototype.getTimeSpan = function(){
 
 Timeline.EventView.prototype.setLineView = function(lineView){
     this._lineView = lineView;
+    return this;
+};
+
+Timeline.EventView.prototype.getLineView = function(lineView){
+    return this._lineView;
+};
+
+Timeline.EventView.prototype.shiftStartTime = function(time){
+    this._timeSpan.shiftStartTime(time);
     return this;
 };
 

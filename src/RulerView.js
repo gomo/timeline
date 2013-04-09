@@ -32,7 +32,7 @@ Timeline.RulerView.prototype._postShow = function(){
 };
 
 Timeline.RulerView.prototype.updateDisplay = function(){
-    
+
     this._element.children().each(function(){
         var hourRuler = $(this);
         var hourView = hourRuler.data('hourView');

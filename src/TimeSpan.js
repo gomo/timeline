@@ -9,11 +9,17 @@ Timeline.TimeSpan.create = function(start, end){
 };
 
 Timeline.TimeSpan.prototype.getDistance = function(){
-    return this._startTime.calcMinDistance(this._endTime);
+    return this._startTime.getDistance(this._endTime);
 };
 
 Timeline.TimeSpan.prototype.getStartTime = function(){ return this._startTime; };
 Timeline.TimeSpan.prototype.getEndTime = function(){ return this._endTime; };
+
+Timeline.TimeSpan.prototype.shiftStartTime = function(time){
+    var minDistance = this.getDistance();
+    this._startTime = time;
+    this._endTime = time.addMin(minDistance);
+};
 
 Timeline.TimeSpan.prototype.forEachHour = function(callback){
     var hour = this.getStartTime().getHour();
