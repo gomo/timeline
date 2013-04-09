@@ -12,13 +12,13 @@ Timeline.EventView = function(timeSpan, color){
     var prevLineView = null;
     self._element.draggable({
         helper: "clone",
-        start: function( event, ui ) {
-            var elem = $(this);
-            prevLineView = self.getLineView();
-            ui.helper.width(elem.width());
+        create: function( event, ui ) {
+            self._element.draggable( "option", "revertDuration", 150 );
         },
-        stop: function(event, ui){
-
+        start: function( event, ui ) {
+            prevLineView = self.getLineView();
+            ui.helper.width(self._element.width());
+            self._element.draggable( "option", "revert", false );
         }
     });
 };
@@ -38,6 +38,11 @@ Timeline.EventView.prototype.getTimeSpan = function(){
     return this._timeSpan;
 };
 
+Timeline.EventView.prototype.setTimeSpan = function(timeSpan){
+    this._timeSpan = timeSpan;
+    return this;
+};
+
 Timeline.EventView.prototype.setLineView = function(lineView){
     this._lineView = lineView;
     return this;
@@ -45,11 +50,6 @@ Timeline.EventView.prototype.setLineView = function(lineView){
 
 Timeline.EventView.prototype.getLineView = function(lineView){
     return this._lineView;
-};
-
-Timeline.EventView.prototype.shiftStartTime = function(time){
-    this._timeSpan.shiftStartTime(time);
-    return this;
 };
 
 Timeline.EventView.prototype.setStartMinView = function(minView){

@@ -1,4 +1,7 @@
-//Time
+/**
+ * 一度生成したオブジェクトは変更しません。
+ * 変更メソッドは新しいオブジェクトを帰します。
+ */
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);

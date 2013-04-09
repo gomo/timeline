@@ -1,4 +1,7 @@
-//TimeSpan
+/**
+ * 一度生成したオブジェクトは変更しません。
+ * 変更メソッドは新しいオブジェクトを帰します。
+ */
 Timeline.TimeSpan = function(startTime, endTime){
     this._startTime = startTime;
     this._endTime = endTime;
@@ -16,9 +19,27 @@ Timeline.TimeSpan.prototype.getStartTime = function(){ return this._startTime; }
 Timeline.TimeSpan.prototype.getEndTime = function(){ return this._endTime; };
 
 Timeline.TimeSpan.prototype.shiftStartTime = function(time){
-    var minDistance = this.getDistance();
-    this._startTime = time;
-    this._endTime = time.addMin(minDistance);
+    return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
+};
+
+Timeline.TimeSpan.prototype.isContains = function(timeSpan){
+
+    var selfRange = this.getRange();
+    var targetRange = timeSpan.getRange();
+
+    return selfRange[0] <= targetRange[0] && selfRange[1] >= targetRange[0];
+};
+
+Timeline.TimeSpan.prototype.getRange = function(){
+    var start = this._startTime.getHour() * 60 + this._startTime.getMin();
+    var endHour = this._endTime.getHour();
+    if(this._startTime.getHour() > endHour)
+    {
+        endHour += 24;
+    }
+    var end = endHour * 60 + this._endTime.getMin();
+
+    return [start, end];
 };
 
 Timeline.TimeSpan.prototype.forEachHour = function(callback){
@@ -27,6 +48,7 @@ Timeline.TimeSpan.prototype.forEachHour = function(callback){
 
     while(true)
     {
+        //TODO count up on try finally
         callback(hour);
 
         if(hour === end)

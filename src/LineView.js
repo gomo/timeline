@@ -45,17 +45,26 @@ Timeline.LineView.prototype._build = function(){
         drop: function( event, ui ) {
             var lineView = self._hoursWrapper.closest('.tlLineView').data('view');
             var eventView = ui.draggable.data('view');
+
             var targetY = ui.helper.offset().top;
-            var time = lineView
-                .getHourViewUnderY(targetY)
-                .getMinViewUnderY(targetY)
-                .getTimeUnderY(targetY);
+            var time = lineView.getTimeUnderY(targetY);
+            if(time === null)
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
+            }
+
+            var newTimeSpan = eventView.getTimeSpan().shiftStartTime(time);
+            if(!lineView.isAvailableTimeSpan(newTimeSpan))
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
+            }
+
+            eventView.setTimeSpan(newTimeSpan);
 
             var prevLineView = eventView.getLineView();
-
-            eventView.shiftStartTime(time);
             lineView.addEventView(eventView);
-
             prevLineView.eachEventView(function(key, eventView){
                 eventView.updateDisplay();
             });
@@ -69,14 +78,42 @@ Timeline.LineView.prototype._build = function(){
     });
 };
 
+Timeline.LineView.prototype.getTimeUnderY = function(y){
+    var hourView = this.getHourViewUnderY(y);
+    if(hourView === null)
+    {
+        return null;
+    }
+
+    return hourView.getMinViewUnderY(y).getTimeUnderY(y);
+};
+
+Timeline.LineView.prototype.isAvailableTimeSpan = function(timeSpan){
+    if(!this._timeSpan.isContains(timeSpan))
+    {
+        return false;
+    }
+
+    var result = true;
+    this.eachEventView(function(key, eventView){
+        if(eventView.getTimeSpan().isContains(timeSpan))
+        {
+            result = false;
+            return false;
+        }
+    });
+
+    return result;
+};
+
 Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var self = this;
     var hourView = null;
 
     $.each(self._hourViews, function(){
-        hourView = this;
-        if(hourView.isContainsY(y))
+        if(this.isContainsY(y))
         {
+            hourView = this;
             return false;
         }
     });
@@ -166,7 +203,10 @@ Timeline.LineView.prototype._updateDisplay = function(){
 Timeline.LineView.prototype.eachEventView = function(callback){
     this._element.find('.tlEventView:not(.ui-draggable-dragging)').each(function(key){
         var view = $(this).data('view');
-        callback.call(view, key, view);
+        if(callback.call(view, key, view) === false)
+        {
+            return;
+        }
     });
 };
 

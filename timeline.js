@@ -95,13 +95,13 @@ Timeline.EventView = function(timeSpan, color){
     var prevLineView = null;
     self._element.draggable({
         helper: "clone",
-        start: function( event, ui ) {
-            var elem = $(this);
-            prevLineView = self.getLineView();
-            ui.helper.width(elem.width());
+        create: function( event, ui ) {
+            self._element.draggable( "option", "revertDuration", 150 );
         },
-        stop: function(event, ui){
-
+        start: function( event, ui ) {
+            prevLineView = self.getLineView();
+            ui.helper.width(self._element.width());
+            self._element.draggable( "option", "revert", false );
         }
     });
 };
@@ -121,6 +121,11 @@ Timeline.EventView.prototype.getTimeSpan = function(){
     return this._timeSpan;
 };
 
+Timeline.EventView.prototype.setTimeSpan = function(timeSpan){
+    this._timeSpan = timeSpan;
+    return this;
+};
+
 Timeline.EventView.prototype.setLineView = function(lineView){
     this._lineView = lineView;
     return this;
@@ -128,11 +133,6 @@ Timeline.EventView.prototype.setLineView = function(lineView){
 
 Timeline.EventView.prototype.getLineView = function(lineView){
     return this._lineView;
-};
-
-Timeline.EventView.prototype.shiftStartTime = function(time){
-    this._timeSpan.shiftStartTime(time);
-    return this;
 };
 
 Timeline.EventView.prototype.setStartMinView = function(minView){
@@ -284,17 +284,26 @@ Timeline.LineView.prototype._build = function(){
         drop: function( event, ui ) {
             var lineView = self._hoursWrapper.closest('.tlLineView').data('view');
             var eventView = ui.draggable.data('view');
+
             var targetY = ui.helper.offset().top;
-            var time = lineView
-                .getHourViewUnderY(targetY)
-                .getMinViewUnderY(targetY)
-                .getTimeUnderY(targetY);
+            var time = lineView.getTimeUnderY(targetY);
+            if(time === null)
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
+            }
+
+            var newTimeSpan = eventView.getTimeSpan().shiftStartTime(time);
+            if(!lineView.isAvailableTimeSpan(newTimeSpan))
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
+            }
+
+            eventView.setTimeSpan(newTimeSpan);
 
             var prevLineView = eventView.getLineView();
-
-            eventView.shiftStartTime(time);
             lineView.addEventView(eventView);
-
             prevLineView.eachEventView(function(key, eventView){
                 eventView.updateDisplay();
             });
@@ -308,14 +317,42 @@ Timeline.LineView.prototype._build = function(){
     });
 };
 
+Timeline.LineView.prototype.getTimeUnderY = function(y){
+    var hourView = this.getHourViewUnderY(y);
+    if(hourView === null)
+    {
+        return null;
+    }
+
+    return hourView.getMinViewUnderY(y).getTimeUnderY(y);
+};
+
+Timeline.LineView.prototype.isAvailableTimeSpan = function(timeSpan){
+    if(!this._timeSpan.isContains(timeSpan))
+    {
+        return false;
+    }
+
+    var result = true;
+    this.eachEventView(function(key, eventView){
+        if(eventView.getTimeSpan().isContains(timeSpan))
+        {
+            result = false;
+            return false;
+        }
+    });
+
+    return result;
+};
+
 Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var self = this;
     var hourView = null;
 
     $.each(self._hourViews, function(){
-        hourView = this;
-        if(hourView.isContainsY(y))
+        if(this.isContainsY(y))
         {
+            hourView = this;
             return false;
         }
     });
@@ -405,7 +442,10 @@ Timeline.LineView.prototype._updateDisplay = function(){
 Timeline.LineView.prototype.eachEventView = function(callback){
     this._element.find('.tlEventView:not(.ui-draggable-dragging)').each(function(key){
         var view = $(this).data('view');
-        callback.call(view, key, view);
+        if(callback.call(view, key, view) === false)
+        {
+            return;
+        }
     });
 };
 
@@ -569,7 +609,10 @@ Timeline.TemplateView.prototype._postShow = function(){
 
 };
 
-//Time
+/**
+ * 一度生成したオブジェクトは変更しません。
+ * 変更メソッドは新しいオブジェクトを帰します。
+ */
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);
@@ -610,7 +653,10 @@ Timeline.Time.prototype.getDistance = function(targetTime){
     return (hourDistance * 60) + (targetTime.getMin() - this._min);
 };
 
-//TimeSpan
+/**
+ * 一度生成したオブジェクトは変更しません。
+ * 変更メソッドは新しいオブジェクトを帰します。
+ */
 Timeline.TimeSpan = function(startTime, endTime){
     this._startTime = startTime;
     this._endTime = endTime;
@@ -628,9 +674,27 @@ Timeline.TimeSpan.prototype.getStartTime = function(){ return this._startTime; }
 Timeline.TimeSpan.prototype.getEndTime = function(){ return this._endTime; };
 
 Timeline.TimeSpan.prototype.shiftStartTime = function(time){
-    var minDistance = this.getDistance();
-    this._startTime = time;
-    this._endTime = time.addMin(minDistance);
+    return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
+};
+
+Timeline.TimeSpan.prototype.isContains = function(timeSpan){
+
+    var selfRange = this.getRange();
+    var targetRange = timeSpan.getRange();
+
+    return selfRange[0] <= targetRange[0] && selfRange[1] >= targetRange[0];
+};
+
+Timeline.TimeSpan.prototype.getRange = function(){
+    var start = this._startTime.getHour() * 60 + this._startTime.getMin();
+    var endHour = this._endTime.getHour();
+    if(this._startTime.getHour() > endHour)
+    {
+        endHour += 24;
+    }
+    var end = endHour * 60 + this._endTime.getMin();
+
+    return [start, end];
 };
 
 Timeline.TimeSpan.prototype.forEachHour = function(callback){
@@ -639,6 +703,7 @@ Timeline.TimeSpan.prototype.forEachHour = function(callback){
 
     while(true)
     {
+        //TODO count up on try finally
         callback(hour);
 
         if(hour === end)
