@@ -502,6 +502,11 @@ Timeline.MinView.prototype.getTimeUnderY = function(y){
     var percent = (y - this._element.offset().top) / this._minUnit;
     var min = this._min + (this._minUnit * percent);
 
+    if(min < 0)
+    {
+        min = 0;
+    }
+
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 
