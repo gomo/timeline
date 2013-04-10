@@ -54,14 +54,15 @@ Timeline.LineView.prototype._build = function(){
                 return false;
             }
 
-            var newTimeSpan = eventView.getTimeSpan().shiftStartTime(time);
-            if(!lineView.isAvailableTimeSpan(newTimeSpan))
+            var oldTimeSpan = eventView.getTimeSpan();
+            var newTimeSpan = oldTimeSpan.shiftStartTime(time);
+            eventView.setTimeSpan(newTimeSpan);
+            if(!lineView.isAvailableEventView(eventView))
             {
+                eventView.setTimeSpan(oldTimeSpan);
                 ui.draggable.draggable( "option", "revert", true );
                 return false;
             }
-
-            eventView.setTimeSpan(newTimeSpan);
 
             var prevLineView = eventView.getLineView();
             lineView.addEventView(eventView);
@@ -88,18 +89,22 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return hourView.getMinViewUnderY(y).getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.isAvailableTimeSpan = function(timeSpan){
-    if(!this._timeSpan.isContains(timeSpan))
+Timeline.LineView.prototype.isAvailableEventView = function(targetEventView){
+    var timeSpan = targetEventView.getTimeSpan();
+    if(!this._timeSpan.isContainsTimeSpan(timeSpan))
     {
         return false;
     }
 
     var result = true;
     this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().isContains(timeSpan))
+        if(targetEventView !== eventView)
         {
-            result = false;
-            return false;
+            if(eventView.getTimeSpan().isOverlapsTimeSpan(timeSpan))
+            {
+                result = false;
+                return false;
+            }
         }
     });
 

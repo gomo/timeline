@@ -17,6 +17,10 @@ Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
 
+Timeline.HourView.prototype.getDisplayHour = function(){
+    return this._hour < 24 ? this._hour : this._hour - 24;
+};
+
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
     this._minViews.forEach(function(minView){

@@ -19,7 +19,7 @@ Timeline.RulerView.prototype._build = function(){
     self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
     self._lineView.forEachHourView(function(hourView){
-        var hourRuler = $('<div class="hour">'+hourView.getHour()+':00'+'</div>');
+        var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
         hourRuler.data('hourView', hourView);
         hourRuler.height(hourView.getElement().outerHeight());

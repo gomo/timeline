@@ -182,6 +182,10 @@ Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
 
+Timeline.HourView.prototype.getDisplayHour = function(){
+    return this._hour < 24 ? this._hour : this._hour - 24;
+};
+
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
     this._minViews.forEach(function(minView){
@@ -293,14 +297,15 @@ Timeline.LineView.prototype._build = function(){
                 return false;
             }
 
-            var newTimeSpan = eventView.getTimeSpan().shiftStartTime(time);
-            if(!lineView.isAvailableTimeSpan(newTimeSpan))
+            var oldTimeSpan = eventView.getTimeSpan();
+            var newTimeSpan = oldTimeSpan.shiftStartTime(time);
+            eventView.setTimeSpan(newTimeSpan);
+            if(!lineView.isAvailableEventView(eventView))
             {
+                eventView.setTimeSpan(oldTimeSpan);
                 ui.draggable.draggable( "option", "revert", true );
                 return false;
             }
-
-            eventView.setTimeSpan(newTimeSpan);
 
             var prevLineView = eventView.getLineView();
             lineView.addEventView(eventView);
@@ -327,18 +332,22 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return hourView.getMinViewUnderY(y).getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.isAvailableTimeSpan = function(timeSpan){
-    if(!this._timeSpan.isContains(timeSpan))
+Timeline.LineView.prototype.isAvailableEventView = function(targetEventView){
+    var timeSpan = targetEventView.getTimeSpan();
+    if(!this._timeSpan.isContainsTimeSpan(timeSpan))
     {
         return false;
     }
 
     var result = true;
     this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().isContains(timeSpan))
+        if(targetEventView !== eventView)
         {
-            result = false;
-            return false;
+            if(eventView.getTimeSpan().isOverlapsTimeSpan(timeSpan))
+            {
+                result = false;
+                return false;
+            }
         }
     });
 
@@ -559,7 +568,7 @@ Timeline.RulerView.prototype._build = function(){
     self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
     self._lineView.forEachHourView(function(hourView){
-        var hourRuler = $('<div class="hour">'+hourView.getHour()+':00'+'</div>');
+        var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
         hourRuler.data('hourView', hourView);
         hourRuler.height(hourView.getElement().outerHeight());
@@ -633,24 +642,45 @@ Timeline.Time.prototype.addMin = function(min){
         newHour += plusHour;
     }
 
-    if(newHour > 23)
+    return new Timeline.Time(newHour, newMin);
+};
+
+Timeline.Time.prototype.equals = function(time){
+    return this.getHour() === time.getHour() && this.getMin() === time.getMin();
+};
+
+Timeline.Time.prototype.compare = function(time){
+    if(this.getHour() > time.getHour())
     {
-        newHour -= 24;
+        return 1;
+    }
+    else if(this.getHour() < time.getHour())
+    {
+        return -1;
+    }
+    else
+    {
+        if(this.getMin() > time.getMin())
+        {
+            return 1;
+        }
+        else if(this.getMin() < time.getMin())
+        {
+            return -1;
+        }
     }
 
-    return new Timeline.Time(newHour, newMin);
+    return 0;
 };
 
 Timeline.Time.prototype.getDistance = function(targetTime){
     var targetHour = targetTime.getHour();
-    if(this._hour > targetHour)
-    {
-        targetHour += 24;
-    }
-
     var hourDistance = targetHour - this._hour;
-
     return (hourDistance * 60) + (targetTime.getMin() - this._min);
+};
+
+Timeline.Time.prototype.toString = function(){
+    return this._hour +':'+ (this._min < 10 ? '0'+this._min : this._min);
 };
 
 /**
@@ -658,6 +688,12 @@ Timeline.Time.prototype.getDistance = function(targetTime){
  * 変更メソッドは新しいオブジェクトを帰します。
  */
 Timeline.TimeSpan = function(startTime, endTime){
+
+    if(startTime.compare(endTime) > 0)
+    {
+        throw Error('The endTime is earlier than the startTime.');
+    }
+
     this._startTime = startTime;
     this._endTime = endTime;
 };
@@ -677,24 +713,12 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isContains = function(timeSpan){
-
-    var selfRange = this.getRange();
-    var targetRange = timeSpan.getRange();
-
-    return selfRange[0] <= targetRange[0] && selfRange[1] >= targetRange[0];
+Timeline.TimeSpan.prototype.isOverlapsTimeSpan = function(timeSpan){
+    return (timeSpan.getStartTime().compare(this._startTime) >= 0 && timeSpan.getStartTime().compare(this._endTime) <= 0) || (timeSpan.getEndTime().compare(this._startTime) >= 0 && timeSpan.getEndTime().compare(this._endTime) <= 0);
 };
 
-Timeline.TimeSpan.prototype.getRange = function(){
-    var start = this._startTime.getHour() * 60 + this._startTime.getMin();
-    var endHour = this._endTime.getHour();
-    if(this._startTime.getHour() > endHour)
-    {
-        endHour += 24;
-    }
-    var end = endHour * 60 + this._endTime.getMin();
-
-    return [start, end];
+Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
+    return this._startTime.compare(timeSpan.getStartTime()) <= 0 && this._endTime.compare(timeSpan.getEndTime()) >= 0;
 };
 
 Timeline.TimeSpan.prototype.forEachHour = function(callback){
@@ -712,11 +736,11 @@ Timeline.TimeSpan.prototype.forEachHour = function(callback){
         }
 
         hour += 1;
-        if(hour == 24)
-        {
-            hour = 0;
-        }
     }
+};
+
+Timeline.TimeSpan.prototype.toString = function(){
+    return this._startTime + '~' + this._endTime;
 };
 
 

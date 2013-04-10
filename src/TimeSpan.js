@@ -3,6 +3,12 @@
  * 変更メソッドは新しいオブジェクトを帰します。
  */
 Timeline.TimeSpan = function(startTime, endTime){
+
+    if(startTime.compare(endTime) > 0)
+    {
+        throw Error('The endTime is earlier than the startTime.');
+    }
+
     this._startTime = startTime;
     this._endTime = endTime;
 };
@@ -22,24 +28,12 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isContains = function(timeSpan){
-
-    var selfRange = this.getRange();
-    var targetRange = timeSpan.getRange();
-
-    return selfRange[0] <= targetRange[0] && selfRange[1] >= targetRange[0];
+Timeline.TimeSpan.prototype.isOverlapsTimeSpan = function(timeSpan){
+    return (timeSpan.getStartTime().compare(this._startTime) >= 0 && timeSpan.getStartTime().compare(this._endTime) <= 0) || (timeSpan.getEndTime().compare(this._startTime) >= 0 && timeSpan.getEndTime().compare(this._endTime) <= 0);
 };
 
-Timeline.TimeSpan.prototype.getRange = function(){
-    var start = this._startTime.getHour() * 60 + this._startTime.getMin();
-    var endHour = this._endTime.getHour();
-    if(this._startTime.getHour() > endHour)
-    {
-        endHour += 24;
-    }
-    var end = endHour * 60 + this._endTime.getMin();
-
-    return [start, end];
+Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
+    return this._startTime.compare(timeSpan.getStartTime()) <= 0 && this._endTime.compare(timeSpan.getEndTime()) >= 0;
 };
 
 Timeline.TimeSpan.prototype.forEachHour = function(callback){
@@ -57,9 +51,9 @@ Timeline.TimeSpan.prototype.forEachHour = function(callback){
         }
 
         hour += 1;
-        if(hour == 24)
-        {
-            hour = 0;
-        }
     }
+};
+
+Timeline.TimeSpan.prototype.toString = function(){
+    return this._startTime + '~' + this._endTime;
 };

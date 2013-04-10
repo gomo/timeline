@@ -22,22 +22,43 @@ Timeline.Time.prototype.addMin = function(min){
         newHour += plusHour;
     }
 
-    if(newHour > 23)
+    return new Timeline.Time(newHour, newMin);
+};
+
+Timeline.Time.prototype.equals = function(time){
+    return this.getHour() === time.getHour() && this.getMin() === time.getMin();
+};
+
+Timeline.Time.prototype.compare = function(time){
+    if(this.getHour() > time.getHour())
     {
-        newHour -= 24;
+        return 1;
+    }
+    else if(this.getHour() < time.getHour())
+    {
+        return -1;
+    }
+    else
+    {
+        if(this.getMin() > time.getMin())
+        {
+            return 1;
+        }
+        else if(this.getMin() < time.getMin())
+        {
+            return -1;
+        }
     }
 
-    return new Timeline.Time(newHour, newMin);
+    return 0;
 };
 
 Timeline.Time.prototype.getDistance = function(targetTime){
     var targetHour = targetTime.getHour();
-    if(this._hour > targetHour)
-    {
-        targetHour += 24;
-    }
-
     var hourDistance = targetHour - this._hour;
-
     return (hourDistance * 60) + (targetTime.getMin() - this._min);
+};
+
+Timeline.Time.prototype.toString = function(){
+    return this._hour +':'+ (this._min < 10 ? '0'+this._min : this._min);
 };
