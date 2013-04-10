@@ -36,14 +36,14 @@ Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
     return this._startTime.compare(timeSpan.getStartTime()) <= 0 && this._endTime.compare(timeSpan.getEndTime()) >= 0;
 };
 
-Timeline.TimeSpan.prototype.forEachHour = function(callback){
+Timeline.TimeSpan.prototype.eachHour = function(callback){
     var hour = this.getStartTime().getHour();
     var end = this.getEndTime().getHour();
+    var key = 0;
 
     while(true)
     {
-        //TODO count up on try finally
-        callback(hour);
+        callback.call(hour, key, hour);
 
         if(hour === end)
         {
@@ -51,6 +51,7 @@ Timeline.TimeSpan.prototype.forEachHour = function(callback){
         }
 
         hour += 1;
+        ++key;
     }
 };
 

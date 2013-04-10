@@ -23,10 +23,11 @@ Timeline.HourView.prototype.getDisplayHour = function(){
 
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
-    this._minViews.forEach(function(minView){
+    $.each(this._minViews, function(key, minView){
         if(minView.contains(min))
         {
             result = minView;
+            return false;
         }
     });
 
@@ -34,14 +35,14 @@ Timeline.HourView.prototype.getMinView = function(min){
 };
 
 Timeline.HourView.prototype.addHeightPerMin = function(amount){
-    this._minViews.forEach(function(minView){
+    $.each(this._minViews, function(key, minView){
         minView.addHeightPerMin(amount);
     });
     return this;
 };
 
 Timeline.HourView.prototype.setHeightPerMin = function(height){
-    this._minViews.forEach(function(minView){
+    $.each(this._minViews, function(key, minView){
         minView.setHeightPerMin(height);
     });
     return this;

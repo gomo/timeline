@@ -3,14 +3,6 @@
 Timeline = {};
 
 //Compatibility for ecma3
-if ( Array.prototype.forEach === undefined ) {
-  Array.prototype.forEach = function(fn, scope) {
-    for(var i = 0, len = this.length; i < len; ++i) {
-      fn.call(scope, this[i], i, this);
-    }
-  };
-}
-
 if( Object.create === undefined ) {
     Object.create = function(o, props) {
         var newObj;
@@ -188,10 +180,11 @@ Timeline.HourView.prototype.getDisplayHour = function(){
 
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
-    this._minViews.forEach(function(minView){
+    $.each(this._minViews, function(key, minView){
         if(minView.contains(min))
         {
             result = minView;
+            return false;
         }
     });
 
@@ -199,14 +192,14 @@ Timeline.HourView.prototype.getMinView = function(min){
 };
 
 Timeline.HourView.prototype.addHeightPerMin = function(amount){
-    this._minViews.forEach(function(minView){
+    $.each(this._minViews, function(key, minView){
         minView.addHeightPerMin(amount);
     });
     return this;
 };
 
 Timeline.HourView.prototype.setHeightPerMin = function(height){
-    this._minViews.forEach(function(minView){
+    $.each(this._minViews, function(key, minView){
         minView.setHeightPerMin(height);
     });
     return this;
@@ -268,10 +261,8 @@ Timeline.LineView.prototype.setRulerView = function(rulerView){
     this._updateDisplay();
 };
 
-Timeline.LineView.prototype.forEachHourView = function(callback){
-    this._hourViews.forEach(function(hourView){
-        callback(hourView);
-    });
+Timeline.LineView.prototype.eachHourView = function(callback){
+    $.each(this._hourViews, callback);
 };
 
 Timeline.LineView.prototype.getLineElement = function(){
@@ -315,7 +306,7 @@ Timeline.LineView.prototype._build = function(){
         }
     });
 
-    self._timeSpan.forEachHour(function(hour){
+    self._timeSpan.eachHour(function(key, hour){
         var hourView = new Timeline.HourView(self, hour);
         self._hoursWrapper.append(hourView.render());
         self._hourViews.push(hourView);
@@ -384,9 +375,10 @@ Timeline.LineView.prototype.addEventView = function(eventView){
 
 Timeline.LineView.prototype._getMinView = function(time){
     var result;
-    this._hourViews.forEach(function(hourView){
+    $.each(this._hourViews, function(key, hourView){
         if(hourView.getHour() === time.getHour()){
             result = hourView.getMinView(time.getMin());
+            return false;
         }
     });
 
@@ -406,7 +398,8 @@ Timeline.LineView.prototype.setLineWidth = function(width){
 };
 
 Timeline.LineView.prototype.addHeightPerMin = function(amount){
-    this._hourViews.forEach(function(hourView){
+
+    $.each(this._hourViews, function(key, hourView){
         hourView.addHeightPerMin(amount);
     });
     this._updateRulerDisplay();
@@ -416,7 +409,7 @@ Timeline.LineView.prototype.addHeightPerMin = function(amount){
 };
 
 Timeline.LineView.prototype.setHeightPerMin = function(height){
-    this._hourViews.forEach(function(hourView){
+    $.each(this._hourViews, function(key, hourView){
         hourView.setHeightPerMin(height);
     });
     this._updateRulerDisplay();
@@ -567,7 +560,7 @@ Timeline.RulerView.prototype._build = function(){
     self._lineView.getElement().prepend(self._element);
     self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
-    self._lineView.forEachHourView(function(hourView){
+    self._lineView.eachHourView(function(key, hourView){
         var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
         hourRuler.data('hourView', hourView);
@@ -721,14 +714,14 @@ Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
     return this._startTime.compare(timeSpan.getStartTime()) <= 0 && this._endTime.compare(timeSpan.getEndTime()) >= 0;
 };
 
-Timeline.TimeSpan.prototype.forEachHour = function(callback){
+Timeline.TimeSpan.prototype.eachHour = function(callback){
     var hour = this.getStartTime().getHour();
     var end = this.getEndTime().getHour();
+    var key = 0;
 
     while(true)
     {
-        //TODO count up on try finally
-        callback(hour);
+        callback.call(hour, key, hour);
 
         if(hour === end)
         {
@@ -736,6 +729,7 @@ Timeline.TimeSpan.prototype.forEachHour = function(callback){
         }
 
         hour += 1;
+        ++key;
     }
 };
 
