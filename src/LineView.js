@@ -13,6 +13,7 @@ Timeline.LineView = function(timeSpan){
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
 Timeline.LineView.CLASS_ELEM = 'tlLineView';
 
+Timeline.timeIndicator = null;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
@@ -35,8 +36,32 @@ Timeline.LineView.prototype.getLineElement = function(){
 
 Timeline.LineView.prototype._build = function(){
     var self = this;
+
+    if(!Timeline.timeIndicator)
+    {
+        Timeline.timeIndicator = $('<div id="tlTimeIndicator" />').appendTo('body').css({position:'absolute'}).hide();
+    }
+
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
+    self._hoursWrapper
+        .bind('mouseover', function(){
+            Timeline.timeIndicator.show();
+        })
+        .bind('mouseout', function(){
+            Timeline.timeIndicator.hide();
+        })
+        .bind('mousemove', function(e){
+            var time = self.getTimeUnderY(e.pageY);
+            if(time)
+            {
+                var offset = self._hoursWrapper.offset();
+                offset.top = e.pageY - (Timeline.timeIndicator.height() / 2);
+                offset.left = offset.left - Timeline.timeIndicator.width();
+                Timeline.timeIndicator.offset(offset);
+                Timeline.timeIndicator.html(time.getDisplayTime());
+            }
+        });
 
     self._hoursWrapper.droppable({
         accept: ".tlEventView",
