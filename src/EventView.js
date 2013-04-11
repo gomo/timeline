@@ -21,6 +21,13 @@ Timeline.EventView = function(timeSpan, color){
             self._element.draggable( "option", "revert", false );
         }
     });
+
+    self._element.append('<div class="start time" />');
+
+    self._displayElement = $('<div class="display" />');
+    self._element.append(self._displayElement);
+
+    self._element.append('<div class="end time" />');
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -74,6 +81,19 @@ Timeline.EventView.prototype.updateDisplay = function(){
     offset.top = startTop;
     self._element.offset(offset);
     self._element.height(endTop - startTop -1);
+
+    var times = self._element.find('.time');
+    times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
+    times.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
+    self._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
+};
+
+Timeline.EventView.prototype.setDisplayHtml = function(html){
+    if(html instanceof jQuery){
+        this._displayElement.children().remove().append(html);
+    }else{
+        this._displayElement.html(html);
+    }
 };
 
 Timeline.EventView.prototype._postShow = function(){

@@ -8,8 +8,12 @@
 .tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
 .tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
 .tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
-.tlLineView .tlTimeline .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;width:85%;margin:0 auto}
+.tlLineView .tlTimeline .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;width:85%;margin:0 auto;text-align:center;font-size:90%;line-height:17px}
 .tlLineView .tlTimeline .tlEventView.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
+.tlLineView .tlTimeline .tlEventView .time{-webkit-border-radius:6px;border-radius:6px;border:1px solid #999;width:85%;margin:0 auto;position:relative;background-color:#fff;opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)"}
+.tlLineView .tlTimeline .tlEventView .time.start{top:2px}
+.tlLineView .tlTimeline .tlEventView .time.end{margin-top:2px}
+.tlLineView .tlTimeline .tlEventView .display{font-size:80%;overflow:hidden;line-height:14px;padding-top:2px}
 .tlLineView .tlTimeline .tlEventView.blue{background-color:#a3cde1}
 .tlLineView .tlTimeline .tlEventView.pink{background-color:#ffb6b6}
 .tlLineView .tlTimeline .tlEventView.green{background-color:#b8f1ac}

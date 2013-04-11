@@ -62,3 +62,13 @@ Timeline.Time.prototype.getDistance = function(targetTime){
 Timeline.Time.prototype.toString = function(){
     return this._hour +':'+ (this._min < 10 ? '0'+this._min : this._min);
 };
+
+Timeline.Time.prototype.getDisplayHour = function(){
+    return this._hour < 24 ? this._hour : this._hour - 24;
+};
+
+Timeline.Time.prototype.getDisplayTime = function(){
+    return this.getDisplayHour() +':'+ (this._min < 10 ? '0'+this._min : this._min);
+};
+
+

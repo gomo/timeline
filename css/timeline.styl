@@ -36,11 +36,37 @@
 	border: 1px solid #555;
 	width 85%
 	margin: 0 auto
+	text-align: center
+	font-size 90%
+	line-height: 17px;
 
 .tlLineView .tlTimeline .tlEventView.disable
 	background-color #999
 	border-radius 0
 	width 100%
+
+.tlLineView .tlTimeline .tlEventView .time
+	border-radius: 6px
+	border 1px solid #999
+	width: 85%;
+	margin 0 auto
+	position relative
+	background-color #fff
+	opacity: 0.7
+	
+
+.tlLineView .tlTimeline .tlEventView .time.start
+	top 2px
+
+.tlLineView .tlTimeline .tlEventView .time.end
+	margin-top: 2px
+
+.tlLineView .tlTimeline .tlEventView .display
+	font-size: 80%
+	overflow: hidden
+	line-height: 14px;
+	padding-top: 2px
+
 
 /* color variation */
 .tlLineView .tlTimeline .tlEventView.blue
