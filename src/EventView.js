@@ -13,12 +13,21 @@ Timeline.EventView = function(timeSpan, color){
     self._element.draggable({
         helper: "clone",
         create: function( event, ui ) {
+            Timeline.EventView.dragging = null;
             self._element.draggable( "option", "revertDuration", 150 );
         },
         start: function( event, ui ) {
+            Timeline.EventView.dragging = {ui:ui, eventView:self};
             prevLineView = self.getLineView();
             ui.helper.width(self._element.width());
             self._element.draggable( "option", "revert", false );
+        },
+        stop: function( event, ui ) {
+            Timeline.EventView.dragging = null;
+            Timeline.timeIndicator.hide();
+        },
+        drag: function( event, ui ){
+            Timeline.LineView.currentLineView.showTimeIndicator(ui.helper.offset().top);
         }
     });
 

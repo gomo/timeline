@@ -44,22 +44,21 @@ Timeline.LineView.prototype._build = function(){
 
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
-    self._hoursWrapper
-        .bind('mouseover', function(){
-            Timeline.timeIndicator.show();
+    self._element
+        .bind('mouseover', function(e){
+            if(Timeline.timeIndicator.is(':hidden'))
+            {
+                Timeline.timeIndicator.show();
+            }
         })
         .bind('mouseout', function(){
             Timeline.timeIndicator.hide();
         })
         .bind('mousemove', function(e){
-            var time = self.getTimeUnderY(e.pageY);
-            if(time)
+            var time = null;
+            if(!Timeline.EventView.dragging)
             {
-                var offset = self._hoursWrapper.offset();
-                offset.top = e.pageY - (Timeline.timeIndicator.height() / 2);
-                offset.left = offset.left - Timeline.timeIndicator.width();
-                Timeline.timeIndicator.offset(offset);
-                Timeline.timeIndicator.html(time.getDisplayTime());
+                self.showTimeIndicator(e.pageY);
             }
         });
 
@@ -69,9 +68,8 @@ Timeline.LineView.prototype._build = function(){
             var lineView = self._hoursWrapper.closest('.tlLineView').data('view');
             var eventView = ui.draggable.data('view');
 
-            var targetY = ui.helper.offset().top;
-            var time = lineView.getTimeUnderY(targetY);
-            if(time === null)
+            var time = Timeline.timeIndicator.data('time');
+            if(!time)
             {
                 ui.draggable.draggable( "option", "revert", true );
                 return false;
@@ -92,6 +90,9 @@ Timeline.LineView.prototype._build = function(){
             prevLineView.eachEventView(function(key, eventView){
                 eventView.updateDisplay();
             });
+        },
+        over: function(event, ui) {
+            Timeline.LineView.currentLineView = self;
         }
     });
 
@@ -100,6 +101,19 @@ Timeline.LineView.prototype._build = function(){
         self._hoursWrapper.append(hourView.render());
         self._hourViews.push(hourView);
     });
+};
+
+Timeline.LineView.prototype.showTimeIndicator = function(y){
+    time = this.getTimeUnderY(y);
+    Timeline.timeIndicator.data('time', time);
+    if(time)
+    {
+        var offset = this._hoursWrapper.offset();
+        offset.top = y - (Timeline.timeIndicator.height() / 2);
+        offset.left = offset.left - Timeline.timeIndicator.width();
+        Timeline.timeIndicator.offset(offset);
+        Timeline.timeIndicator.html(time.getDisplayTime());
+    }
 };
 
 Timeline.LineView.prototype.getTimeUnderY = function(y){
