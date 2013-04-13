@@ -44,7 +44,7 @@ Timeline.LineView.prototype._build = function(){
 
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
-    self._element
+    self._lineElement
         .bind('mouseover', function(e){
             if(Timeline.timeIndicator.is(':hidden'))
             {
