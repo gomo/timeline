@@ -342,13 +342,30 @@ Timeline.LineView.prototype._build = function(){
 
             var oldTimeSpan = eventView.getTimeSpan();
             var newTimeSpan = oldTimeSpan.shiftStartTime(time);
-            eventView.setTimeSpan(newTimeSpan);
-            if(!lineView.isAvailableEventView(eventView))
+            var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView);
+            if(prevEventView)
             {
-                eventView.setTimeSpan(oldTimeSpan);
+                newTimeSpan = newTimeSpan.shiftStartTime(prevEventView.getTimeSpan().getEndTime());
+            }
+
+            var nextEventView = self.getEventViewAtTime(newTimeSpan.getEndTime(), eventView);
+            if(prevEventView && nextEventView)
+            {
                 ui.draggable.draggable( "option", "revert", true );
                 return false;
             }
+            else if(nextEventView)
+            {
+                newTimeSpan = newTimeSpan.shiftEndTime(nextEventView.getTimeSpan().getStartTime());
+            }
+
+            if(!self._timeSpan.isContainsTimeSpan(newTimeSpan))
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
+            }
+
+            eventView.setTimeSpan(newTimeSpan);
 
             var prevLineView = eventView.getLineView();
             lineView.addEventView(eventView);
@@ -391,24 +408,20 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return hourView.getMinViewUnderY(y).getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.isAvailableEventView = function(targetEventView){
-    var timeSpan = targetEventView.getTimeSpan();
-    if(!this._timeSpan.isContainsTimeSpan(timeSpan))
-    {
-        return false;
-    }
-
-    var result = true;
+Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView){
+    var result = null;
     this.eachEventView(function(key, eventView){
-        if(targetEventView !== eventView)
+        if(eventView.getTimeSpan().isOverlapsTime(time))
         {
-            if(eventView.getTimeSpan().isOverlapsTimeSpan(timeSpan))
-            {
-                result = false;
-                return false;
-            }
+            result = eventView;
+            return false;
         }
     });
+
+    if(exceptEventView === result)
+    {
+        return null;
+    }
 
     return result;
 };
@@ -691,6 +704,10 @@ Timeline.TemplateView.prototype._postShow = function(){
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);
+    if(!(this._hour >= 0 && this._min >= 0 && this._min <= 59))
+    {
+        throw new Error(this.toString()+' is not valid time.');
+    }
 };
 
 Timeline.Time.prototype.getHour = function(){ return this._hour; };
@@ -701,10 +718,10 @@ Timeline.Time.prototype.addMin = function(min){
     var newMin = this.getMin();
 
     newMin += min;
-    if(newMin > 59)
+    if(newMin > 59 || newMin < 0)
     {
         var plusHour = Math.floor(newMin / 60);
-        newMin = newMin % 60;
+        newMin = Math.abs(newMin % 60);
         newHour += plusHour;
     }
 
@@ -760,6 +777,9 @@ Timeline.Time.prototype.getDisplayTime = function(){
 
 
 
+
+
+
 /**
  * 一度生成したオブジェクトは変更しません。
  * 変更メソッドは新しいオブジェクトを帰します。
@@ -786,16 +806,20 @@ Timeline.TimeSpan.prototype.getDistance = function(){
 Timeline.TimeSpan.prototype.getStartTime = function(){ return this._startTime; };
 Timeline.TimeSpan.prototype.getEndTime = function(){ return this._endTime; };
 
+Timeline.TimeSpan.prototype.shiftEndTime = function(time){
+    return new Timeline.TimeSpan(time.addMin(-this.getDistance()), time);
+};
+
 Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapsTimeSpan = function(timeSpan){
-    return (timeSpan.getStartTime().compare(this._startTime) >= 0 && timeSpan.getStartTime().compare(this._endTime) <= 0) || (timeSpan.getEndTime().compare(this._startTime) >= 0 && timeSpan.getEndTime().compare(this._endTime) <= 0);
+Timeline.TimeSpan.prototype.isOverlapsTime = function(time){
+    return this._startTime.compare(time) < 0 && this._endTime.compare(time) > 0;
 };
 
 Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
-    return this._startTime.compare(timeSpan.getStartTime()) <= 0 && this._endTime.compare(timeSpan.getEndTime()) >= 0;
+    return this.isOverlapsTime(timeSpan.getStartTime()) && this.isOverlapsTime(timeSpan.getEndTime());
 };
 
 Timeline.TimeSpan.prototype.eachHour = function(callback){

@@ -5,6 +5,10 @@
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);
+    if(!(this._hour >= 0 && this._min >= 0 && this._min <= 59))
+    {
+        throw new Error(this.toString()+' is not valid time.');
+    }
 };
 
 Timeline.Time.prototype.getHour = function(){ return this._hour; };
@@ -15,10 +19,10 @@ Timeline.Time.prototype.addMin = function(min){
     var newMin = this.getMin();
 
     newMin += min;
-    if(newMin > 59)
+    if(newMin > 59 || newMin < 0)
     {
         var plusHour = Math.floor(newMin / 60);
-        newMin = newMin % 60;
+        newMin = Math.abs(newMin % 60);
         newHour += plusHour;
     }
 
@@ -70,5 +74,8 @@ Timeline.Time.prototype.getDisplayHour = function(){
 Timeline.Time.prototype.getDisplayTime = function(){
     return this.getDisplayHour() +':'+ (this._min < 10 ? '0'+this._min : this._min);
 };
+
+
+
 
 

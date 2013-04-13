@@ -77,13 +77,30 @@ Timeline.LineView.prototype._build = function(){
 
             var oldTimeSpan = eventView.getTimeSpan();
             var newTimeSpan = oldTimeSpan.shiftStartTime(time);
-            eventView.setTimeSpan(newTimeSpan);
-            if(!lineView.isAvailableEventView(eventView))
+            var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView);
+            if(prevEventView)
             {
-                eventView.setTimeSpan(oldTimeSpan);
+                newTimeSpan = newTimeSpan.shiftStartTime(prevEventView.getTimeSpan().getEndTime());
+            }
+
+            var nextEventView = self.getEventViewAtTime(newTimeSpan.getEndTime(), eventView);
+            if(prevEventView && nextEventView)
+            {
                 ui.draggable.draggable( "option", "revert", true );
                 return false;
             }
+            else if(nextEventView)
+            {
+                newTimeSpan = newTimeSpan.shiftEndTime(nextEventView.getTimeSpan().getStartTime());
+            }
+
+            if(!self._timeSpan.isContainsTimeSpan(newTimeSpan))
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
+            }
+
+            eventView.setTimeSpan(newTimeSpan);
 
             var prevLineView = eventView.getLineView();
             lineView.addEventView(eventView);
@@ -126,24 +143,20 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return hourView.getMinViewUnderY(y).getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.isAvailableEventView = function(targetEventView){
-    var timeSpan = targetEventView.getTimeSpan();
-    if(!this._timeSpan.isContainsTimeSpan(timeSpan))
-    {
-        return false;
-    }
-
-    var result = true;
+Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView){
+    var result = null;
     this.eachEventView(function(key, eventView){
-        if(targetEventView !== eventView)
+        if(eventView.getTimeSpan().isOverlapsTime(time))
         {
-            if(eventView.getTimeSpan().isOverlapsTimeSpan(timeSpan))
-            {
-                result = false;
-                return false;
-            }
+            result = eventView;
+            return false;
         }
     });
+
+    if(exceptEventView === result)
+    {
+        return null;
+    }
 
     return result;
 };

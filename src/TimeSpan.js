@@ -24,16 +24,20 @@ Timeline.TimeSpan.prototype.getDistance = function(){
 Timeline.TimeSpan.prototype.getStartTime = function(){ return this._startTime; };
 Timeline.TimeSpan.prototype.getEndTime = function(){ return this._endTime; };
 
+Timeline.TimeSpan.prototype.shiftEndTime = function(time){
+    return new Timeline.TimeSpan(time.addMin(-this.getDistance()), time);
+};
+
 Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapsTimeSpan = function(timeSpan){
-    return (timeSpan.getStartTime().compare(this._startTime) >= 0 && timeSpan.getStartTime().compare(this._endTime) <= 0) || (timeSpan.getEndTime().compare(this._startTime) >= 0 && timeSpan.getEndTime().compare(this._endTime) <= 0);
+Timeline.TimeSpan.prototype.isOverlapsTime = function(time){
+    return this._startTime.compare(time) < 0 && this._endTime.compare(time) > 0;
 };
 
 Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
-    return this._startTime.compare(timeSpan.getStartTime()) <= 0 && this._endTime.compare(timeSpan.getEndTime()) >= 0;
+    return this.isOverlapsTime(timeSpan.getStartTime()) && this.isOverlapsTime(timeSpan.getEndTime());
 };
 
 Timeline.TimeSpan.prototype.eachHour = function(callback){
