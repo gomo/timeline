@@ -11,6 +11,10 @@ Timeline.Time = function(hour, min){
     }
 };
 
+Timeline.Time.create = function(hour, min){
+    return new Timeline.Time(hour, min);
+};
+
 Timeline.Time.prototype.getHour = function(){ return this._hour; };
 Timeline.Time.prototype.getMin = function(){ return this._min; };
 
@@ -19,11 +23,21 @@ Timeline.Time.prototype.addMin = function(min){
     var newMin = this.getMin();
 
     newMin += min;
-    if(newMin > 59 || newMin < 0)
+    if(newMin > 59)
     {
         var plusHour = Math.floor(newMin / 60);
-        newMin = Math.abs(newMin % 60);
         newHour += plusHour;
+        newMin = Math.abs(newMin % 60);
+    }
+    else if(newMin < 0)
+    {
+        var minusHour = Math.floor(newMin / 60);
+        newHour += minusHour;
+        newMin = 60 - Math.abs(newMin % 60);
+        if(newMin === 60)
+        {
+            newMin = 0;
+        }
     }
 
     return new Timeline.Time(newHour, newMin);
