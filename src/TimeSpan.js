@@ -32,8 +32,15 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapsTime = function(time){
-    return this._startTime.compare(time) < 0 && this._endTime.compare(time) > 0;
+Timeline.TimeSpan.prototype.isOverlapsTime = function(time, includeEquals){
+    if(includeEquals)
+    {
+        return this._startTime.compare(time) <= 0 && this._endTime.compare(time) >= 0;
+    }
+    else
+    {
+        return this._startTime.compare(time) < 0 && this._endTime.compare(time) > 0;
+    }
 };
 
 Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){

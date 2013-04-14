@@ -67,7 +67,6 @@ Timeline.LineView.prototype._build = function(){
         drop: function( event, ui ) {
             var lineView = self._hoursWrapper.closest('.tlLineView').data('view');
             var eventView = ui.draggable.data('view');
-
             var time = Timeline.timeIndicator.data('time');
             if(!time)
             {
@@ -77,7 +76,18 @@ Timeline.LineView.prototype._build = function(){
 
             var oldTimeSpan = eventView.getTimeSpan();
             var newTimeSpan = oldTimeSpan.shiftStartTime(time);
-            var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView);
+
+            if(!lineView.getTimeSpan().isOverlapsTime(newTimeSpan.getStartTime(), true))
+            {
+                newTimeSpan = newTimeSpan.shiftStartTime(lineView.getTimeSpan().getStartTime());
+            }
+
+            if(!lineView.getTimeSpan().isOverlapsTime(newTimeSpan.getEndTime()))
+            {
+                newTimeSpan = newTimeSpan.shiftEndTime(lineView.getTimeSpan().getEndTime());
+            }
+
+            var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView, true);
             if(prevEventView)
             {
                 newTimeSpan = newTimeSpan.shiftStartTime(prevEventView.getTimeSpan().getEndTime());
@@ -92,12 +102,6 @@ Timeline.LineView.prototype._build = function(){
             else if(nextEventView)
             {
                 newTimeSpan = newTimeSpan.shiftEndTime(nextEventView.getTimeSpan().getStartTime());
-            }
-
-            if(!self._timeSpan.isContainsTimeSpan(newTimeSpan))
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
             }
 
             eventView.setTimeSpan(newTimeSpan);
@@ -121,6 +125,13 @@ Timeline.LineView.prototype._build = function(){
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
+    //20px top allowance.
+    var maxTop = this._element.offset().top;
+    if(y < maxTop && maxTop - y < 20)
+    {
+        y = maxTop;
+    }
+
     time = this.getTimeUnderY(y);
     Timeline.timeIndicator.data('time', time);
     if(time)
@@ -133,6 +144,10 @@ Timeline.LineView.prototype.showTimeIndicator = function(y){
     }
 };
 
+Timeline.LineView.prototype.getTimeSpan = function(){
+    return this._timeSpan;
+};
+
 Timeline.LineView.prototype.getTimeUnderY = function(y){
     var hourView = this.getHourViewUnderY(y);
     if(hourView === null)
@@ -143,10 +158,10 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return hourView.getMinViewUnderY(y).getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView){
+Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
     var result = null;
     this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().isOverlapsTime(time))
+        if(eventView.getTimeSpan().isOverlapsTime(time, includeEquals))
         {
             result = eventView;
             return false;
