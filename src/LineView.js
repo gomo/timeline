@@ -117,11 +117,33 @@ Timeline.LineView.prototype._build = function(){
         }
     });
 
+    var hourView = null;
     self._timeSpan.eachHour(function(key, hour){
-        var hourView = new Timeline.HourView(self, hour);
+        hourView = new Timeline.HourView(self, hour);
         self._hoursWrapper.append(hourView.render());
         self._hourViews.push(hourView);
     });
+
+    var selector = '.tlMinView';
+    var lastMin = self._timeSpan.getEndTime().getMin();
+    if(0 <= lastMin && lastMin < 15)
+    {
+        selector += ':not(._15)';
+    }
+    else if(15 <= lastMin && lastMin < 30)
+    {
+        selector += ':not(._15, ._30)';
+    }
+    else if(30 <= lastMin && lastMin < 45)
+    {
+        selector += ':not(._15, ._30, ._45)';
+    }
+    else if(45 <= lastMin && lastMin < 60)
+    {
+        selector += ':not(._15, ._30, ._45, ._60)';
+    }
+
+    hourView.getElement().children(selector).remove();
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){

@@ -58,3 +58,28 @@ test( "Time.addMin", function() {
     equal(resultT.getHour(), 21);
     equal(resultT.getMin(), 50);
 });
+
+test( "Line.create", function() {
+    var wrapper = $('<div></div>').appendTo('body');
+    var line;
+
+    line = new tl.LineView(tl.TimeSpan.create([10, 0], [15, 0]));
+    wrapper.append(line.render());
+    line.setRulerView(new tl.RulerView());
+
+    equal(line.getElement().find('.tlHourView').length, 6);
+    equal(line.getElement().find('.tlHourView._15 .tlMinView').length, 1);
+
+
+    line = new tl.LineView(tl.TimeSpan.create([10, 0], [15, 15]));
+    wrapper.append(line.render());
+    equal(line.getElement().find('.tlHourView._15 .tlMinView').length, 2);
+
+    line = new tl.LineView(tl.TimeSpan.create([10, 0], [15, 30]));
+    wrapper.append(line.render());
+    equal(line.getElement().find('.tlHourView._15 .tlMinView').length, 3);
+
+    line = new tl.LineView(tl.TimeSpan.create([10, 0], [15, 45]));
+    wrapper.append(line.render());
+    equal(line.getElement().find('.tlHourView._15 .tlMinView').length, 4);
+});

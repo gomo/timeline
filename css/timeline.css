@@ -2,10 +2,10 @@
 .tlLineView:before,.tlLineView:after{content:"";display:table}
 .tlLineView:after{clear:both}
 #tlTimeIndicator{width:80px;height:24px;line-height:22px;color:#ddd;font-size:80%;text-align:left;padding-left:20px;font-weight:bold;background-image:url("../img/indicator.png");background-repeat:no-repeat}
-.tlLineView .tlRulerView{float:left;text-align:center}
+.tlLineView .tlRulerView{float:left;text-align:center;font-size:14px}
 .tlLineView.even .tlTimeline{background-color:#f3f3f3}
 .tlLineView.odd .tlTimeline{background-color:#fbfbfb}
-.tlLineView .tlTimeline{float:left}
+.tlLineView .tlTimeline{float:left;margin-top:10px}
 .tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
 .tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
 .tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
