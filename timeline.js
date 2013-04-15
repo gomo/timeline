@@ -49,6 +49,7 @@ Timeline.View = function(){
     this._element = $('<div class="'+ this._getClassName() +'"></div>');
     this._element.appendTo('body').hide();
     this._element.data('view', this);
+    this._element.disableSelection();
 };
 
 Timeline.View.prototype.getElement = function(){
@@ -112,6 +113,9 @@ Timeline.EventView = function(timeSpan, color){
     self._element.append(self._displayElement);
 
     self._element.append('<div class="end time" />');
+    self._element.find('.time')
+        .disableSelection()
+        .css({cursor:'default'});
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -413,7 +417,7 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
     //20px top allowance.
-    var maxTop = this._element.offset().top;
+    var maxTop = this._lineElement.offset().top;
     if(y < maxTop && maxTop - y < 20)
     {
         y = maxTop;
@@ -686,6 +690,7 @@ Timeline.RulerView.prototype._build = function(){
     self._lineView.eachHourView(function(key, hourView){
         var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
+        hourRuler.css({cursor:'default'});
         hourRuler.data('hourView', hourView);
         hourRuler.height(hourView.getElement().outerHeight());
     });

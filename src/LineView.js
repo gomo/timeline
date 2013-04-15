@@ -148,7 +148,7 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
     //20px top allowance.
-    var maxTop = this._element.offset().top;
+    var maxTop = this._lineElement.offset().top;
     if(y < maxTop && maxTop - y < 20)
     {
         y = maxTop;
