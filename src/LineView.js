@@ -77,6 +77,7 @@ Timeline.LineView.prototype._build = function(){
             var oldTimeSpan = eventView.getTimeSpan();
             var newTimeSpan = oldTimeSpan.shiftStartTime(time);
 
+            //check overlap entire timeline
             if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getStartTime(), true))
             {
                 newTimeSpan = newTimeSpan.shiftStartTime(lineView.getTimeSpan().getStartTime());
@@ -87,12 +88,14 @@ Timeline.LineView.prototype._build = function(){
                 newTimeSpan = newTimeSpan.shiftEndTime(lineView.getTimeSpan().getEndTime());
             }
 
+            //check overlap start time
             var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView, true);
             if(prevEventView)
             {
                 newTimeSpan = newTimeSpan.shiftStartTime(prevEventView.getTimeSpan().getEndTime());
             }
 
+            //check overlap end time
             var nextEventView = self.getEventViewAtTime(newTimeSpan.getEndTime(), eventView);
             if(prevEventView && nextEventView)
             {
@@ -102,6 +105,21 @@ Timeline.LineView.prototype._build = function(){
             else if(nextEventView)
             {
                 newTimeSpan = newTimeSpan.shiftEndTime(nextEventView.getTimeSpan().getStartTime());
+            }
+
+            //check overlap all
+            var hasOverlapEvent = false;
+            lineView.eachEventView(function(key, eventView){
+                if(newTimeSpan.isContainTimeSpan(eventView.getTimeSpan())){
+                    hasOverlapEvent = true;
+                    return false;
+                }
+            });
+
+            if(hasOverlapEvent)
+            {
+                ui.draggable.draggable( "option", "revert", true );
+                return false;
             }
 
             eventView.setTimeSpan(newTimeSpan);
