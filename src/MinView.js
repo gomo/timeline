@@ -14,7 +14,7 @@ Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
 };
 
-Timeline.MinView.prototype.contains = function(min){
+Timeline.MinView.prototype.isContainMin = function(min){
     var less = this._min === 0 ? 0 : this._min;
     var max = this._min + this._minUnit - 1;
     return less <= min && min <= max;

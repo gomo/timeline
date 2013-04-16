@@ -43,7 +43,7 @@ Timeline.Time.prototype.addMin = function(min){
     return new Timeline.Time(newHour, newMin);
 };
 
-Timeline.Time.prototype.equals = function(time){
+Timeline.Time.prototype.isEqual = function(time){
     return this.getHour() === time.getHour() && this.getMin() === time.getMin();
 };
 

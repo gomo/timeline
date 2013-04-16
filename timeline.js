@@ -66,7 +66,7 @@ Timeline.View.prototype.render = function(){
     return this._element;
 };
 
-Timeline.View.prototype.isContainsY = function(y){
+Timeline.View.prototype.isContainY = function(y){
     var top = this._element.offset().top;
     var down = top + this._element.height();
     return top <= y && y <= down;
@@ -210,7 +210,7 @@ Timeline.HourView.prototype.getDisplayHour = function(){
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
     $.each(this._minViews, function(key, minView){
-        if(minView.contains(min))
+        if(minView.isContainMin(min))
         {
             result = minView;
             return false;
@@ -237,7 +237,7 @@ Timeline.HourView.prototype.setHeightPerMin = function(height){
 Timeline.HourView.prototype.getMinViewUnderY = function(y){
     var minView = null;
     $.each(this._minViews, function(){
-        if(this.isContainsY(y))
+        if(this.isContainY(y))
         {
             minView = this;
             return false;
@@ -342,12 +342,12 @@ Timeline.LineView.prototype._build = function(){
             var oldTimeSpan = eventView.getTimeSpan();
             var newTimeSpan = oldTimeSpan.shiftStartTime(time);
 
-            if(!lineView.getTimeSpan().isOverlapsTime(newTimeSpan.getStartTime(), true))
+            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getStartTime(), true))
             {
                 newTimeSpan = newTimeSpan.shiftStartTime(lineView.getTimeSpan().getStartTime());
             }
 
-            if(!lineView.getTimeSpan().isOverlapsTime(newTimeSpan.getEndTime()))
+            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getEndTime()))
             {
                 newTimeSpan = newTimeSpan.shiftEndTime(lineView.getTimeSpan().getEndTime());
             }
@@ -454,7 +454,7 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
 Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
     var result = null;
     this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().isOverlapsTime(time, includeEquals))
+        if(eventView.getTimeSpan().isOverlapTime(time, includeEquals))
         {
             result = eventView;
             return false;
@@ -473,7 +473,7 @@ Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var hourView = null;
 
     $.each(this._hourViews, function(){
-        if(this.isContainsY(y))
+        if(this.isContainY(y))
         {
             hourView = this;
             return false;
@@ -605,7 +605,7 @@ Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
 };
 
-Timeline.MinView.prototype.contains = function(min){
+Timeline.MinView.prototype.isContainMin = function(min){
     var less = this._min === 0 ? 0 : this._min;
     var max = this._min + this._minUnit - 1;
     return less <= min && min <= max;
@@ -785,7 +785,7 @@ Timeline.Time.prototype.addMin = function(min){
     return new Timeline.Time(newHour, newMin);
 };
 
-Timeline.Time.prototype.equals = function(time){
+Timeline.Time.prototype.isEqual = function(time){
     return this.getHour() === time.getHour() && this.getMin() === time.getMin();
 };
 
@@ -871,7 +871,7 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapsTime = function(time, includeEquals){
+Timeline.TimeSpan.prototype.isOverlapTime = function(time, includeEquals){
     if(includeEquals)
     {
         return this._startTime.compare(time) <= 0 && this._endTime.compare(time) >= 0;
@@ -882,8 +882,8 @@ Timeline.TimeSpan.prototype.isOverlapsTime = function(time, includeEquals){
     }
 };
 
-Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
-    return this.isOverlapsTime(timeSpan.getStartTime()) && this.isOverlapsTime(timeSpan.getEndTime());
+Timeline.TimeSpan.prototype.isContainTimeSpan = function(timeSpan){
+    return this.isOverlapTime(timeSpan.getStartTime()) && this.isOverlapTime(timeSpan.getEndTime());
 };
 
 Timeline.TimeSpan.prototype.eachHour = function(callback){

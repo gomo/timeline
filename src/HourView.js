@@ -24,7 +24,7 @@ Timeline.HourView.prototype.getDisplayHour = function(){
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
     $.each(this._minViews, function(key, minView){
-        if(minView.contains(min))
+        if(minView.isContainMin(min))
         {
             result = minView;
             return false;
@@ -51,7 +51,7 @@ Timeline.HourView.prototype.setHeightPerMin = function(height){
 Timeline.HourView.prototype.getMinViewUnderY = function(y){
     var minView = null;
     $.each(this._minViews, function(){
-        if(this.isContainsY(y))
+        if(this.isContainY(y))
         {
             minView = this;
             return false;

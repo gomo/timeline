@@ -32,7 +32,7 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapsTime = function(time, includeEquals){
+Timeline.TimeSpan.prototype.isOverlapTime = function(time, includeEquals){
     if(includeEquals)
     {
         return this._startTime.compare(time) <= 0 && this._endTime.compare(time) >= 0;
@@ -43,8 +43,8 @@ Timeline.TimeSpan.prototype.isOverlapsTime = function(time, includeEquals){
     }
 };
 
-Timeline.TimeSpan.prototype.isContainsTimeSpan = function(timeSpan){
-    return this.isOverlapsTime(timeSpan.getStartTime()) && this.isOverlapsTime(timeSpan.getEndTime());
+Timeline.TimeSpan.prototype.isContainTimeSpan = function(timeSpan){
+    return this.isOverlapTime(timeSpan.getStartTime()) && this.isOverlapTime(timeSpan.getEndTime());
 };
 
 Timeline.TimeSpan.prototype.eachHour = function(callback){

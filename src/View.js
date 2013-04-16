@@ -20,7 +20,7 @@ Timeline.View.prototype.render = function(){
     return this._element;
 };
 
-Timeline.View.prototype.isContainsY = function(y){
+Timeline.View.prototype.isContainY = function(y){
     var top = this._element.offset().top;
     var down = top + this._element.height();
     return top <= y && y <= down;

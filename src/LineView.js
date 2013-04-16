@@ -77,12 +77,12 @@ Timeline.LineView.prototype._build = function(){
             var oldTimeSpan = eventView.getTimeSpan();
             var newTimeSpan = oldTimeSpan.shiftStartTime(time);
 
-            if(!lineView.getTimeSpan().isOverlapsTime(newTimeSpan.getStartTime(), true))
+            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getStartTime(), true))
             {
                 newTimeSpan = newTimeSpan.shiftStartTime(lineView.getTimeSpan().getStartTime());
             }
 
-            if(!lineView.getTimeSpan().isOverlapsTime(newTimeSpan.getEndTime()))
+            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getEndTime()))
             {
                 newTimeSpan = newTimeSpan.shiftEndTime(lineView.getTimeSpan().getEndTime());
             }
@@ -189,7 +189,7 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
 Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
     var result = null;
     this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().isOverlapsTime(time, includeEquals))
+        if(eventView.getTimeSpan().isOverlapTime(time, includeEquals))
         {
             result = eventView;
             return false;
@@ -208,7 +208,7 @@ Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var hourView = null;
 
     $.each(this._hourViews, function(){
-        if(this.isContainsY(y))
+        if(this.isContainY(y))
         {
             hourView = this;
             return false;
