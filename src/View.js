@@ -23,6 +23,5 @@ Timeline.View.prototype.render = function(){
 Timeline.View.prototype.isContainsY = function(y){
     var top = this._element.offset().top;
     var down = top + this._element.height();
-
     return top <= y && y <= down;
 };

@@ -69,7 +69,6 @@ Timeline.View.prototype.render = function(){
 Timeline.View.prototype.isContainsY = function(y){
     var top = this._element.offset().top;
     var down = top + this._element.height();
-
     return top <= y && y <= down;
 };
 
@@ -238,9 +237,9 @@ Timeline.HourView.prototype.setHeightPerMin = function(height){
 Timeline.HourView.prototype.getMinViewUnderY = function(y){
     var minView = null;
     $.each(this._minViews, function(){
-        minView = this;
-        if(minView.isContainsY(y))
+        if(this.isContainsY(y))
         {
+            minView = this;
             return false;
         }
     });
@@ -414,7 +413,7 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
     //20px top allowance.
-    var maxTop = this._lineElement.offset().top;
+    var maxTop = this._hourViews[0].getElement().find('.tlMinView:first').offset().top;
     if(y < maxTop && maxTop - y < 20)
     {
         y = maxTop;
@@ -443,7 +442,13 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
         return null;
     }
 
-    return hourView.getMinViewUnderY(y).getTimeUnderY(y);
+    var minView = hourView.getMinViewUnderY(y);
+    if(minView === null)
+    {
+        return null;
+    }
+
+    return minView.getTimeUnderY(y);
 };
 
 Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
@@ -465,10 +470,9 @@ Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView,
 };
 
 Timeline.LineView.prototype.getHourViewUnderY = function(y){
-    var self = this;
     var hourView = null;
 
-    $.each(self._hourViews, function(){
+    $.each(this._hourViews, function(){
         if(this.isContainsY(y))
         {
             hourView = this;
