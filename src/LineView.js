@@ -12,6 +12,7 @@ Timeline.LineView = function(timeSpan){
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
 Timeline.LineView.CLASS_ELEM = 'tlLineView';
+Timeline.LineView.EVENT_TOP_ALLOWANCE = 20;
 
 Timeline.timeIndicator = null;
 
@@ -45,17 +46,16 @@ Timeline.LineView.prototype._build = function(){
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
     self._lineElement
-        .bind('mouseover', function(e){
+        .bind('mouseenter', function(e){
             if(Timeline.timeIndicator.is(':hidden'))
             {
                 Timeline.timeIndicator.show();
             }
         })
-        .bind('mouseout', function(){
+        .bind('mouseleave', function(){
             Timeline.timeIndicator.hide();
         })
         .bind('mousemove', function(e){
-            var time = null;
             if(!Timeline.EventView.dragging)
             {
                 self.showTimeIndicator(e.pageY);
@@ -165,20 +165,27 @@ Timeline.LineView.prototype._build = function(){
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
-    //20px top allowance.
+    //top allowance.
     var maxTop = this._hourViews[0].getElement().find('.tlMinView:first').offset().top;
-    if(y < maxTop && maxTop - y < 20)
+    if(y < maxTop && maxTop - y < Timeline.LineView.EVENT_TOP_ALLOWANCE)
     {
         y = maxTop;
     }
 
-    time = this.getTimeUnderY(y);
-    Timeline.timeIndicator.data('time', time);
+    var time = this.getTimeUnderY(y);
+
     if(time)
     {
+        var prevTime = Timeline.timeIndicator.data('time');
+        if(prevTime && prevTime.isEqual(time)){
+            return;
+        }
+
+        Timeline.timeIndicator.data('time', time);
+
         var offset = this._hoursWrapper.offset();
         offset.top = y - (Timeline.timeIndicator.height() / 2);
-        offset.left = offset.left - Timeline.timeIndicator.width();
+        offset.left = offset.left - Timeline.timeIndicator.outerWidth();
         Timeline.timeIndicator.offset(offset);
         Timeline.timeIndicator.html(time.getDisplayTime());
     }
