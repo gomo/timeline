@@ -176,11 +176,6 @@ Timeline.LineView.prototype.showTimeIndicator = function(y){
 
     if(time)
     {
-        var prevTime = Timeline.timeIndicator.data('time');
-        if(prevTime && prevTime.isEqual(time)){
-            return;
-        }
-
         Timeline.timeIndicator.data('time', time);
 
         var offset = this._hoursWrapper.offset();

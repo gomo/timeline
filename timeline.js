@@ -237,6 +237,7 @@ Timeline.HourView.prototype.setHeightPerMin = function(height){
 Timeline.HourView.prototype.getMinViewUnderY = function(y){
     var minView = null;
     $.each(this._minViews, function(){
+
         if(this.isContainY(y))
         {
             minView = this;
@@ -441,11 +442,6 @@ Timeline.LineView.prototype.showTimeIndicator = function(y){
 
     if(time)
     {
-        var prevTime = Timeline.timeIndicator.data('time');
-        if(prevTime && prevTime.isEqual(time)){
-            return;
-        }
-
         Timeline.timeIndicator.data('time', time);
 
         var offset = this._hoursWrapper.offset();
@@ -647,14 +643,7 @@ Timeline.MinView.prototype.getTopPosition = function(min){
 };
 
 Timeline.MinView.prototype.getTimeUnderY = function(y){
-    var percent = (y - this._element.offset().top) / this._minUnit;
-    var min = this._min + (this._minUnit * percent);
-
-    if(min < 0)
-    {
-        min = 0;
-    }
-
+    var min = this._min + ((y - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 
