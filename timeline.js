@@ -49,7 +49,6 @@ Timeline.View = function(){
     this._element = $('<div class="'+ this._getClassName() +'"></div>');
     this._element.appendTo('body').hide();
     this._element.data('view', this);
-    this._element.disableSelection();
 };
 
 Timeline.View.prototype.getElement = function(){
@@ -113,9 +112,7 @@ Timeline.EventView = function(timeSpan, color){
     self._element.append(self._displayElement);
 
     self._element.append('<div class="end time" />');
-    self._element.find('.time')
-        .disableSelection()
-        .css({cursor:'default'});
+    self._element.find('.time').css({cursor:'default'});
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);

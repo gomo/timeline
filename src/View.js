@@ -3,7 +3,6 @@ Timeline.View = function(){
     this._element = $('<div class="'+ this._getClassName() +'"></div>');
     this._element.appendTo('body').hide();
     this._element.data('view', this);
-    this._element.disableSelection();
 };
 
 Timeline.View.prototype.getElement = function(){

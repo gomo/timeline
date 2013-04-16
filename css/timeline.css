@@ -1,4 +1,4 @@
-.tlLineView{zoom:1;float:left}
+.tlLineView{zoom:1;float:left;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 .tlLineView:before,.tlLineView:after{content:"";display:table}
 .tlLineView:after{clear:both}
 #tlTimeIndicator{width:80px;height:24px;line-height:22px;color:#ddd;font-size:80%;text-align:left;padding-left:20px;font-weight:bold;background-image:url("../img/indicator.png");background-repeat:no-repeat}
