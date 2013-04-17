@@ -1,7 +1,11 @@
 .tlLineView{zoom:1;float:left;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 .tlLineView:before,.tlLineView:after{content:"";display:table}
 .tlLineView:after{clear:both}
-#tlTimeIndicator{width:60px;height:24px;line-height:22px;color:#ddd;font-size:80%;text-align:left;padding-left:20px;font-weight:bold;background-image:url("../img/indicator.png");background-repeat:no-repeat}
+#tlTimeIndicator{width:70px;height:24px;line-height:22px;color:#ddd;font-size:14px;text-align:center;padding-right:10px;font-weight:bold;background-image:url("../img/indicator.png");background-repeat:no-repeat}
+.tlLinesView .tlLabelsWrapper{zoom:1;position:relative;height:20px;top:0;background-color:#ccc;-webkit-border-radius:3px;border-radius:3px;border:1px solid #999}
+.tlLinesView .tlLabelsWrapper:before,.tlLinesView .tlLabelsWrapper:after{content:"";display:table}
+.tlLinesView .tlLabelsWrapper:after{clear:both}
+.tlLinesView .tlLabelsWrapper .tlLabel{float:left;text-align:center;font-size:12px;line-height:20px;border-left:1px solid #aaa}
 .tlLineView .tlRulerView{float:left;text-align:center;font-size:14px}
 .tlLineView.even .tlTimeline{background-color:#f3f3f3}
 .tlLineView.odd .tlTimeline{background-color:#fbfbfb}

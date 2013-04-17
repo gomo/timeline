@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="/js/timeline/css/timeline.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+  <script src="/js/timeline/timeline.js"></script>
+  <script>
+    $(function(){
+      var tl = Timeline;
+      var lv = new tl.LinesView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)), [
+        {label:'label1', code:'__1'},
+        {label:'label2', code:'__2'},
+        {label:'label3', code:'__3'},
+        {label:'label4', code:'__4'},
+        {label:'label5', code:'__5'},
+        {label:'label6', code:'__6'},
+        {label:'label7', code:'__7'},
+        {label:'label8', code:'__8'},
+        {label:'label9', code:'__9'},
+        {label:'label10', code:'__10'},
+        {label:'label11', code:'__11'},
+        {label:'label12', code:'__12'},
+        {label:'label13', code:'__13'},
+        {label:'label14', code:'__14'},
+        {label:'label15', code:'__15'},
+      ]);
+
+      $('#timeline').append(lv.render());
+    });
+  </script>
+</head>
+<body>
+  <div id="timeline"></div>
+</body>
+</html>

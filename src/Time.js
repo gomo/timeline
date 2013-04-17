@@ -18,6 +18,10 @@ Timeline.Time.create = function(hour, min){
 Timeline.Time.prototype.getHour = function(){ return this._hour; };
 Timeline.Time.prototype.getMin = function(){ return this._min; };
 
+Timeline.Time.prototype.clone = function(){
+    return new Timeline.Time(this.getHour(), this.getMin());
+};
+
 Timeline.Time.prototype.addMin = function(min){
     var newHour = this.getHour();
     var newMin = this.getMin();

@@ -48,6 +48,12 @@ Timeline.Util.inherits = function(childClass, superClass){
 Timeline.View = function(){
     this._element = $('<div class="'+ this._getClassName() +'"></div>');
     this._element.appendTo('body').hide();
+
+    var data = {};
+    data.view = this;
+    this._element.data('timeline', data);
+
+    //TODO　chage to adove
     this._element.data('view', this);
 };
 
@@ -274,6 +280,7 @@ Timeline.LineView = function(timeSpan){
     this._rulerElement = null;
     this._rulerView = null;
     this._lineWidth = 60;
+    this._label = undefined;
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
@@ -284,6 +291,21 @@ Timeline.timeIndicator = null;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.setLabel = function(label){
+    this._label = label;
+    return this;
+};
+
+Timeline.LineView.prototype.setCode = function(code){
+    this._element.data('timeline')['code'] = code;
+    this._element.addClass(code);
+    return this;
+};
+
+Timeline.LineView.prototype.hasRulerView = function(){
+    return !!this._rulerView;
 };
 
 Timeline.LineView.prototype.setRulerView = function(rulerView){
@@ -610,6 +632,79 @@ Timeline.LineView.prototype._updateRulerDisplay = function(){
     this._rulerView.updateDisplay();
 };
 
+//LinesView
+Timeline.LinesView = function(timeSpan, linesData){
+    Timeline.LinesView.super_.call(this);
+    this._linesData = linesData;
+    this._timeSpan = timeSpan;
+    this._rulerInterval = 5;
+    // this._labelsWrapper = null;
+    // this._linesWrapper = null;
+};
+
+Timeline.Util.inherits(Timeline.LinesView, Timeline.View);
+Timeline.LinesView.CLASS_ELEM = 'tlLinesView';
+
+Timeline.LinesView.prototype._getClassName = function(){
+    return Timeline.LinesView.CLASS_ELEM;
+};
+
+Timeline.LinesView.prototype._build = function(){
+    this._labelsWrapper = $('<div class="tlLabelsWrapper" />').appendTo(this._element);
+    this._linesWrapper = $('<div class="tlLinesWrapper" />').appendTo(this._element);
+};
+
+
+Timeline.LinesView.prototype._postShow = function(){
+    var self = this;
+    var totalWidth = 0;
+    $.each(self._linesData, function(key, data){
+        var timeline = new Timeline.LineView(self._timeSpan.clone());
+        timeline
+            .setLabel(data.label)
+            .setCode(data.code);
+
+        self._linesWrapper.append(timeline.render());
+
+        if(key % self._rulerInterval === 0){
+            timeline.setRulerView(new Timeline.RulerView());
+        }
+
+        if(key % 2 === 0){
+            timeline.getElement().addClass('even');
+        }else{
+            timeline.getElement().addClass('odd');
+        }
+
+        var width = timeline.getElement().outerWidth();
+        var label = $('<div class="tlLabel">'+data.label+'</div>');
+        self._labelsWrapper.append(label);
+        if(timeline.hasRulerView())
+        {
+            var lineWidth = timeline.getLineElement().outerWidth();
+            var lmargin = width - lineWidth;
+            label.outerWidth(lineWidth);
+            label.css('marginLeft', lmargin);
+        }
+        else
+        {
+            label.outerWidth(width);
+        }
+        
+        
+
+        totalWidth += timeline.getElement().outerWidth();
+    });
+    self._labelsWrapper.width(totalWidth);
+    self._element.width(totalWidth);
+
+    $(window).scroll(function(){
+        self._labelsWrapper.css({
+            'top': $(this).scrollTop()
+        });
+    });
+};
+
 //Min
 Timeline.MinView = function(hourView, min, minUnit){
     Timeline.MinView.super_.call(this);
@@ -733,27 +828,6 @@ Timeline.RulerView.prototype.setLineView = function(lineView){
     this._lineView = lineView;
 };
 
-//TemplateView
-Timeline.TemplateView = function(){
-    Timeline.TemplateView.super_.call(this);
-};
-
-Timeline.Util.inherits(Timeline.TemplateView, Timeline.View);
-Timeline.TemplateView.CLASS_ELEM = 'tlTemplateView';
-
-Timeline.TemplateView.prototype._getClassName = function(){
-    return Timeline.TemplateView.CLASS_ELEM;
-};
-
-Timeline.TemplateView.prototype._build = function(){
-
-};
-
-
-Timeline.TemplateView.prototype._postShow = function(){
-
-};
-
 /**
  * 一度生成したオブジェクトは変更しません。
  * 変更メソッドは新しいオブジェクトを帰します。
@@ -773,6 +847,10 @@ Timeline.Time.create = function(hour, min){
 
 Timeline.Time.prototype.getHour = function(){ return this._hour; };
 Timeline.Time.prototype.getMin = function(){ return this._min; };
+
+Timeline.Time.prototype.clone = function(){
+    return new Timeline.Time(this.getHour(), this.getMin());
+};
 
 Timeline.Time.prototype.addMin = function(min){
     var newHour = this.getHour();
@@ -868,6 +946,10 @@ Timeline.TimeSpan = function(startTime, endTime){
 
 Timeline.TimeSpan.create = function(start, end){
     return new Timeline.TimeSpan(new Timeline.Time(start[0], start[1]), new Timeline.Time(end[0], end[1]));
+};
+
+Timeline.TimeSpan.prototype.clone = function(){
+    return new Timeline.TimeSpan(this.getStartTime().clone(), this.getEndTime().clone());
 };
 
 Timeline.TimeSpan.prototype.getDistance = function(){

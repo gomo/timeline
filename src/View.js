@@ -2,6 +2,12 @@
 Timeline.View = function(){
     this._element = $('<div class="'+ this._getClassName() +'"></div>');
     this._element.appendTo('body').hide();
+
+    var data = {};
+    data.view = this;
+    this._element.data('timeline', data);
+
+    //TODO　chage to adove
     this._element.data('view', this);
 };
 

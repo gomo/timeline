@@ -8,6 +8,7 @@ Timeline.LineView = function(timeSpan){
     this._rulerElement = null;
     this._rulerView = null;
     this._lineWidth = 60;
+    this._label = undefined;
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
@@ -18,6 +19,21 @@ Timeline.timeIndicator = null;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.setLabel = function(label){
+    this._label = label;
+    return this;
+};
+
+Timeline.LineView.prototype.setCode = function(code){
+    this._element.data('timeline')['code'] = code;
+    this._element.addClass(code);
+    return this;
+};
+
+Timeline.LineView.prototype.hasRulerView = function(){
+    return !!this._rulerView;
 };
 
 Timeline.LineView.prototype.setRulerView = function(rulerView){
