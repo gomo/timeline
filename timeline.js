@@ -638,8 +638,8 @@ Timeline.LinesView = function(timeSpan, linesData){
     this._linesData = linesData;
     this._timeSpan = timeSpan;
     this._rulerInterval = 5;
-    // this._labelsWrapper = null;
-    // this._linesWrapper = null;
+    this._labelsWrapper = null;
+    this._linesWrapper = null;
 };
 
 Timeline.Util.inherits(Timeline.LinesView, Timeline.View);
@@ -690,11 +690,10 @@ Timeline.LinesView.prototype._postShow = function(){
         {
             label.outerWidth(width);
         }
-        
-        
 
         totalWidth += timeline.getElement().outerWidth();
     });
+
     self._labelsWrapper.width(totalWidth);
     self._element.width(totalWidth);
 
