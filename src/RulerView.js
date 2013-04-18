@@ -14,16 +14,25 @@ Timeline.RulerView.prototype._getClassName = function(){
 
 Timeline.RulerView.prototype._build = function(){
     var self = this;
-
-    self._lineView.getElement().prepend(self._element);
     self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
     self._lineView.eachHourView(function(key, hourView){
+        var hourElem = hourView.getElement();
         var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
-        hourRuler.css({cursor:'default'});
         hourRuler.data('hourView', hourView);
-        hourRuler.height(hourView.getElement().outerHeight());
+
+        var css = {cursor:'default'};
+        var height = hourElem.outerHeight();
+        if(hourElem.hasClass('tlHasLabel'))
+        {
+            var labelHeight = hourElem.find('.tlLabel').outerHeight();
+            height -= labelHeight;
+            css.paddingTop = labelHeight;
+        }
+
+        hourRuler.height(height);
+        hourRuler.css(css);
     });
 };
 

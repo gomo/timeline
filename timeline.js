@@ -205,6 +205,11 @@ Timeline.HourView.prototype._getClassName = function(){
     return Timeline.HourView.CLASS_ELEM;
 };
 
+Timeline.HourView.prototype.setLabel = function(label){
+    var elem = $('<div class="tlLabel">'+label+'</div>');
+    this._element.append(elem).addClass('tlHasLabel');
+};
+
 Timeline.HourView.prototype.getHour = function(){
     return this._hour;
 };
@@ -275,9 +280,10 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
+    //display frame element
     this._lineElement = null;
-    this._hoursWrapper = null;
-    this._rulerElement = null;
+    //HourView wrapper element(for culc height faster)
+    this._hoursElement = null;
     this._rulerView = null;
     this._lineWidth = 60;
     this._label = undefined;
@@ -311,7 +317,7 @@ Timeline.LineView.prototype.hasRulerView = function(){
 Timeline.LineView.prototype.setRulerView = function(rulerView){
     this._rulerView = rulerView;
     this._rulerView.setLineView(this);
-    this._rulerView.render();
+    this._element.prepend(this._rulerView.render());
     this._updateDisplay();
 };
 
@@ -332,7 +338,7 @@ Timeline.LineView.prototype._build = function(){
     }
 
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
-    self._hoursWrapper = $('<div class="tlHours" />').appendTo(self._lineElement);
+    self._hoursElement = $('<div class="tlHours" />').appendTo(self._lineElement);
     self._lineElement
         .bind('mouseenter', function(e){
             if(Timeline.timeIndicator.is(':hidden'))
@@ -350,10 +356,10 @@ Timeline.LineView.prototype._build = function(){
             }
         });
 
-    self._hoursWrapper.droppable({
+    self._hoursElement.droppable({
         accept: ".tlEventView",
         drop: function( event, ui ) {
-            var lineView = self._hoursWrapper.closest('.tlLineView').data('view');
+            var lineView = self._hoursElement.closest('.tlLineView').data('view');
             var eventView = ui.draggable.data('view');
             var time = Timeline.timeIndicator.data('time');
             if(!time)
@@ -426,7 +432,11 @@ Timeline.LineView.prototype._build = function(){
     var hourView = null;
     self._timeSpan.eachHour(function(key, hour){
         hourView = new Timeline.HourView(self, hour);
-        self._hoursWrapper.append(hourView.render());
+        if(key === 0 || key % 5 === 0)
+        {
+            hourView.setLabel(self._label);
+        }
+        self._hoursElement.append(hourView.render());
         self._hourViews.push(hourView);
     });
 
@@ -466,7 +476,7 @@ Timeline.LineView.prototype.showTimeIndicator = function(y){
     {
         Timeline.timeIndicator.data('time', time);
 
-        var offset = this._hoursWrapper.offset();
+        var offset = this._hoursElement.offset();
         offset.top = y - (Timeline.timeIndicator.height() / 2);
         offset.left = offset.left - Timeline.timeIndicator.outerWidth();
         Timeline.timeIndicator.offset(offset);
@@ -598,7 +608,7 @@ Timeline.LineView.prototype._updateDisplay = function(){
     }
 
     setTimeout(function(){
-        var height = self._hoursWrapper.height();
+        var height = self._hoursElement.height();
 
         self._lineElement.css({
             height: height,
@@ -637,9 +647,8 @@ Timeline.LinesView = function(timeSpan, linesData){
     Timeline.LinesView.super_.call(this);
     this._linesData = linesData;
     this._timeSpan = timeSpan;
+    this._timeLines = {};
     this._rulerInterval = 5;
-    this._labelsWrapper = null;
-    this._linesWrapper = null;
 };
 
 Timeline.Util.inherits(Timeline.LinesView, Timeline.View);
@@ -650,10 +659,12 @@ Timeline.LinesView.prototype._getClassName = function(){
 };
 
 Timeline.LinesView.prototype._build = function(){
-    this._labelsWrapper = $('<div class="tlLabelsWrapper" />').appendTo(this._element);
-    this._linesWrapper = $('<div class="tlLinesWrapper" />').appendTo(this._element);
+
 };
 
+Timeline.LinesView.prototype.addEventView = function(code, eventView){
+    this._timeLines[code].addEventView(eventView);
+};
 
 Timeline.LinesView.prototype._postShow = function(){
     var self = this;
@@ -664,7 +675,12 @@ Timeline.LinesView.prototype._postShow = function(){
             .setLabel(data.label)
             .setCode(data.code);
 
-        self._linesWrapper.append(timeline.render());
+        if(self._timeLines[data.code]){
+            throw 'Already exists timeline ' + data.code;
+        }
+
+        self._timeLines[data.code] = timeline;
+        self._element.append(timeline.render());
 
         if(key % self._rulerInterval === 0){
             timeline.setRulerView(new Timeline.RulerView());
@@ -676,32 +692,10 @@ Timeline.LinesView.prototype._postShow = function(){
             timeline.getElement().addClass('odd');
         }
 
-        var width = timeline.getElement().outerWidth();
-        var label = $('<div class="tlLabel">'+data.label+'</div>');
-        self._labelsWrapper.append(label);
-        if(timeline.hasRulerView())
-        {
-            var lineWidth = timeline.getLineElement().outerWidth();
-            var lmargin = width - lineWidth;
-            label.outerWidth(lineWidth);
-            label.css('marginLeft', lmargin);
-        }
-        else
-        {
-            label.outerWidth(width);
-        }
-
         totalWidth += timeline.getElement().outerWidth();
     });
 
-    self._labelsWrapper.width(totalWidth);
     self._element.width(totalWidth);
-
-    $(window).scroll(function(){
-        self._labelsWrapper.css({
-            'top': $(this).scrollTop()
-        });
-    });
 };
 
 //Min
@@ -792,16 +786,25 @@ Timeline.RulerView.prototype._getClassName = function(){
 
 Timeline.RulerView.prototype._build = function(){
     var self = this;
-
-    self._lineView.getElement().prepend(self._element);
     self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
     self._lineView.eachHourView(function(key, hourView){
+        var hourElem = hourView.getElement();
         var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
-        hourRuler.css({cursor:'default'});
         hourRuler.data('hourView', hourView);
-        hourRuler.height(hourView.getElement().outerHeight());
+
+        var css = {cursor:'default'};
+        var height = hourElem.outerHeight();
+        if(hourElem.hasClass('tlHasLabel'))
+        {
+            var labelHeight = hourElem.find('.tlLabel').outerHeight();
+            height -= labelHeight;
+            css.paddingTop = labelHeight;
+        }
+
+        hourRuler.height(height);
+        hourRuler.css(css);
     });
 };
 

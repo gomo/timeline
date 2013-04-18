@@ -3,9 +3,8 @@ Timeline.LinesView = function(timeSpan, linesData){
     Timeline.LinesView.super_.call(this);
     this._linesData = linesData;
     this._timeSpan = timeSpan;
+    this._timeLines = {};
     this._rulerInterval = 5;
-    this._labelsWrapper = null;
-    this._linesWrapper = null;
 };
 
 Timeline.Util.inherits(Timeline.LinesView, Timeline.View);
@@ -16,10 +15,12 @@ Timeline.LinesView.prototype._getClassName = function(){
 };
 
 Timeline.LinesView.prototype._build = function(){
-    this._labelsWrapper = $('<div class="tlLabelsWrapper" />').appendTo(this._element);
-    this._linesWrapper = $('<div class="tlLinesWrapper" />').appendTo(this._element);
+
 };
 
+Timeline.LinesView.prototype.addEventView = function(code, eventView){
+    this._timeLines[code].addEventView(eventView);
+};
 
 Timeline.LinesView.prototype._postShow = function(){
     var self = this;
@@ -30,7 +31,12 @@ Timeline.LinesView.prototype._postShow = function(){
             .setLabel(data.label)
             .setCode(data.code);
 
-        self._linesWrapper.append(timeline.render());
+        if(self._timeLines[data.code]){
+            throw 'Already exists timeline ' + data.code;
+        }
+
+        self._timeLines[data.code] = timeline;
+        self._element.append(timeline.render());
 
         if(key % self._rulerInterval === 0){
             timeline.setRulerView(new Timeline.RulerView());
@@ -42,30 +48,8 @@ Timeline.LinesView.prototype._postShow = function(){
             timeline.getElement().addClass('odd');
         }
 
-        var width = timeline.getElement().outerWidth();
-        var label = $('<div class="tlLabel">'+data.label+'</div>');
-        self._labelsWrapper.append(label);
-        if(timeline.hasRulerView())
-        {
-            var lineWidth = timeline.getLineElement().outerWidth();
-            var lmargin = width - lineWidth;
-            label.outerWidth(lineWidth);
-            label.css('marginLeft', lmargin);
-        }
-        else
-        {
-            label.outerWidth(width);
-        }
-
         totalWidth += timeline.getElement().outerWidth();
     });
 
-    self._labelsWrapper.width(totalWidth);
     self._element.width(totalWidth);
-
-    $(window).scroll(function(){
-        self._labelsWrapper.css({
-            'top': $(this).scrollTop()
-        });
-    });
 };

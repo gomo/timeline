@@ -2,15 +2,13 @@
 .tlLineView:before,.tlLineView:after{content:"";display:table}
 .tlLineView:after{clear:both}
 #tlTimeIndicator{width:70px;height:24px;line-height:24px;color:#ddd;font-size:12px;text-align:center;padding-right:10px;font-weight:bold;background-image:url("../img/indicator.png");background-repeat:no-repeat}
-.tlLinesView .tlLabelsWrapper{zoom:1;position:relative;height:20px;top:0;background-color:#ccc;-webkit-border-radius:3px;border-radius:3px;border:1px solid #999}
-.tlLinesView .tlLabelsWrapper:before,.tlLinesView .tlLabelsWrapper:after{content:"";display:table}
-.tlLinesView .tlLabelsWrapper:after{clear:both}
-.tlLinesView .tlLabelsWrapper .tlLabel{float:left;text-align:center;font-size:12px;line-height:20px;border-left:1px solid #aaa}
 .tlLineView .tlRulerView{float:left;text-align:center;font-size:14px}
 .tlLineView.even .tlTimeline{background-color:#f3f3f3}
 .tlLineView.odd .tlTimeline{background-color:#fbfbfb}
 .tlLineView .tlTimeline{float:left;margin-top:10px}
+.tlLineView .tlTimeline .tlLabel{font-size:11px;text-align:center;height:16px;line-height:16px;color:#fff;background-color:#000;opacity:.4;filter:alpha(opacity=40);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)"}
 .tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
+.tlLineView .tlTimeline .tlHourView.tlHasLabel{border-top:none}
 .tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
 .tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
 .tlLineView .tlTimeline .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;width:85%;margin:0 auto;text-align:center;line-height:17px;overflow:hidden}
