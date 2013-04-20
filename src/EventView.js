@@ -99,7 +99,7 @@ Timeline.EventView.prototype.back = function(){
     }
 };
 
-Timeline.EventView.prototype.float = function(){
+Timeline.EventView.prototype.toFloat = function(){
     if(this.isFloating()){
         return;
     }
