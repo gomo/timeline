@@ -31,9 +31,15 @@
 .tlLineView.odd .tlTimeline
 	background-color: #fbfbfb;
 
+
+
+.tlLineView.tlEventOver .tlTimeline
+	background-color: #FFFED6;
+
 .tlLineView .tlTimeline
 	float: left
 	margin-top: 10px;
+	
 
 .tlLineView .tlTimeline .tlLabel
 	font-size: 11px
@@ -66,6 +72,9 @@
 	text-align: center
 	line-height: 17px;
 	overflow: hidden
+
+.tlLineView .tlTimeline .tlEventView.tlFloating
+	border: 2px dotted #333;
 
 .tlLineView .tlTimeline .tlEventView.disable
 	background-color #999

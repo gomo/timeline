@@ -1,5 +1,4 @@
 (function($){
-
 Timeline = {};
 
 //Compatibility for ecma3
@@ -36,6 +35,54 @@ if ( Object.getPrototypeOf === undefined ) {
         };
     }
 }
+
+//Event
+Timeline.events ={};
+Timeline.addEventListener = function(key, callback){
+
+    var keys = key.split('.');
+    var eventName = keys[0];
+    if(!Timeline.events[eventName]){
+        Timeline.events[eventName] = [];
+    }
+
+    if(keys[1])
+    {
+        Timeline.events[eventName].push({callback: callback, ns:keys[1]});
+    }
+    else
+    {
+        Timeline.events[eventName].push({callback: callback});
+    }
+};
+
+Timeline.fireEvent = function(eventName, params){
+    if(Timeline.events[eventName]){
+        $.each(Timeline.events[eventName], function(){
+            this.callback(params);
+        });
+    }
+};
+
+Timeline.removeEventListener = function(key){
+
+    var keys = key.split('.');
+    var eventName = keys[0];
+
+    if(Timeline.events[eventName]){
+        var events = [];
+        if(keys[1]){
+            $.each(Timeline.events[eventName], function(){
+                var data = this;
+                if(!data.ns || data.ns != keys[1]){
+                    events.push(data);
+                }
+            });
+        }
+
+        Timeline.events[eventName] = events;
+    }
+};
 
 //Util
 Timeline.Util = {};
@@ -84,6 +131,8 @@ Timeline.EventView = function(timeSpan, color){
     Timeline.EventView.super_.call(self);
     self._timeSpan = timeSpan;
     self._lineView = null;
+    self._nextLineView = null;
+    self._prevOffset = null;
     self._element.css('position', 'relative');
     self._element.addClass(color);
     self._startMinView = null;
@@ -91,24 +140,23 @@ Timeline.EventView = function(timeSpan, color){
 
     var prevLineView = null;
     self._element.draggable({
-        helper: "clone",
         create: function( event, ui ) {
-            Timeline.EventView.dragging = null;
-            self._element.draggable( "option", "revertDuration", 150 );
         },
         start: function( event, ui ) {
-            Timeline.EventView.dragging = {ui:ui, eventView:self};
-            prevLineView = self.getLineView();
-            ui.helper.width(self._element.width());
-            self._element.draggable( "option", "revert", false );
         },
         stop: function( event, ui ) {
-            Timeline.EventView.dragging = null;
-            Timeline.timeIndicator.hide();
         },
         drag: function( event, ui ){
-            Timeline.LineView.currentLineView.showTimeIndicator(ui.helper.offset().top);
+            if(self._nextLineView){
+                self._nextLineView.showTimeIndicator(ui.helper.offset().top);
+            }
         }
+    });
+
+    self._element.draggable('disable');
+
+    self._element.click(function(e){
+        Timeline.fireEvent('clickEventView', {'event':e, eventView:self});
     });
 
     self._element.append('<div class="start time" />');
@@ -125,6 +173,71 @@ Timeline.EventView.CLASS_ELEM = 'tlEventView';
 
 Timeline.EventView.create = function(start, end, type){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
+};
+
+Timeline.EventView.prototype.setNextLineView = function(lineView){
+    if(this._nextLineView){
+        this._nextLineView.getElement().removeClass('tlEventOver');
+    } else {
+        Timeline.timeIndicator.show();
+    }
+
+    lineView.getElement().addClass('tlEventOver');
+    lineView.showTimeIndicator(this._element.offset().top);
+    this._nextLineView = lineView;
+};
+
+Timeline.EventView.prototype.isFloating = function(){
+    return this._element.hasClass('tlFloating');
+};
+
+Timeline.EventView.prototype._clearFloat = function(){
+    this._element.css('position', 'relative');
+    this._element.removeClass('tlFloating');
+    this._element.draggable('disable');
+    if(this._nextLineView){
+        this._nextLineView.getElement().removeClass('tlEventOver');
+    }
+
+    this._nextLineView = null;
+    Timeline.timeIndicator.hide();
+};
+
+Timeline.EventView.prototype.drop = function(){
+    if(this.isFloating()){
+        this._element.css('position', 'static');
+        var time = Timeline.timeIndicator.data('time');
+        var newTimeSpan = this.getTimeSpan().shiftStartTime(time);
+        this.setTimeSpan(newTimeSpan);
+        this._nextLineView.addEventView(this);
+        this._clearFloat();
+    }
+};
+
+Timeline.EventView.prototype.back = function(){
+    var self = this;
+    if(self.isFloating()){
+        Timeline.timeIndicator.hide();
+        self._element.animate(self._prevOffset, 200).promise()
+            .then(function(){
+                self._clearFloat();
+                self._element.offset(self._prevOffset);
+            });
+    }
+};
+
+Timeline.EventView.prototype.float = function(){
+    if(this.isFloating()){
+        return;
+    }
+
+    var offset = this._element.offset();
+    this._prevOffset = offset;
+    this._element.width(this._element.width());
+    this._element.css('position', 'absolute');
+    this._element.offset({top: offset.top + 3, left: offset.left + 3});
+    this._element.addClass('tlFloating');
+    this._element.draggable('enable');
 };
 
 Timeline.EventView.prototype._getClassName = function(){
@@ -164,18 +277,20 @@ Timeline.EventView.prototype._build = function(){
 };
 
 Timeline.EventView.prototype.updateDisplay = function(){
-    var self = this;
-    var startTop = self._startMinView.getTopPosition(self._timeSpan.getStartTime().getMin());
-    var endTop = self._endMinView.getTopPosition(self._timeSpan.getEndTime().getMin());
-    var offset = self._element.offset();
+    var startTop = this._startMinView.getTopPosition(this._timeSpan.getStartTime().getMin());
+    var endTop = this._endMinView.getTopPosition(this._timeSpan.getEndTime().getMin());
+    var offset = this._element.offset();
+    console.log(offset);
     offset.top = startTop;
-    self._element.offset(offset);
-    self._element.height(endTop - startTop -1);
+    console.log(offset);
+    this._element.offset(offset);
+    this._element.height(endTop - startTop -1);
 
-    var times = self._element.find('.time');
+    var times = this._element.find('.time');
     times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
     times.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
-    self._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
+    this._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
+    console.log(this._element);
 };
 
 Timeline.EventView.prototype.setDisplayHtml = function(html){
@@ -206,8 +321,10 @@ Timeline.HourView.prototype._getClassName = function(){
 };
 
 Timeline.HourView.prototype.setLabel = function(label){
-    var elem = $('<div class="tlLabel">'+label+'</div>');
-    this._element.append(elem).addClass('tlHasLabel');
+    if(label){
+        var elem = $('<div class="tlLabel">'+label+'</div>');
+        this._element.append(elem).addClass('tlHasLabel');
+    }
 };
 
 Timeline.HourView.prototype.getHour = function(){
@@ -339,93 +456,16 @@ Timeline.LineView.prototype._build = function(){
 
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursElement = $('<div class="tlHours" />').appendTo(self._lineElement);
-    self._lineElement
-        .bind('mouseenter', function(e){
-            if(Timeline.timeIndicator.is(':hidden'))
-            {
-                Timeline.timeIndicator.show();
-            }
-        })
-        .bind('mouseleave', function(){
-            Timeline.timeIndicator.hide();
-        })
-        .bind('mousemove', function(e){
-            if(!Timeline.EventView.dragging)
-            {
-                self.showTimeIndicator(e.pageY);
-            }
-        });
 
     self._hoursElement.droppable({
         accept: ".tlEventView",
         drop: function( event, ui ) {
-            var lineView = self._hoursElement.closest('.tlLineView').data('view');
-            var eventView = ui.draggable.data('view');
-            var time = Timeline.timeIndicator.data('time');
-            if(!time)
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
-            }
-
-            var oldTimeSpan = eventView.getTimeSpan();
-            var newTimeSpan = oldTimeSpan.shiftStartTime(time);
-
-            //check overlap entire timeline
-            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getStartTime(), true))
-            {
-                newTimeSpan = newTimeSpan.shiftStartTime(lineView.getTimeSpan().getStartTime());
-            }
-
-            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getEndTime()))
-            {
-                newTimeSpan = newTimeSpan.shiftEndTime(lineView.getTimeSpan().getEndTime());
-            }
-
-            //check overlap start time
-            var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView, true);
-            if(prevEventView)
-            {
-                newTimeSpan = newTimeSpan.shiftStartTime(prevEventView.getTimeSpan().getEndTime());
-            }
-
-            //check overlap end time
-            var nextEventView = self.getEventViewAtTime(newTimeSpan.getEndTime(), eventView);
-            if(prevEventView && nextEventView)
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
-            }
-            else if(nextEventView)
-            {
-                newTimeSpan = newTimeSpan.shiftEndTime(nextEventView.getTimeSpan().getStartTime());
-            }
-
-            //check overlap all
-            var hasOverlapEvent = false;
-            lineView.eachEventView(function(key, eventView){
-                if(newTimeSpan.isContainTimeSpan(eventView.getTimeSpan())){
-                    hasOverlapEvent = true;
-                    return false;
-                }
-            });
-
-            if(hasOverlapEvent)
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
-            }
-
-            eventView.setTimeSpan(newTimeSpan);
-
-            var prevLineView = eventView.getLineView();
-            lineView.addEventView(eventView);
-            prevLineView.eachEventView(function(key, eventView){
-                eventView.updateDisplay();
-            });
+            var eventView = ui.draggable.data('timeline').view;
+            eventView.setNextLineView(self);
         },
         over: function(event, ui) {
-            Timeline.LineView.currentLineView = self;
+            var eventView = ui.draggable.data('timeline').view;
+            eventView.setNextLineView(self);
         }
     });
 

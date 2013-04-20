@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <link rel="stylesheet" href="/js/timeline/css/timeline.css">
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+  <script src="https://rawgithub.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
   <script src="/js/timeline/timeline.js"></script>
   <script>
     $(function(){
@@ -30,6 +31,17 @@
 
       $('#timeline').append(lv.render());
 
+      tl.addEventListener('clickEventView', function(params){
+        if(params.eventView.isFloating()){
+          if(confirm('OK')){
+            params.eventView.drop();
+          } else {
+            params.eventView.back();
+          }
+        } else {
+          params.eventView.float();
+        }
+      })
 
       lv.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
 

@@ -62,93 +62,16 @@ Timeline.LineView.prototype._build = function(){
 
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursElement = $('<div class="tlHours" />').appendTo(self._lineElement);
-    self._lineElement
-        .bind('mouseenter', function(e){
-            if(Timeline.timeIndicator.is(':hidden'))
-            {
-                Timeline.timeIndicator.show();
-            }
-        })
-        .bind('mouseleave', function(){
-            Timeline.timeIndicator.hide();
-        })
-        .bind('mousemove', function(e){
-            if(!Timeline.EventView.dragging)
-            {
-                self.showTimeIndicator(e.pageY);
-            }
-        });
 
     self._hoursElement.droppable({
         accept: ".tlEventView",
         drop: function( event, ui ) {
-            var lineView = self._hoursElement.closest('.tlLineView').data('view');
-            var eventView = ui.draggable.data('view');
-            var time = Timeline.timeIndicator.data('time');
-            if(!time)
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
-            }
-
-            var oldTimeSpan = eventView.getTimeSpan();
-            var newTimeSpan = oldTimeSpan.shiftStartTime(time);
-
-            //check overlap entire timeline
-            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getStartTime(), true))
-            {
-                newTimeSpan = newTimeSpan.shiftStartTime(lineView.getTimeSpan().getStartTime());
-            }
-
-            if(!lineView.getTimeSpan().isOverlapTime(newTimeSpan.getEndTime()))
-            {
-                newTimeSpan = newTimeSpan.shiftEndTime(lineView.getTimeSpan().getEndTime());
-            }
-
-            //check overlap start time
-            var prevEventView = self.getEventViewAtTime(newTimeSpan.getStartTime(), eventView, true);
-            if(prevEventView)
-            {
-                newTimeSpan = newTimeSpan.shiftStartTime(prevEventView.getTimeSpan().getEndTime());
-            }
-
-            //check overlap end time
-            var nextEventView = self.getEventViewAtTime(newTimeSpan.getEndTime(), eventView);
-            if(prevEventView && nextEventView)
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
-            }
-            else if(nextEventView)
-            {
-                newTimeSpan = newTimeSpan.shiftEndTime(nextEventView.getTimeSpan().getStartTime());
-            }
-
-            //check overlap all
-            var hasOverlapEvent = false;
-            lineView.eachEventView(function(key, eventView){
-                if(newTimeSpan.isContainTimeSpan(eventView.getTimeSpan())){
-                    hasOverlapEvent = true;
-                    return false;
-                }
-            });
-
-            if(hasOverlapEvent)
-            {
-                ui.draggable.draggable( "option", "revert", true );
-                return false;
-            }
-
-            eventView.setTimeSpan(newTimeSpan);
-
-            var prevLineView = eventView.getLineView();
-            lineView.addEventView(eventView);
-            prevLineView.eachEventView(function(key, eventView){
-                eventView.updateDisplay();
-            });
+            var eventView = ui.draggable.data('timeline').view;
+            eventView.setNextLineView(self);
         },
         over: function(event, ui) {
-            Timeline.LineView.currentLineView = self;
+            var eventView = ui.draggable.data('timeline').view;
+            eventView.setNextLineView(self);
         }
     });
 

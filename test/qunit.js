@@ -1,5 +1,9 @@
 var tl = Timeline;
 
+// test( "Some.test", function() {
+
+// });
+
 test( "TimeSpan.shiftStartTime", function() {
     var originTs, resultTs;
     originTs = tl.TimeSpan.create([10, 0], [12, 15]);
@@ -82,4 +86,39 @@ test( "Line.create", function() {
     line = new tl.LineView(tl.TimeSpan.create([10, 0], [15, 45]));
     wrapper.append(line.render());
     equal(line.getElement().find('.tlHourView._15 .tlMinView').length, 4);
+});
+
+test( "Timeline.event", function() {
+    var foo = null;
+    var bar = null;
+    tl.addEventListener('test.foo', function(params){
+        foo = params;
+    });
+    tl.addEventListener('test.bar', function(params){
+        bar = params;
+    });
+    var sample = {hoge:'huge'};
+
+    foo = null;
+    bar = null;
+    equal(foo, null);
+    equal(bar, null);
+
+    tl.fireEvent('test', sample);
+    equal(foo, sample);
+    equal(bar, sample);
+
+    tl.removeEventListener('test.foo');
+    foo = null;
+    bar = null;
+    tl.fireEvent('test', sample);
+    equal(foo, null);
+    equal(bar, sample);
+
+    tl.removeEventListener('test');
+    foo = null;
+    bar = null;
+    tl.fireEvent('test', sample);
+    equal(foo, null);
+    equal(bar, null);
 });
