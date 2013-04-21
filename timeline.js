@@ -155,7 +155,7 @@ Timeline.EventView = function(timeSpan, color){
 
     self._element.draggable('disable');
 
-    self._element.click(function(e){
+    self._element.on('click', function(e){
         Timeline.fireEvent('clickEventView', {'event':e, eventView:self});
     });
 
@@ -178,8 +178,6 @@ Timeline.EventView.create = function(start, end, type){
 Timeline.EventView.prototype.setNextLineView = function(lineView){
     if(this._nextLineView){
         this._nextLineView.getElement().removeClass('tlEventOver');
-    } else {
-        Timeline.timeIndicator.show();
     }
 
     lineView.getElement().addClass('tlEventOver');
@@ -195,15 +193,12 @@ Timeline.EventView.prototype._clearFloat = function(){
     this._element.css('position', 'relative');
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
-    if(this._nextLineView){
-        this._nextLineView.getElement().removeClass('tlEventOver');
-    }
-
+    this._nextLineView.getElement().removeClass('tlEventOver');
     this._nextLineView = null;
     Timeline.timeIndicator.hide();
 };
 
-Timeline.EventView.prototype.drop = function(){
+Timeline.EventView.prototype.floatFix = function(){
     if(this.isFloating()){
         this._element.css('position', 'static');
         var time = Timeline.timeIndicator.data('time');
@@ -214,15 +209,12 @@ Timeline.EventView.prototype.drop = function(){
     }
 };
 
-Timeline.EventView.prototype.back = function(){
+Timeline.EventView.prototype.floatCancel = function(){
     var self = this;
     if(self.isFloating()){
-        Timeline.timeIndicator.hide();
-        self._element.animate(self._prevOffset, 200).promise()
-            .then(function(){
-                self._clearFloat();
-                self._element.offset(self._prevOffset);
-            });
+        self._element.css('position', 'static');
+        self._lineView.addEventView(self);
+        self._clearFloat();
     }
 };
 
@@ -238,6 +230,11 @@ Timeline.EventView.prototype.toFloat = function(){
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
+
+    this.setNextLineView(this._lineView);
+    this._nextLineView = this._lineView;
+    Timeline.timeIndicator.show();
+    this._nextLineView.showTimeIndicator(this._element.offset().top);
 };
 
 Timeline.EventView.prototype._getClassName = function(){
@@ -280,9 +277,7 @@ Timeline.EventView.prototype.updateDisplay = function(){
     var startTop = this._startMinView.getTopPosition(this._timeSpan.getStartTime().getMin());
     var endTop = this._endMinView.getTopPosition(this._timeSpan.getEndTime().getMin());
     var offset = this._element.offset();
-    console.log(offset);
     offset.top = startTop;
-    console.log(offset);
     this._element.offset(offset);
     this._element.height(endTop - startTop -1);
 
@@ -290,7 +285,6 @@ Timeline.EventView.prototype.updateDisplay = function(){
     times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
     times.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
     this._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
-    console.log(this._element);
 };
 
 Timeline.EventView.prototype.setDisplayHtml = function(html){

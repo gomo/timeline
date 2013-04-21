@@ -32,11 +32,11 @@
       $('#timeline').append(lv.render());
 
       tl.addEventListener('clickEventView', function(params){
-        if(params.eventView.isFloating()){
+        if(params.eventView.isFloating('clickEventView')){
           if(confirm('OK')){
-            params.eventView.drop();
+            params.eventView.floatFix();
           } else {
-            params.eventView.back();
+            params.eventView.floatCancel();
           }
         } else {
           params.eventView.toFloat();
