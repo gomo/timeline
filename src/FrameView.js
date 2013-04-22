@@ -19,6 +19,20 @@ Timeline.FrameView.prototype._build = function(){
 
 };
 
+Timeline.FrameView.prototype.addLineWidth = function(value){
+    for(var key in this._timeLines){
+        var lineView = this._timeLines[key];
+        lineView.addLineWidth(value);
+    }
+};
+
+Timeline.FrameView.prototype.addHeightPerMin = function(value){
+    for(var key in this._timeLines){
+        var lineView = this._timeLines[key];
+        lineView.addHeightPerMin(value);
+    }
+};
+
 Timeline.FrameView.prototype.addEventView = function(id, eventView){
     this._timeLines[id].addEventView(eventView);
 };

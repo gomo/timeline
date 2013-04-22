@@ -50,10 +50,29 @@
       lv.addEventView('__1', tl.EventView.create([10,0], [12,00], 'disable'));
       lv.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
 
+      $("#actions button").click(function(){
+        var elem = $(this);
+        switch(elem.attr('class')){
+          case 'left':
+            lv.addLineWidth(-2);
+            break;
+          case 'right':
+            lv.addLineWidth(2);
+            break;
+          case 'up':
+            lv.addHeightPerMin(-0.1);
+            break;
+          case 'down':
+            lv.addHeightPerMin(0.1);
+            break;
+        }
+      });
+
     });
   </script>
 </head>
 <body>
+  <div id="actions"><button class="left">←</button><button class="right">→</button><button class="up">↑</button><button class="down">↓</button></div>
   <div id="timeline"></div>
 </body>
 </html>

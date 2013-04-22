@@ -6,9 +6,6 @@ Timeline.View = function(){
     var data = {};
     data.view = this;
     this._element.data('timeline', data);
-
-    //TODO　chage to adove
-    this._element.data('view', this);
 };
 
 Timeline.View.prototype.getElement = function(){

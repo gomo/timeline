@@ -28,7 +28,7 @@ Timeline.LineView.prototype.setLabel = function(label){
 };
 
 Timeline.LineView.prototype.setId = function(id){
-    this._element.data('timeline')['id'] = id;
+    this._element.data('timeline').id = id;
     this._element.addClass(id);
     return this;
 };
@@ -58,6 +58,7 @@ Timeline.LineView.prototype._build = function(){
     if(!Timeline.timeIndicator)
     {
         Timeline.timeIndicator = $('<div id="tlTimeIndicator" />').appendTo('body').css({position:'absolute'}).hide();
+        Timeline.timeIndicator.data('timeline', {});
     }
 
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
@@ -120,7 +121,7 @@ Timeline.LineView.prototype.showTimeIndicator = function(y){
 
     if(time)
     {
-        Timeline.timeIndicator.data('time', time);
+        Timeline.timeIndicator.data('timeline').time = time;
 
         var offset = this._hoursElement.offset();
         offset.top = y - (Timeline.timeIndicator.height() / 2);
@@ -264,7 +265,7 @@ Timeline.LineView.prototype._updateDisplay = function(){
 
 Timeline.LineView.prototype.eachEventView = function(callback){
     this._element.find('.tlEventView:not(.ui-draggable-dragging)').each(function(key){
-        var view = $(this).data('view');
+        var view = $(this).data('timeline').view;
         if(callback.call(view, key, view) === false)
         {
             return;

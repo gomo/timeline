@@ -17,23 +17,24 @@ Timeline.RulerView.prototype._build = function(){
     self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
     self._lineView.eachHourView(function(key, hourView){
-        var hourElem = hourView.getElement();
         var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
         self._element.append(hourRuler);
-        hourRuler.data('hourView', hourView);
-
-        var css = {cursor:'default'};
-        var height = hourElem.outerHeight();
-        if(hourElem.hasClass('tlHasLabel'))
-        {
-            var labelHeight = hourElem.find('.tlLabel').outerHeight();
-            height -= labelHeight;
-            css.paddingTop = labelHeight;
-        }
-
-        hourRuler.height(height);
-        hourRuler.css(css);
+        hourRuler.data('timeline', {hourView:hourView});
+        hourRuler.css('cursor', 'default');
+        self._adjustHeight(hourView, hourRuler);
     });
+};
+
+Timeline.RulerView.prototype._adjustHeight = function(hourView, hourRuler){
+    var hourElem = hourView.getElement();
+    var height = hourElem.outerHeight();
+    if(hourElem.hasClass('tlHasLabel')){
+        var labelHeight = hourElem.find('.tlLabel').outerHeight();
+        height -= labelHeight;
+        hourRuler.css('paddingTop', labelHeight);
+    }
+
+    hourRuler.height(height);
 };
 
 
@@ -42,13 +43,11 @@ Timeline.RulerView.prototype._postShow = function(){
 };
 
 Timeline.RulerView.prototype.updateDisplay = function(){
-
-    this._element.children().each(function(){
+    var self = this;
+    self._element.children().each(function(){
         var hourRuler = $(this);
-        var hourView = hourRuler.data('hourView');
-        setTimeout(function(){
-            hourRuler.height(hourView.getElement().outerHeight());
-        }, 0);
+        var hourView = hourRuler.data('timeline').hourView;
+        self._adjustHeight(hourView, hourRuler);
     });
 };
 
