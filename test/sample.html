@@ -11,28 +11,28 @@
   <script>
     $(function(){
       var tl = Timeline;
-      var lv = new tl.LinesView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)), [
-        {label:'label1', code:'__1'},
-        {label:'label2', code:'__2'},
-        {label:'label3', code:'__3'},
-        {label:'label4', code:'__4'},
-        {label:'label5', code:'__5'},
-        {label:'label6', code:'__6'},
-        {label:'label7', code:'__7'},
-        {label:'label8', code:'__8'},
-        {label:'label9', code:'__9'},
-        {label:'label10', code:'__10'},
-        {label:'label11', code:'__11'},
-        {label:'label12', code:'__12'},
-        {label:'label13', code:'__13'},
-        {label:'label14', code:'__14'},
-        {label:'label15', code:'__15'},
+      var lv = new tl.FrameView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)), [
+        {label:'label1', id:'__1'},
+        {label:'label2', id:'__2'},
+        {label:'label3', id:'__3'},
+        {label:'label4', id:'__4'},
+        {label:'label5', id:'__5'},
+        {label:'label6', id:'__6'},
+        {label:'label7', id:'__7'},
+        {label:'label8', id:'__8'},
+        {label:'label9', id:'__9'},
+        {label:'label10', id:'__10'},
+        {label:'label11', id:'__11'},
+        {label:'label12', id:'__12'},
+        {label:'label13', id:'__13'},
+        {label:'label14', id:'__14'},
+        {label:'label15', id:'__15'},
       ]);
 
       $('#timeline').append(lv.render());
 
-      tl.addEventListener('clickEventView', function(params){
-        if(params.eventView.isFloating('clickEventView')){
+      tl.frame.bind('didClickEventView', function(e, params){
+        if(params.eventView.isFloating()){
           if(confirm('OK')){
             params.eventView.floatFix();
           } else {
@@ -41,8 +41,13 @@
         } else {
           params.eventView.toFloat();
         }
-      })
+      });
 
+      tl.frame.bind('didFloatFixEventView', function(e, params){
+        console.log(params);
+      });
+
+      lv.addEventView('__1', tl.EventView.create([10,0], [12,00], 'disable'));
       lv.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
 
     });

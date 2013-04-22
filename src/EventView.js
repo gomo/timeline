@@ -29,7 +29,7 @@ Timeline.EventView = function(timeSpan, color){
     self._element.draggable('disable');
 
     self._element.on('click', function(e){
-        Timeline.fireEvent('clickEventView', {'event':e, eventView:self});
+        Timeline.frame.trigger('didClickEventView', [{eventView:self}]);
     });
 
     self._element.append('<div class="start time" />');
@@ -79,6 +79,7 @@ Timeline.EventView.prototype.floatFix = function(){
         this.setTimeSpan(newTimeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
+        Timeline.frame.trigger('didFloatFixEventView', [{eventView:this}]);
     }
 };
 

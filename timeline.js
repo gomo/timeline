@@ -36,54 +36,6 @@ if ( Object.getPrototypeOf === undefined ) {
     }
 }
 
-//Event
-Timeline.events ={};
-Timeline.addEventListener = function(key, callback){
-
-    var keys = key.split('.');
-    var eventName = keys[0];
-    if(!Timeline.events[eventName]){
-        Timeline.events[eventName] = [];
-    }
-
-    if(keys[1])
-    {
-        Timeline.events[eventName].push({callback: callback, ns:keys[1]});
-    }
-    else
-    {
-        Timeline.events[eventName].push({callback: callback});
-    }
-};
-
-Timeline.fireEvent = function(eventName, params){
-    if(Timeline.events[eventName]){
-        $.each(Timeline.events[eventName], function(){
-            this.callback(params);
-        });
-    }
-};
-
-Timeline.removeEventListener = function(key){
-
-    var keys = key.split('.');
-    var eventName = keys[0];
-
-    if(Timeline.events[eventName]){
-        var events = [];
-        if(keys[1]){
-            $.each(Timeline.events[eventName], function(){
-                var data = this;
-                if(!data.ns || data.ns != keys[1]){
-                    events.push(data);
-                }
-            });
-        }
-
-        Timeline.events[eventName] = events;
-    }
-};
-
 //Util
 Timeline.Util = {};
 Timeline.Util.inherits = function(childClass, superClass){
@@ -156,7 +108,7 @@ Timeline.EventView = function(timeSpan, color){
     self._element.draggable('disable');
 
     self._element.on('click', function(e){
-        Timeline.fireEvent('clickEventView', {'event':e, eventView:self});
+        Timeline.frame.trigger('didClickEventView', [{eventView:self}]);
     });
 
     self._element.append('<div class="start time" />');
@@ -206,6 +158,7 @@ Timeline.EventView.prototype.floatFix = function(){
         this.setTimeSpan(newTimeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
+        Timeline.frame.trigger('didFloatFixEventView', [{eventView:this}]);
     }
 };
 
@@ -297,6 +250,63 @@ Timeline.EventView.prototype.setDisplayHtml = function(html){
 
 Timeline.EventView.prototype._postShow = function(){
     this.updateDisplay();
+};
+
+//FrameView
+Timeline.FrameView = function(timeSpan, linesData){
+    Timeline.FrameView.super_.call(this);
+    this._linesData = linesData;
+    this._timeSpan = timeSpan;
+    this._timeLines = {};
+    this._rulerInterval = 5;
+    Timeline.frame = this._element;
+};
+
+Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
+Timeline.FrameView.CLASS_ELEM = 'tlFrameView';
+
+Timeline.FrameView.prototype._getClassName = function(){
+    return Timeline.FrameView.CLASS_ELEM;
+};
+
+Timeline.FrameView.prototype._build = function(){
+
+};
+
+Timeline.FrameView.prototype.addEventView = function(id, eventView){
+    this._timeLines[id].addEventView(eventView);
+};
+
+Timeline.FrameView.prototype._postShow = function(){
+    var self = this;
+    var totalWidth = 0;
+    $.each(self._linesData, function(key, data){
+        var timeline = new Timeline.LineView(self._timeSpan.clone());
+        timeline
+            .setLabel(data.label)
+            .setId(data.id);
+
+        if(self._timeLines[data.id]){
+            throw 'Already exists timeline ' + data.id;
+        }
+
+        self._timeLines[data.id] = timeline;
+        self._element.append(timeline.render());
+
+        if(key % self._rulerInterval === 0){
+            timeline.setRulerView(new Timeline.RulerView());
+        }
+
+        if(key % 2 === 0){
+            timeline.getElement().addClass('even');
+        }else{
+            timeline.getElement().addClass('odd');
+        }
+
+        totalWidth += timeline.getElement().outerWidth();
+    });
+
+    self._element.width(totalWidth);
 };
 
 //Hour
@@ -415,9 +425,9 @@ Timeline.LineView.prototype.setLabel = function(label){
     return this;
 };
 
-Timeline.LineView.prototype.setCode = function(code){
-    this._element.data('timeline')['code'] = code;
-    this._element.addClass(code);
+Timeline.LineView.prototype.setId = function(id){
+    this._element.data('timeline')['id'] = id;
+    this._element.addClass(id);
     return this;
 };
 
@@ -608,7 +618,6 @@ Timeline.LineView.prototype.setLineWidth = function(width){
 };
 
 Timeline.LineView.prototype.addHeightPerMin = function(amount){
-
     $.each(this._hourViews, function(key, hourView){
         hourView.addHeightPerMin(amount);
     });
@@ -674,62 +683,6 @@ Timeline.LineView.prototype._updateRulerDisplay = function(){
     }
 
     this._rulerView.updateDisplay();
-};
-
-//LinesView
-Timeline.LinesView = function(timeSpan, linesData){
-    Timeline.LinesView.super_.call(this);
-    this._linesData = linesData;
-    this._timeSpan = timeSpan;
-    this._timeLines = {};
-    this._rulerInterval = 5;
-};
-
-Timeline.Util.inherits(Timeline.LinesView, Timeline.View);
-Timeline.LinesView.CLASS_ELEM = 'tlLinesView';
-
-Timeline.LinesView.prototype._getClassName = function(){
-    return Timeline.LinesView.CLASS_ELEM;
-};
-
-Timeline.LinesView.prototype._build = function(){
-
-};
-
-Timeline.LinesView.prototype.addEventView = function(code, eventView){
-    this._timeLines[code].addEventView(eventView);
-};
-
-Timeline.LinesView.prototype._postShow = function(){
-    var self = this;
-    var totalWidth = 0;
-    $.each(self._linesData, function(key, data){
-        var timeline = new Timeline.LineView(self._timeSpan.clone());
-        timeline
-            .setLabel(data.label)
-            .setCode(data.code);
-
-        if(self._timeLines[data.code]){
-            throw 'Already exists timeline ' + data.code;
-        }
-
-        self._timeLines[data.code] = timeline;
-        self._element.append(timeline.render());
-
-        if(key % self._rulerInterval === 0){
-            timeline.setRulerView(new Timeline.RulerView());
-        }
-
-        if(key % 2 === 0){
-            timeline.getElement().addClass('even');
-        }else{
-            timeline.getElement().addClass('odd');
-        }
-
-        totalWidth += timeline.getElement().outerWidth();
-    });
-
-    self._element.width(totalWidth);
 };
 
 //Min

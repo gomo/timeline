@@ -27,9 +27,9 @@ Timeline.LineView.prototype.setLabel = function(label){
     return this;
 };
 
-Timeline.LineView.prototype.setCode = function(code){
-    this._element.data('timeline')['code'] = code;
-    this._element.addClass(code);
+Timeline.LineView.prototype.setId = function(id){
+    this._element.data('timeline')['id'] = id;
+    this._element.addClass(id);
     return this;
 };
 
@@ -220,7 +220,6 @@ Timeline.LineView.prototype.setLineWidth = function(width){
 };
 
 Timeline.LineView.prototype.addHeightPerMin = function(amount){
-
     $.each(this._hourViews, function(key, hourView){
         hourView.addHeightPerMin(amount);
     });
