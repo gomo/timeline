@@ -48,7 +48,9 @@
       });
 
       lv.addEventView('__1', tl.EventView.create([10,0], [12,00], 'disable'));
+      lv.addEventView('__1', tl.EventView.create([12,30], [14,30], 'green'));
       lv.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
+      lv.addEventView('__3', tl.EventView.create([10,0], [11,00], 'disable'));
 
       $("#actions button").click(function(){
         var elem = $(this);

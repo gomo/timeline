@@ -73,9 +73,14 @@ Timeline.EventView.prototype._clearFloat = function(){
 
 Timeline.EventView.prototype.floatFix = function(){
     if(this.isFloating()){
-        this._element.css('position', 'static');
         var time = Timeline.timeIndicator.data('timeline').time;
         var newTimeSpan = this.getTimeSpan().shiftStartTime(time);
+        newTimeSpan = this._nextLineView.correctTimeSpan(newTimeSpan, this);
+        console.log(newTimeSpan);
+        if(!newTimeSpan){
+            return;
+        }
+        this._element.css('position', 'static');
         this.setTimeSpan(newTimeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();

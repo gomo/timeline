@@ -32,6 +32,8 @@ Timeline.MinView.prototype.getTopPosition = function(min){
 
 Timeline.MinView.prototype.getTimeUnderY = function(y){
     var min = this._min + ((y - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
+    if(min < 0) min = 0;
+    if(min > 59) min = 59;
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 

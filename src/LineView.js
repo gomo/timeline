@@ -22,6 +22,54 @@ Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
 };
 
+Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
+    //check overlap entire timeline
+    if(this.getTimeSpan().isOverlapTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_END){
+        timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());
+    }
+
+    if(this.getTimeSpan().isOverlapTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_START){
+        timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
+    }
+
+    //check overlap start time
+    this.eachEventView(function(key, eventView){
+        if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+            timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
+            return false;
+        }
+    });
+
+    //check overlap end time
+    this.eachEventView(function(key, eventView){
+        if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
+            timeSpan = timeSpan.shiftEndTime(eventView.getTimeSpan().getStartTime());
+            return false;
+        }
+    });
+
+    //check overlap all
+    var hasOverlapEvent = false;
+    this.eachEventView(function(key, eventView){
+        var overlap = timeSpan.isOverlapTimeSpan(eventView.getTimeSpan());
+        if(
+            overlap === Timeline.TimeSpan.OVERLAP_OVER ||
+            overlap === Timeline.TimeSpan.OVERLAP_CONTAIN ||
+            overlap === Timeline.TimeSpan.OVERLAP_EQUAL
+        ){
+            hasOverlapEvent = true;
+            return false;
+        }
+    });
+
+    if(hasOverlapEvent)
+    {
+        return false;
+    }
+
+    return timeSpan;
+};
+
 Timeline.LineView.prototype.setLabel = function(label){
     this._label = label;
     return this;

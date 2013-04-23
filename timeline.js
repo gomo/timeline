@@ -149,9 +149,14 @@ Timeline.EventView.prototype._clearFloat = function(){
 
 Timeline.EventView.prototype.floatFix = function(){
     if(this.isFloating()){
-        this._element.css('position', 'static');
         var time = Timeline.timeIndicator.data('timeline').time;
         var newTimeSpan = this.getTimeSpan().shiftStartTime(time);
+        newTimeSpan = this._nextLineView.correctTimeSpan(newTimeSpan, this);
+        console.log(newTimeSpan);
+        if(!newTimeSpan){
+            return;
+        }
+        this._element.css('position', 'static');
         this.setTimeSpan(newTimeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
@@ -429,6 +434,54 @@ Timeline.timeIndicator = null;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
+    //check overlap entire timeline
+    if(this.getTimeSpan().isOverlapTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_END){
+        timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());
+    }
+
+    if(this.getTimeSpan().isOverlapTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_START){
+        timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
+    }
+
+    //check overlap start time
+    this.eachEventView(function(key, eventView){
+        if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+            timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
+            return false;
+        }
+    });
+
+    //check overlap end time
+    this.eachEventView(function(key, eventView){
+        if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
+            timeSpan = timeSpan.shiftEndTime(eventView.getTimeSpan().getStartTime());
+            return false;
+        }
+    });
+
+    //check overlap all
+    var hasOverlapEvent = false;
+    this.eachEventView(function(key, eventView){
+        var overlap = timeSpan.isOverlapTimeSpan(eventView.getTimeSpan());
+        if(
+            overlap === Timeline.TimeSpan.OVERLAP_OVER ||
+            overlap === Timeline.TimeSpan.OVERLAP_CONTAIN ||
+            overlap === Timeline.TimeSpan.OVERLAP_EQUAL
+        ){
+            hasOverlapEvent = true;
+            return false;
+        }
+    });
+
+    if(hasOverlapEvent)
+    {
+        return false;
+    }
+
+    return timeSpan;
 };
 
 Timeline.LineView.prototype.setLabel = function(label){
@@ -731,6 +784,8 @@ Timeline.MinView.prototype.getTopPosition = function(min){
 
 Timeline.MinView.prototype.getTimeUnderY = function(y){
     var min = this._min + ((y - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
+    if(min < 0) min = 0;
+    if(min > 59) min = 59;
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 
@@ -944,6 +999,13 @@ Timeline.TimeSpan = function(startTime, endTime){
     this._endTime = endTime;
 };
 
+Timeline.TimeSpan.OVERLAP_NO = 0;
+Timeline.TimeSpan.OVERLAP_START = 1;
+Timeline.TimeSpan.OVERLAP_END = 2;
+Timeline.TimeSpan.OVERLAP_CONTAIN = 3;
+Timeline.TimeSpan.OVERLAP_OVER = 4;
+Timeline.TimeSpan.OVERLAP_EQUAL = 5;
+
 Timeline.TimeSpan.create = function(start, end){
     return new Timeline.TimeSpan(new Timeline.Time(start[0], start[1]), new Timeline.Time(end[0], end[1]));
 };
@@ -967,19 +1029,28 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapTime = function(time, includeEquals){
-    if(includeEquals)
-    {
-        return this._startTime.compare(time) <= 0 && this._endTime.compare(time) >= 0;
+Timeline.TimeSpan.prototype.isOverlapTimeSpan = function(timeSpan){
+    var compStart = this._startTime.compare(timeSpan.getStartTime());
+    var compEnd = this._endTime.compare(timeSpan.getEndTime());
+    if(compStart === 0 && compEnd === 0){
+        return Timeline.TimeSpan.OVERLAP_EQUAL;
     }
-    else
-    {
-        return this._startTime.compare(time) < 0 && this._endTime.compare(time) > 0;
-    }
-};
 
-Timeline.TimeSpan.prototype.isContainTimeSpan = function(timeSpan){
-    return this.isOverlapTime(timeSpan.getStartTime()) && this.isOverlapTime(timeSpan.getEndTime());
+    if(compStart < 0 && compEnd > 0){
+        return Timeline.TimeSpan.OVERLAP_OVER;
+    }
+
+    var overlapStartTime = (this._startTime.compare(timeSpan.getStartTime()) >= 0 && this._startTime.compare(timeSpan.getEndTime()) < 0);
+    var overlapEndTime = (this._endTime.compare(timeSpan.getStartTime()) > 0 && this._endTime.compare(timeSpan.getEndTime()) <= 0);
+    if(overlapStartTime && overlapEndTime){
+        return Timeline.TimeSpan.OVERLAP_CONTAIN;
+    } else if(overlapStartTime){
+        return Timeline.TimeSpan.OVERLAP_START;
+    } else if(overlapEndTime){
+        return Timeline.TimeSpan.OVERLAP_END;
+    } else {
+        return Timeline.TimeSpan.OVERLAP_NO;
+    }
 };
 
 Timeline.TimeSpan.prototype.eachHour = function(callback){

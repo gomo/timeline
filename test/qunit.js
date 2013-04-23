@@ -87,3 +87,40 @@ test( "Line.create", function() {
     wrapper.append(line.render());
     equal(line.getElement().find('.tlHourView._15 .tlMinView').length, 4);
 });
+
+test( "TimeSpan.isOverlapTimeSpan", function() {
+    var ts1, ts2;
+
+    //check OVERLAP_START
+    ts1 = tl.TimeSpan.create([10, 0], [15, 0]);
+    ts2 = tl.TimeSpan.create([14, 59], [15, 10]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_START);
+
+    ts2 = tl.TimeSpan.create([15, 0], [15, 10]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_NO);
+
+    //check OVERLAP_END
+    ts1 = tl.TimeSpan.create([10, 0], [15, 0]);
+    ts2 = tl.TimeSpan.create([9, 0], [10, 1]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_END);
+
+    ts2 = tl.TimeSpan.create([9, 0], [10, 0]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_NO);
+
+    //check OVERLAP_CONTAIN
+    ts1 = tl.TimeSpan.create([10, 0], [15, 0]);
+    ts2 = tl.TimeSpan.create([10, 1], [14, 59]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_CONTAIN);
+
+    ts2 = tl.TimeSpan.create([10, 0], [15, 0]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_EQUAL);
+    ts2 = tl.TimeSpan.create([10, 0], [15, 1]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_START);
+    ts2 = tl.TimeSpan.create([9, 59], [15, 0]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_END);
+    ts2 = tl.TimeSpan.create([15, 1], [15, 20]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_NO);
+    ts2 = tl.TimeSpan.create([9, 59], [15, 1]);
+    equal(ts2.isOverlapTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_OVER);
+
+});
