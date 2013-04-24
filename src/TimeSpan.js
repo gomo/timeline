@@ -43,7 +43,7 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapTimeSpan = function(timeSpan){
+Timeline.TimeSpan.prototype.overlapsTimeSpan = function(timeSpan){
     var compStart = this._startTime.compare(timeSpan.getStartTime());
     var compEnd = this._endTime.compare(timeSpan.getEndTime());
     if(compStart === 0 && compEnd === 0){

@@ -68,7 +68,7 @@ Timeline.View.prototype.render = function(){
     return this._element;
 };
 
-Timeline.View.prototype.isContainY = function(y){
+Timeline.View.prototype.containsY = function(y){
     var top = this._element.offset().top;
     var down = top + this._element.height();
     return top <= y && y <= down;
@@ -372,7 +372,7 @@ Timeline.HourView.prototype.getDisplayHour = function(){
 Timeline.HourView.prototype.getMinView = function(min){
     var result;
     $.each(this._minViews, function(key, minView){
-        if(minView.isContainMin(min))
+        if(minView.containsMin(min))
         {
             result = minView;
             return false;
@@ -400,7 +400,7 @@ Timeline.HourView.prototype.getMinViewUnderY = function(y){
     var minView = null;
     $.each(this._minViews, function(){
 
-        if(this.isContainY(y))
+        if(this.containsY(y))
         {
             minView = this;
             return false;
@@ -452,18 +452,18 @@ Timeline.LineView.prototype._getClassName = function(){
 
 Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
     //check overlap entire timeline
-    if(this.getTimeSpan().isOverlapTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_END){
+    if(this.getTimeSpan().overlapsTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_END){
         timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());
     }
 
-    if(this.getTimeSpan().isOverlapTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_START){
+    if(this.getTimeSpan().overlapsTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_START){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
     }
 
     //check start time overlaps with other
     var overlapStart = false;
     this.eachEventView(function(key, eventView){
-        if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+        if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
             overlapStart = true;
             timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
             return false;
@@ -473,7 +473,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
     //check end time overlaps with other 
     var overlapEnd = false;
     this.eachEventView(function(key, eventView){
-        if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
+        if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
             overlapEnd = true;
             timeSpan = timeSpan.shiftEndTime(eventView.getTimeSpan().getStartTime());
             return false;
@@ -486,7 +486,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
         //check start time again when adjusted end time.
         var overlapStartAgain = false;
         this.eachEventView(function(key, eventView){
-            if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+            if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
                 overlapStartAgain = true;
                 return false;
             }
@@ -500,7 +500,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
     //check overlap all
     var overlapTotally = false;
     this.eachEventView(function(key, eventView){
-        var overlap = timeSpan.isOverlapTimeSpan(eventView.getTimeSpan());
+        var overlap = timeSpan.overlapsTimeSpan(eventView.getTimeSpan());
         if(
             overlap === Timeline.TimeSpan.OVERLAP_OVER ||
             overlap === Timeline.TimeSpan.OVERLAP_CONTAIN ||
@@ -651,7 +651,7 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
 Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
     var result = null;
     this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().isOverlapTime(time, includeEquals))
+        if(eventView.getTimeSpan().overlapsWithTime(time, includeEquals))
         {
             result = eventView;
             return false;
@@ -670,7 +670,7 @@ Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var hourView = null;
 
     $.each(this._hourViews, function(){
-        if(this.isContainY(y))
+        if(this.containsY(y))
         {
             hourView = this;
             return false;
@@ -801,7 +801,7 @@ Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
 };
 
-Timeline.MinView.prototype.isContainMin = function(min){
+Timeline.MinView.prototype.containsMin = function(min){
     var less = this._min === 0 ? 0 : this._min;
     var max = this._min + this._minUnit - 1;
     return less <= min && min <= max;
@@ -1064,7 +1064,7 @@ Timeline.TimeSpan.prototype.shiftStartTime = function(time){
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 
-Timeline.TimeSpan.prototype.isOverlapTimeSpan = function(timeSpan){
+Timeline.TimeSpan.prototype.overlapsTimeSpan = function(timeSpan){
     var compStart = this._startTime.compare(timeSpan.getStartTime());
     var compEnd = this._endTime.compare(timeSpan.getEndTime());
     if(compStart === 0 && compEnd === 0){
