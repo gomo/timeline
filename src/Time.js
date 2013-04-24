@@ -7,7 +7,7 @@ Timeline.Time = function(hour, min){
     this._min = min === undefined ? 0 : parseInt(min, 10);
     if(!(this._hour >= 0 && this._min >= 0 && this._min <= 59))
     {
-        throw new Error(this.toString()+' is not valid time.');
+        throw this.toString()+' is not valid time.';
     }
 };
 

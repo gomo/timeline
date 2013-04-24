@@ -33,10 +33,14 @@
 
       tl.frame.bind('didClickEventView', function(e, params){
         if(params.eventView.isFloating()){
-          if(confirm('OK')){
-            params.eventView.floatFix();
+          if(!params.expectedTimeSpan){
+            alert('You can\'t');
           } else {
-            params.eventView.floatCancel();
+            if(confirm('OK')){
+              params.eventView.floatFix();
+            } else {
+              params.eventView.floatCancel();
+            }
           }
         } else {
           params.eventView.toFloat();

@@ -10,6 +10,7 @@ Timeline.EventView = function(timeSpan, color){
     self._element.addClass(color);
     self._startMinView = null;
     self._endMinView = null;
+    self._expectedTimeSpan = null;
 
     var prevLineView = null;
     self._element.draggable({
@@ -20,6 +21,7 @@ Timeline.EventView = function(timeSpan, color){
         stop: function( event, ui ) {
         },
         drag: function( event, ui ){
+            self._expectedTimeSpan = null;
             if(self._nextLineView){
                 self._nextLineView.showTimeIndicator(ui.helper.offset().top);
             }
@@ -29,7 +31,14 @@ Timeline.EventView = function(timeSpan, color){
     self._element.draggable('disable');
 
     self._element.on('click', function(e){
-        Timeline.frame.trigger('didClickEventView', [{eventView:self}]);
+        var params = {eventView:self};
+        if(self.isFloating()){
+            var time = Timeline.timeIndicator.data('timeline').time;
+            var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
+            self._expectedTimeSpan = self._nextLineView.correctTimeSpan(newTimeSpan, self);
+            params.expectedTimeSpan = self._expectedTimeSpan;
+        }
+        Timeline.frame.trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -58,12 +67,11 @@ Timeline.EventView.prototype.setNextLineView = function(lineView){
     this._nextLineView = lineView;
 };
 
-Timeline.EventView.prototype.isFloating = function(){
-    return this._element.hasClass('tlFloating');
-};
-
 Timeline.EventView.prototype._clearFloat = function(){
-    this._element.css('position', 'relative');
+    this._element.css({
+        position:'relative',
+        zIndex:1000
+    });
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
@@ -71,15 +79,18 @@ Timeline.EventView.prototype._clearFloat = function(){
     Timeline.timeIndicator.hide();
 };
 
+Timeline.EventView.prototype.isFloating = function(){
+    return this._element.hasClass('tlFloating');
+};
+
 Timeline.EventView.prototype.floatFix = function(){
-    if(this.isFloating()){
-        var time = Timeline.timeIndicator.data('timeline').time;
-        var newTimeSpan = this.getTimeSpan().shiftStartTime(time);
-        newTimeSpan = this._nextLineView.correctTimeSpan(newTimeSpan, this);
-        console.log(newTimeSpan);
+    if(this.isFloating(this._expectedTimeSpan)){
+        var newTimeSpan = this._expectedTimeSpan;
+        this._expectedTimeSpan = null;
         if(!newTimeSpan){
             return;
         }
+
         this._element.css('position', 'static');
         this.setTimeSpan(newTimeSpan);
         this._nextLineView.addEventView(this);
@@ -105,7 +116,10 @@ Timeline.EventView.prototype.toFloat = function(){
     var offset = this._element.offset();
     this._prevOffset = offset;
     this._element.width(this._element.width());
-    this._element.css('position', 'absolute');
+    this._element.css({
+        position:'absolute',
+        zIndex:9999
+    });
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');

@@ -6,7 +6,7 @@ Timeline.TimeSpan = function(startTime, endTime){
 
     if(startTime.compare(endTime) > 0)
     {
-        throw Error('The endTime is earlier than the startTime.');
+        throw 'The endTime is earlier than the startTime.';
     }
 
     this._startTime = startTime;

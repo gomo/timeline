@@ -32,24 +32,45 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
     }
 
-    //check overlap start time
+    //check start time overlaps with other
+    var overlapStart = false;
     this.eachEventView(function(key, eventView){
         if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+            overlapStart = true;
             timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
             return false;
         }
     });
 
-    //check overlap end time
+    //check end time overlaps with other 
+    var overlapEnd = false;
     this.eachEventView(function(key, eventView){
         if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
+            overlapEnd = true;
             timeSpan = timeSpan.shiftEndTime(eventView.getTimeSpan().getStartTime());
             return false;
         }
     });
 
+    if(overlapStart && overlapEnd){
+        return false;
+    } else if(overlapEnd) {
+        //check start time again when adjusted end time.
+        var overlapStartAgain = false;
+        this.eachEventView(function(key, eventView){
+            if(timeSpan.isOverlapTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+                overlapStartAgain = true;
+                return false;
+            }
+        });
+
+        if(overlapStartAgain){
+            return false;
+        }
+    }
+
     //check overlap all
-    var hasOverlapEvent = false;
+    var overlapTotally = false;
     this.eachEventView(function(key, eventView){
         var overlap = timeSpan.isOverlapTimeSpan(eventView.getTimeSpan());
         if(
@@ -57,12 +78,12 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
             overlap === Timeline.TimeSpan.OVERLAP_CONTAIN ||
             overlap === Timeline.TimeSpan.OVERLAP_EQUAL
         ){
-            hasOverlapEvent = true;
+            overlapTotally = true;
             return false;
         }
     });
 
-    if(hasOverlapEvent)
+    if(overlapTotally)
     {
         return false;
     }
