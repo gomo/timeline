@@ -12,6 +12,8 @@ Timeline.EventView = function(timeSpan, color){
     self._endMinView = null;
     self._expectedTimeSpan = null;
 
+    self._element.width('85%');
+
     var prevLineView = null;
     self._element.draggable({
         create: function( event, ui ) {
@@ -72,6 +74,7 @@ Timeline.EventView.prototype._clearFloat = function(){
         position:'relative',
         zIndex:1000
     });
+    this._element.width('85%');
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
@@ -124,8 +127,11 @@ Timeline.EventView.prototype.toFloat = function(){
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
 
+    this._lineView.eachEventView(function(key, eventView){
+        eventView.updateDisplay();
+    });
+
     this.setNextLineView(this._lineView);
-    this._nextLineView = this._lineView;
     Timeline.timeIndicator.show();
     this._nextLineView.showTimeIndicator(this._element.offset().top);
 };

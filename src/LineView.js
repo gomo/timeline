@@ -14,7 +14,6 @@ Timeline.LineView = function(timeSpan){
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
 Timeline.LineView.CLASS_ELEM = 'tlLineView';
-Timeline.LineView.EVENT_TOP_ALLOWANCE = 20;
 
 Timeline.timeIndicator = null;
 
@@ -24,13 +23,15 @@ Timeline.LineView.prototype._getClassName = function(){
 
 Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
     //check overlap entire timeline
-    if(this.getTimeSpan().overlapsTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_END){
+    if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
         timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());
     }
 
-    if(this.getTimeSpan().overlapsTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_START){
+    if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
     }
+
+
 
     //check start time overlaps with other
     var overlapStart = false;
@@ -42,6 +43,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
         }
     });
 
+    //TODO Optimize below logic using the time span of empty area.
     //check end time overlaps with other 
     var overlapEnd = false;
     this.eachEventView(function(key, eventView){
@@ -179,13 +181,6 @@ Timeline.LineView.prototype._build = function(){
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
-    //top allowance.
-    var maxTop = this._hourViews[0].getElement().find('.tlMinView:first').offset().top;
-    if(y < maxTop && maxTop - y < Timeline.LineView.EVENT_TOP_ALLOWANCE)
-    {
-        y = maxTop;
-    }
-
     var time = this.getTimeUnderY(y);
 
     if(time)
