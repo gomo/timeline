@@ -22,7 +22,7 @@ Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
 };
 
-Timeline.LineView.prototype.correctTimeSpan = function(timeSpan, eventView){
+Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
     //check overlap entire timeline
     if(this.getTimeSpan().overlapsTimeSpan(timeSpan) === Timeline.TimeSpan.OVERLAP_END){
         timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());

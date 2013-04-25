@@ -35,7 +35,7 @@ Timeline.EventView = function(timeSpan, color){
         if(self.isFloating()){
             var time = Timeline.timeIndicator.data('timeline').time;
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
-            self._expectedTimeSpan = self._nextLineView.correctTimeSpan(newTimeSpan, self);
+            self._expectedTimeSpan = self._nextLineView.correctTimeSpan(newTimeSpan);
             params.expectedTimeSpan = self._expectedTimeSpan;
         }
         Timeline.frame.trigger('didClickEventView', [params]);
