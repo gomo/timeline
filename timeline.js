@@ -484,51 +484,24 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
         }
     });
 
-    //TODO Optimize below logic using the time span of empty area.
-    //check end time overlaps with other 
-    var overlapEnd = false;
+    //search the next eventView and check fit in the gap.
+    var nextEv = null;
+    var startTime = timeSpan.getStartTime();
     this.eachEventView(function(key, eventView){
-        if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
-            overlapEnd = true;
-            timeSpan = timeSpan.shiftEndTime(eventView.getTimeSpan().getStartTime());
-            return false;
-        }
-    });
-
-    if(overlapStart && overlapEnd){
-        return false;
-    } else if(overlapEnd) {
-        //check start time again when adjusted end time.
-        var overlapStartAgain = false;
-        this.eachEventView(function(key, eventView){
-            if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
-                overlapStartAgain = true;
-                return false;
+        var stime = eventView.getTimeSpan().getStartTime();
+        if(startTime.compare(stime) <= 0){
+            if(!nextEv || nextEv.getTimeSpan().getStartTime().compare(stime) > 0){
+                nextEv = eventView;
             }
-        });
-
-        if(overlapStartAgain){
-            return false;
-        }
-    }
-
-    //check overlap all
-    var overlapTotally = false;
-    this.eachEventView(function(key, eventView){
-        var overlap = timeSpan.overlapsTimeSpan(eventView.getTimeSpan());
-        if(
-            overlap === Timeline.TimeSpan.OVERLAP_OVER ||
-            overlap === Timeline.TimeSpan.OVERLAP_CONTAIN ||
-            overlap === Timeline.TimeSpan.OVERLAP_EQUAL
-        ){
-            overlapTotally = true;
-            return false;
         }
     });
-
-    if(overlapTotally)
-    {
-        return false;
+    
+    if(nextEv){
+        var emptyTimeSpan = Timeline.TimeSpan.create(startTime, nextEv.getTimeSpan().getStartTime());
+        var ol = timeSpan.overlapsTimeSpan(emptyTimeSpan);
+        if(ol !== Timeline.TimeSpan.OVERLAP_CONTAIN && ol !== Timeline.TimeSpan.OVERLAP_EQUAL){
+            return false;
+        }
     }
 
     return timeSpan;
