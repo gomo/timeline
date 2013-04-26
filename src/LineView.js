@@ -182,7 +182,6 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
     var time = this.getTimeUnderY(y);
-
     if(time)
     {
         Timeline.timeIndicator.data('timeline').time = time;

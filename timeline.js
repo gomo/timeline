@@ -70,7 +70,7 @@ Timeline.View.prototype.render = function(){
 
 Timeline.View.prototype.containsY = function(y){
     var top = this._element.offset().top;
-    var down = top + this._element.height();
+    var down = top + this._element.outerHeight();
     return top <= y && y <= down;
 };
 
@@ -616,7 +616,6 @@ Timeline.LineView.prototype._build = function(){
 
 Timeline.LineView.prototype.showTimeIndicator = function(y){
     var time = this.getTimeUnderY(y);
-
     if(time)
     {
         Timeline.timeIndicator.data('timeline').time = time;
