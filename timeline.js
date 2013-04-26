@@ -202,6 +202,7 @@ Timeline.EventView.prototype.toFloat = function(){
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
+    Timeline.frame.append(this._element);
 
     this._lineView.eachEventView(function(key, eventView){
         eventView.updateDisplay();
@@ -293,6 +294,14 @@ Timeline.FrameView.prototype._getClassName = function(){
 
 Timeline.FrameView.prototype._build = function(){
 
+};
+
+Timeline.FrameView.prototype.setMinFixInterval = function(value){
+    Timeline.MinView.FIX_INTERVAL = value;
+};
+
+Timeline.FrameView.prototype.getMinFixInterval = function(){
+    return Timeline.MinView.FIX_INTERVAL;
 };
 
 Timeline.FrameView.prototype.addLineWidth = function(value){
@@ -464,8 +473,6 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
     if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
     }
-
-
 
     //check start time overlaps with other
     var overlapStart = false;
@@ -796,6 +803,7 @@ Timeline.MinView = function(hourView, min, minUnit){
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
 Timeline.MinView.CLASS_ELEM = 'tlMinView';
+Timeline.MinView.FIX_INTERVAL = 5;
 
 Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
@@ -819,8 +827,16 @@ Timeline.MinView.prototype.getTopPosition = function(min){
 
 Timeline.MinView.prototype.getTimeUnderY = function(y){
     var min = this._min + ((y - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
-    if(min < 0) min = 0;
-    if(min > 59) min = 59;
+
+    if(Timeline.MinView.FIX_INTERVAL > 1){
+        var rem = min % Timeline.MinView.FIX_INTERVAL;
+        if(rem > Timeline.MinView.FIX_INTERVAL / 2){
+            min += Timeline.MinView.FIX_INTERVAL - rem;
+        } else {
+            min -= rem;
+        }
+    }
+
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 
@@ -925,7 +941,17 @@ Timeline.RulerView.prototype.setLineView = function(lineView){
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);
-    if(!(this._hour >= 0 && this._min >= 0 && this._min <= 59))
+    if(this._min < 0){
+        --this._hour;
+        this._min = 60 + this._min;
+    }
+
+    if(this._min > 59){
+        ++this._hour;
+        this._min = this._min - 60;
+    }
+
+    if(this._hour < 0)
     {
         throw this.toString()+' is not valid time.';
     }

@@ -19,6 +19,14 @@ Timeline.FrameView.prototype._build = function(){
 
 };
 
+Timeline.FrameView.prototype.setMinFixInterval = function(value){
+    Timeline.MinView.FIX_INTERVAL = value;
+};
+
+Timeline.FrameView.prototype.getMinFixInterval = function(){
+    return Timeline.MinView.FIX_INTERVAL;
+};
+
 Timeline.FrameView.prototype.addLineWidth = function(value){
     for(var key in this._timeLines){
         var lineView = this._timeLines[key];

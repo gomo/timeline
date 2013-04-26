@@ -1,26 +1,26 @@
-.tlLineView{zoom:1;float:left;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
-.tlLineView:before,.tlLineView:after{content:"";display:table}
-.tlLineView:after{clear:both}
+.tlFrameView .tlLineView{zoom:1;float:left;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+.tlFrameView .tlLineView:before,.tlFrameView .tlLineView:after{content:"";display:table}
+.tlFrameView .tlLineView:after{clear:both}
 #tlTimeIndicator{width:70px;height:24px;line-height:24px;color:#ddd;font-size:12px;text-align:center;padding-right:10px;font-weight:bold;background-image:url("../img/indicator.png");background-repeat:no-repeat}
-.tlLineView .tlRulerView{float:left;text-align:center;font-size:14px}
-.tlLineView.even .tlTimeline{background-color:#f3f3f3}
-.tlLineView.odd .tlTimeline{background-color:#fbfbfb}
-.tlLineView.tlEventOver .tlTimeline{background-color:#fffed6}
-.tlLineView .tlTimeline{float:left;margin-top:10px}
-.tlLineView .tlTimeline .tlLabel{font-size:11px;text-align:center;height:16px;line-height:16px;color:#fff;background-color:#000;opacity:.4;filter:alpha(opacity=40);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)"}
-.tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
-.tlLineView .tlTimeline .tlHourView.tlHasLabel{border-top:none}
-.tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
-.tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
-.tlLineView .tlTimeline .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;margin:0 auto;text-align:center;line-height:17px;overflow:hidden}
-.tlLineView .tlTimeline .tlEventView.tlFloating{border:2px dotted #333}
-.tlLineView .tlTimeline .tlEventView.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
-.tlLineView .tlTimeline .tlEventView .time{-webkit-border-radius:6px;border-radius:6px;width:85%;margin:0 auto;position:relative;background-color:#fff;opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";border:1px solid #888;-webkit-box-shadow:-1px -1px 4px #555;box-shadow:-1px -1px 4px #555;font-size:85%}
-.tlLineView .tlTimeline .tlEventView .time.start{top:3px}
-.tlLineView .tlTimeline .tlEventView .time.end{margin-top:1px}
-.tlLineView .tlTimeline .tlEventView .display{overflow:hidden;line-height:14px;padding-top:2px;font-size:80%}
-.tlLineView .tlTimeline .tlEventView.blue{background-color:#a3cde1}
-.tlLineView .tlTimeline .tlEventView.pink{background-color:#ffb6b6}
-.tlLineView .tlTimeline .tlEventView.green{background-color:#b8f1ac}
-.tlLineView .tlTimeline .tlEventView.yellow{background-color:#ffffb6}
-.tlLineView .tlTimeline .tlEventView.orange{background-color:#ffdcb6}
+.tlFrameView .tlLineView .tlRulerView{float:left;text-align:center;font-size:14px}
+.tlFrameView .tlLineView.even .tlTimeline{background-color:#f3f3f3}
+.tlFrameView .tlLineView.odd .tlTimeline{background-color:#fbfbfb}
+.tlFrameView .tlLineView.tlEventOver .tlTimeline{background-color:#fffed6}
+.tlFrameView .tlLineView .tlTimeline{float:left;margin-top:10px}
+.tlFrameView .tlLineView .tlTimeline .tlLabel{font-size:11px;text-align:center;height:16px;line-height:16px;color:#fff;background-color:#000;opacity:.4;filter:alpha(opacity=40);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)"}
+.tlFrameView .tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
+.tlFrameView .tlLineView .tlTimeline .tlHourView.tlHasLabel{border-top:none}
+.tlFrameView .tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
+.tlFrameView .tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
+.tlFrameView .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;margin:0 auto;text-align:center;line-height:17px;overflow:hidden}
+.tlFrameView .tlEventView.tlFloating{border:2px dotted #333}
+.tlFrameView .tlEventView.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
+.tlFrameView .tlEventView .time{-webkit-border-radius:6px;border-radius:6px;width:85%;margin:0 auto;position:relative;background-color:#fff;opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";border:1px solid #888;-webkit-box-shadow:-1px -1px 4px #555;box-shadow:-1px -1px 4px #555;font-size:85%}
+.tlFrameView .tlEventView .time.start{top:3px}
+.tlFrameView .tlEventView .time.end{margin-top:1px}
+.tlFrameView .tlEventView .display{overflow:hidden;line-height:14px;padding-top:2px;font-size:80%}
+.tlFrameView .tlEventView.blue{background-color:#a3cde1}
+.tlFrameView .tlEventView.pink{background-color:#ffb6b6}
+.tlFrameView .tlEventView.green{background-color:#b8f1ac}
+.tlFrameView .tlEventView.yellow{background-color:#ffffb6}
+.tlFrameView .tlEventView.orange{background-color:#ffdcb6}

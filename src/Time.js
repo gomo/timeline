@@ -5,7 +5,17 @@
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);
-    if(!(this._hour >= 0 && this._min >= 0 && this._min <= 59))
+    if(this._min < 0){
+        --this._hour;
+        this._min = 60 + this._min;
+    }
+
+    if(this._min > 59){
+        ++this._hour;
+        this._min = this._min - 60;
+    }
+
+    if(this._hour < 0)
     {
         throw this.toString()+' is not valid time.';
     }

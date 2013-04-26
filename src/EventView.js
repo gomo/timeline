@@ -126,6 +126,7 @@ Timeline.EventView.prototype.toFloat = function(){
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
+    Timeline.frame.append(this._element);
 
     this._lineView.eachEventView(function(key, eventView){
         eventView.updateDisplay();

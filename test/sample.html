@@ -74,11 +74,25 @@
         }
       });
 
+      var fixInterval = $('#actions .fix_interval');
+      fixInterval.val(lv.getMinFixInterval());
+      fixInterval.change(function(){
+        lv.setMinFixInterval(fixInterval.val());
+      });
+
     });
   </script>
 </head>
 <body>
-  <div id="actions"><button class="left">←</button><button class="right">→</button><button class="up">↑</button><button class="down">↓</button></div>
+  <div id="actions">
+    <button class="left">←</button><button class="right">→</button><button class="up">↑</button><button class="down">↓</button>
+    <select name="fix_interval" class="fix_interval">
+      <option value="1">1</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="15">15</option>
+    </select>&nbsp;min.
+  </div>
   <div id="timeline"></div>
 </body>
 </html>

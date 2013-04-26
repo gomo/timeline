@@ -1,6 +1,6 @@
 @import 'nib'
 
-.tlLineView
+.tlFrameView .tlLineView
 	clearfix();
 	float: left;
 	user-select(none);
@@ -19,29 +19,29 @@
 	background-repeat: no-repeat
 
 /* tlRuler */
-.tlLineView .tlRulerView
+.tlFrameView .tlLineView .tlRulerView
 	float: left
 	text-align: center
 	font-size: 14px
 
 /* tlTimeline */
-.tlLineView.even .tlTimeline
+.tlFrameView .tlLineView.even .tlTimeline
 	background-color: #f3f3f3;
 
-.tlLineView.odd .tlTimeline
+.tlFrameView .tlLineView.odd .tlTimeline
 	background-color: #fbfbfb;
 
 
 
-.tlLineView.tlEventOver .tlTimeline
+.tlFrameView .tlLineView.tlEventOver .tlTimeline
 	background-color: #FFFED6;
 
-.tlLineView .tlTimeline
+.tlFrameView .tlLineView .tlTimeline
 	float: left
 	margin-top: 10px;
 	
 
-.tlLineView .tlTimeline .tlLabel
+.tlFrameView .tlLineView .tlTimeline .tlLabel
 	font-size: 11px
 	text-align: center
 	height 16px
@@ -50,20 +50,20 @@
 	background-color: #000
 	opacity: 0.4
 
-.tlLineView .tlTimeline .tlHourView
+.tlFrameView .tlLineView .tlTimeline .tlHourView
 	border-top 1px solid #999
 
-.tlLineView .tlTimeline .tlHourView.tlHasLabel
+.tlFrameView .tlLineView .tlTimeline .tlHourView.tlHasLabel
 	border-top none
 
-.tlLineView .tlTimeline .tlMinView._15, .tlTimeline .tlMinView._45
+.tlFrameView .tlLineView .tlTimeline .tlMinView._15, .tlTimeline .tlMinView._45
 	border-bottom 1px dashed #ddd
 
-.tlLineView .tlTimeline .tlMinView._30
+.tlFrameView .tlLineView .tlTimeline .tlMinView._30
 	border-bottom 1px solid #ccc
 
 /* tlEventView */
-.tlLineView .tlTimeline .tlEventView
+.tlFrameView .tlEventView
 	opacity: 0.7
 	border-radius: 8px
 	border: 1px solid #555;
@@ -72,15 +72,15 @@
 	line-height: 17px;
 	overflow: hidden
 
-.tlLineView .tlTimeline .tlEventView.tlFloating
+.tlFrameView .tlEventView.tlFloating
 	border: 2px dotted #333;
 
-.tlLineView .tlTimeline .tlEventView.disable
+.tlFrameView .tlEventView.disable
 	background-color #999
 	border-radius 0
 	width 100%
 
-.tlLineView .tlTimeline .tlEventView .time
+.tlFrameView .tlEventView .time
 	border-radius: 6px
 	width: 85%;
 	margin 0 auto
@@ -91,30 +91,30 @@
 	box-shadow: -1px -1px 4px #555
 	font-size 85%
 
-.tlLineView .tlTimeline .tlEventView .time.start
+.tlFrameView .tlEventView .time.start
 	top 3px
 
-.tlLineView .tlTimeline .tlEventView .time.end
+.tlFrameView .tlEventView .time.end
 	margin-top: 1px
 
-.tlLineView .tlTimeline .tlEventView .display
+.tlFrameView .tlEventView .display
 	overflow: hidden
 	line-height: 14px;
 	padding-top: 2px
 	font-size 80%
 
 /* color variation */
-.tlLineView .tlTimeline .tlEventView.blue
+.tlFrameView .tlEventView.blue
 	background-color #A3CDE1
 
-.tlLineView .tlTimeline .tlEventView.pink
+.tlFrameView .tlEventView.pink
 	background-color #FFB6B6
 
-.tlLineView .tlTimeline .tlEventView.green
+.tlFrameView .tlEventView.green
 	background-color #B8F1AC
 
-.tlLineView .tlTimeline .tlEventView.yellow
+.tlFrameView .tlEventView.yellow
 	background-color #FFFFB6
 
-.tlLineView .tlTimeline .tlEventView.orange
+.tlFrameView .tlEventView.orange
 	background-color #FFDCB6

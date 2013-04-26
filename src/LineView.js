@@ -31,8 +31,6 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
     }
 
-
-
     //check start time overlaps with other
     var overlapStart = false;
     this.eachEventView(function(key, eventView){

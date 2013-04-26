@@ -9,6 +9,7 @@ Timeline.MinView = function(hourView, min, minUnit){
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
 Timeline.MinView.CLASS_ELEM = 'tlMinView';
+Timeline.MinView.FIX_INTERVAL = 5;
 
 Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
@@ -32,8 +33,16 @@ Timeline.MinView.prototype.getTopPosition = function(min){
 
 Timeline.MinView.prototype.getTimeUnderY = function(y){
     var min = this._min + ((y - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
-    if(min < 0) min = 0;
-    if(min > 59) min = 59;
+
+    if(Timeline.MinView.FIX_INTERVAL > 1){
+        var rem = min % Timeline.MinView.FIX_INTERVAL;
+        if(rem > Timeline.MinView.FIX_INTERVAL / 2){
+            min += Timeline.MinView.FIX_INTERVAL - rem;
+        } else {
+            min -= rem;
+        }
+    }
+
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 
