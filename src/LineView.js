@@ -52,7 +52,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
             }
         }
     });
-    
+
     if(nextEv){
         var emptyTimeSpan = Timeline.TimeSpan.create(startTime, nextEv.getTimeSpan().getStartTime());
         var ol = timeSpan.overlapsTimeSpan(emptyTimeSpan);
@@ -185,24 +185,6 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return minView.getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
-    var result = null;
-    this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().overlapsWithTime(time, includeEquals))
-        {
-            result = eventView;
-            return false;
-        }
-    });
-
-    if(exceptEventView === result)
-    {
-        return null;
-    }
-
-    return result;
-};
-
 Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var hourView = null;
 
@@ -215,6 +197,10 @@ Timeline.LineView.prototype.getHourViewUnderY = function(y){
     });
 
     return hourView;
+};
+
+Timeline.LineView.prototype.getOffsetTopAtTime = function(time){
+    return this._getMinView(time).getTopPosition(time.getMin());
 };
 
 Timeline.LineView.prototype._postShow = function(){

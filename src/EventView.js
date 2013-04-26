@@ -39,6 +39,17 @@ Timeline.EventView = function(timeSpan, color){
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             self._expectedTimeSpan = self._nextLineView.correctTimeSpan(newTimeSpan);
             params.expectedTimeSpan = self._expectedTimeSpan;
+            if(self._expectedTimeSpan){
+                //move to correct offset
+                var offset = self._element.offset();
+                offset.top = self._nextLineView.getOffsetTopAtTime(self._expectedTimeSpan.getStartTime());
+                //calc offset.left using dummy event elemnt
+                var dummy = self._element.clone().appendTo(self._nextLineView.getLineElement()).css('position', 'static');
+                offset.left = dummy.offset().left;
+                dummy.remove();
+                self._element.offset(offset);
+                self._nextLineView.showTimeIndicator(offset.top);
+            }
         }
         Timeline.frame.trigger('didClickEventView', [params]);
     });

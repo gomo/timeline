@@ -21,6 +21,10 @@ Timeline.MinView.prototype.containsMin = function(min){
     return less <= min && min <= max;
 };
 
+Timeline.MinView.prototype.getMin = function(){
+    return this._min;
+};
+
 Timeline.MinView.prototype.getHourView = function(){
     return this._hourView;
 };

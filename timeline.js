@@ -115,6 +115,17 @@ Timeline.EventView = function(timeSpan, color){
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             self._expectedTimeSpan = self._nextLineView.correctTimeSpan(newTimeSpan);
             params.expectedTimeSpan = self._expectedTimeSpan;
+            if(self._expectedTimeSpan){
+                //move to correct offset
+                var offset = self._element.offset();
+                offset.top = self._nextLineView.getOffsetTopAtTime(self._expectedTimeSpan.getStartTime());
+                //calc offset.left using dummy event elemnt
+                var dummy = self._element.clone().appendTo(self._nextLineView.getLineElement()).css('position', 'static');
+                offset.left = dummy.offset().left;
+                dummy.remove();
+                self._element.offset(offset);
+                self._nextLineView.showTimeIndicator(offset.top);
+            }
         }
         Timeline.frame.trigger('didClickEventView', [params]);
     });
@@ -495,7 +506,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
             }
         }
     });
-    
+
     if(nextEv){
         var emptyTimeSpan = Timeline.TimeSpan.create(startTime, nextEv.getTimeSpan().getStartTime());
         var ol = timeSpan.overlapsTimeSpan(emptyTimeSpan);
@@ -628,24 +639,6 @@ Timeline.LineView.prototype.getTimeUnderY = function(y){
     return minView.getTimeUnderY(y);
 };
 
-Timeline.LineView.prototype.getEventViewAtTime = function(time, exceptEventView, includeEquals){
-    var result = null;
-    this.eachEventView(function(key, eventView){
-        if(eventView.getTimeSpan().overlapsWithTime(time, includeEquals))
-        {
-            result = eventView;
-            return false;
-        }
-    });
-
-    if(exceptEventView === result)
-    {
-        return null;
-    }
-
-    return result;
-};
-
 Timeline.LineView.prototype.getHourViewUnderY = function(y){
     var hourView = null;
 
@@ -658,6 +651,10 @@ Timeline.LineView.prototype.getHourViewUnderY = function(y){
     });
 
     return hourView;
+};
+
+Timeline.LineView.prototype.getOffsetTopAtTime = function(time){
+    return this._getMinView(time).getTopPosition(time.getMin());
 };
 
 Timeline.LineView.prototype._postShow = function(){
@@ -786,6 +783,10 @@ Timeline.MinView.prototype.containsMin = function(min){
     var less = this._min === 0 ? 0 : this._min;
     var max = this._min + this._minUnit - 1;
     return less <= min && min <= max;
+};
+
+Timeline.MinView.prototype.getMin = function(){
+    return this._min;
 };
 
 Timeline.MinView.prototype.getHourView = function(){
