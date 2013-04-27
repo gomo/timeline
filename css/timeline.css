@@ -8,6 +8,8 @@
 .tlFrameView .tlLineView.tlEventOver .tlTimeline{background-color:#fffed6}
 .tlFrameView .tlLineView .tlTimeline{float:left;margin-top:10px}
 .tlFrameView .tlLineView .tlTimeline .tlLabel{font-size:11px;text-align:center;height:16px;line-height:16px;color:#fff;background-color:#000;opacity:.4;filter:alpha(opacity=40);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=40)"}
+.tlFrameView .tlLineView.tlHasRuler .tlTimeline .tlLabel{-webkit-border-radius:3px 0 0 3px;border-radius:3px 0 0 3px}
+.tlFrameView .tlLineView.tlPrevRuler .tlTimeline .tlLabel{-webkit-border-radius:0 3px 3px 0;border-radius:0 3px 3px 0}
 .tlFrameView .tlLineView .tlTimeline .tlHourView{border-top:1px solid #999}
 .tlFrameView .tlLineView .tlTimeline .tlHourView.tlHasLabel{border-top:none}
 .tlFrameView .tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
