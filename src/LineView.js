@@ -151,14 +151,14 @@ Timeline.LineView.prototype._build = function(){
     hourView.getElement().children(selector).remove();
 };
 
-Timeline.LineView.prototype.showTimeIndicator = function(y){
-    var time = this.getTimeUnderY(y);
+Timeline.LineView.prototype.showTimeIndicator = function(top){
+    var time = this.getTimeByTop(top);
     if(time)
     {
         Timeline.timeIndicator.data('timeline').time = time;
 
         var offset = this._hoursElement.offset();
-        offset.top = y - (Timeline.timeIndicator.height() / 2);
+        offset.top = top - (Timeline.timeIndicator.height() / 2);
         offset.left = offset.left - Timeline.timeIndicator.outerWidth();
         Timeline.timeIndicator.offset(offset);
         Timeline.timeIndicator.html(time.getDisplayTime());
@@ -169,27 +169,27 @@ Timeline.LineView.prototype.getTimeSpan = function(){
     return this._timeSpan;
 };
 
-Timeline.LineView.prototype.getTimeUnderY = function(y){
-    var hourView = this.getHourViewUnderY(y);
+Timeline.LineView.prototype.getTimeByTop = function(top){
+    var hourView = this.getHourViewByTop(top);
     if(hourView === null)
     {
         return null;
     }
 
-    var minView = hourView.getMinViewUnderY(y);
+    var minView = hourView.getMinViewByTop(top);
     if(minView === null)
     {
         return null;
     }
 
-    return minView.getTimeUnderY(y);
+    return minView.getTimeByTop(top);
 };
 
-Timeline.LineView.prototype.getHourViewUnderY = function(y){
+Timeline.LineView.prototype.getHourViewByTop = function(top){
     var hourView = null;
 
     $.each(this._hourViews, function(){
-        if(this.containsY(y))
+        if(this.containsTop(top))
         {
             hourView = this;
             return false;
@@ -199,8 +199,8 @@ Timeline.LineView.prototype.getHourViewUnderY = function(y){
     return hourView;
 };
 
-Timeline.LineView.prototype.getOffsetTopAtTime = function(time){
-    return this._getMinView(time).getTopPosition(time.getMin());
+Timeline.LineView.prototype.getTopByTime = function(time){
+    return this._getMinView(time).getTopByMin(time.getMin());
 };
 
 Timeline.LineView.prototype._postShow = function(){

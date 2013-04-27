@@ -42,7 +42,7 @@ Timeline.EventView = function(timeSpan, color){
             if(self._expectedTimeSpan){
                 //move to correct offset
                 var offset = self._element.offset();
-                offset.top = self._nextLineView.getOffsetTopAtTime(self._expectedTimeSpan.getStartTime());
+                offset.top = self._nextLineView.getTopByTime(self._expectedTimeSpan.getStartTime());
                 //calc offset.left using dummy event elemnt
                 var dummy = self._element.clone().appendTo(self._nextLineView.getLineElement()).css('position', 'static');
                 offset.left = dummy.offset().left;
@@ -185,8 +185,8 @@ Timeline.EventView.prototype._build = function(){
 };
 
 Timeline.EventView.prototype.updateDisplay = function(){
-    var startTop = this._startMinView.getTopPosition(this._timeSpan.getStartTime().getMin());
-    var endTop = this._endMinView.getTopPosition(this._timeSpan.getEndTime().getMin());
+    var startTop = this._startMinView.getTopByMin(this._timeSpan.getStartTime().getMin());
+    var endTop = this._endMinView.getTopByMin(this._timeSpan.getEndTime().getMin());
     var offset = this._element.offset();
     offset.top = startTop;
     this._element.offset(offset);

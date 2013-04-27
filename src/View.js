@@ -23,8 +23,8 @@ Timeline.View.prototype.render = function(){
     return this._element;
 };
 
-Timeline.View.prototype.containsY = function(y){
-    var top = this._element.offset().top;
-    var down = top + this._element.outerHeight();
-    return top <= y && y <= down;
+Timeline.View.prototype.containsTop = function(top){
+    var up = this._element.offset().top;
+    var down = up + this._element.outerHeight();
+    return up <= top && top <= down;
 };

@@ -29,14 +29,14 @@ Timeline.MinView.prototype.getHourView = function(){
     return this._hourView;
 };
 
-Timeline.MinView.prototype.getTopPosition = function(min){
+Timeline.MinView.prototype.getTopByMin = function(min){
     var offset = this._element.offset();
     var percent = (min % this._minUnit) / this._minUnit;
     return offset.top + (this._element.outerHeight() * percent) - 1;
 };
 
-Timeline.MinView.prototype.getTimeUnderY = function(y){
-    var min = this._min + ((y - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
+Timeline.MinView.prototype.getTimeByTop = function(top){
+    var min = this._min + ((top - this._element.offset().top) * (this._minUnit / this._element.outerHeight()));
 
     if(Timeline.MinView.FIX_INTERVAL > 1){
         var rem = min % Timeline.MinView.FIX_INTERVAL;
