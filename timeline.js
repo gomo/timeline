@@ -336,6 +336,8 @@ Timeline.FrameView.prototype.addEventView = function(id, eventView){
 Timeline.FrameView.prototype._postShow = function(){
     var self = this;
     var totalWidth = 0;
+
+    var prevTimeline;
     $.each(self._linesData, function(key, data){
         var timeline = new Timeline.LineView(self._timeSpan.clone());
         timeline
@@ -351,6 +353,9 @@ Timeline.FrameView.prototype._postShow = function(){
 
         if(key % self._rulerInterval === 0){
             timeline.setRulerView(new Timeline.RulerView());
+            if(prevTimeline){
+                prevTimeline.getElement().addClass('tlPrevRuler');
+            }
         }
 
         if(key % 2 === 0){
@@ -360,6 +365,7 @@ Timeline.FrameView.prototype._postShow = function(){
         }
 
         totalWidth += timeline.getElement().outerWidth();
+        prevTimeline = timeline;
     });
 
     self._element.width(totalWidth);
@@ -904,7 +910,7 @@ Timeline.RulerView.prototype.updateDisplay = function(){
 
 //methods
 Timeline.RulerView.prototype.setLineView = function(lineView){
-    lineView.getElement().addClass('hasRuler');
+    lineView.getElement().addClass('tlHasRuler');
     this._lineView = lineView;
 };
 

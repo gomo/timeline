@@ -53,6 +53,6 @@ Timeline.RulerView.prototype.updateDisplay = function(){
 
 //methods
 Timeline.RulerView.prototype.setLineView = function(lineView){
-    lineView.getElement().addClass('hasRuler');
+    lineView.getElement().addClass('tlHasRuler');
     this._lineView = lineView;
 };
