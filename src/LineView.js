@@ -54,7 +54,7 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
     });
 
     if(nextEv){
-        var emptyTimeSpan = Timeline.TimeSpan.create(startTime, nextEv.getTimeSpan().getStartTime());
+        var emptyTimeSpan = new Timeline.TimeSpan(startTime, nextEv.getTimeSpan().getStartTime());
         var ol = timeSpan.overlapsTimeSpan(emptyTimeSpan);
         if(ol !== Timeline.TimeSpan.OVERLAP_CONTAIN && ol !== Timeline.TimeSpan.OVERLAP_EQUAL){
             return false;
