@@ -33,15 +33,18 @@
 
       tl.frame.bind('didClickEventView', function(e, params){
         if(params.eventView.isFloating()){
-          if(!params.expectedTimeSpan){
+
+          if(!params.check.ok && !params.check.suggestion){
             alert('You can\'t');
           } else {
+            params.eventView.moveTo(params.check.suggestion.getStartTime(), params.lineView);
             if(confirm('OK')){
-              params.eventView.floatFix();
+              params.eventView.floatFix(params.check.suggestion);
             } else {
               params.eventView.floatCancel();
             }
           }
+
         } else {
           params.eventView.toFloat();
         }

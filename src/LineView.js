@@ -21,28 +21,34 @@ Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
 };
 
-Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
+Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
+    var result = {ok:true, requsted:timeSpan, suggestion:timeSpan, space:undefined};
+
     //check overlap entire timeline
     if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
         timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());
+        result.ok = false;
+        result.suggestion = timeSpan;
     }
 
     if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
+        result.ok = false;
+        result.suggestion = timeSpan;
     }
 
     //check start time overlaps with other
-    var overlapStart = false;
     this.eachEventView(function(key, eventView){
         if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
-            overlapStart = true;
             timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
+            result.ok = false;
+            result.suggestion = timeSpan;
             return false;
         }
     });
 
     //search the next eventView and check fit in the gap.
-    var nextEv = null;
+    var nextEv;
     var startTime = timeSpan.getStartTime();
     this.eachEventView(function(key, eventView){
         var stime = eventView.getTimeSpan().getStartTime();
@@ -54,14 +60,16 @@ Timeline.LineView.prototype.correctTimeSpan = function(timeSpan){
     });
 
     if(nextEv){
-        var emptyTimeSpan = new Timeline.TimeSpan(startTime, nextEv.getTimeSpan().getStartTime());
-        var ol = timeSpan.overlapsTimeSpan(emptyTimeSpan);
+        result.space = new Timeline.TimeSpan(startTime, nextEv.getTimeSpan().getStartTime());
+        var ol = timeSpan.overlapsTimeSpan(result.space);
         if(ol !== Timeline.TimeSpan.OVERLAP_CONTAIN && ol !== Timeline.TimeSpan.OVERLAP_EQUAL){
-            return false;
+            result.suggestion = undefined;
         }
+    } else {
+        result.space = new Timeline.TimeSpan(startTime, this.getTimeSpan().getEndTime());
     }
 
-    return timeSpan;
+    return result;
 };
 
 Timeline.LineView.prototype.setLabel = function(label){

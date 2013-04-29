@@ -10,8 +10,6 @@ Timeline.EventView = function(timeSpan, color){
     self._element.addClass(color);
     self._startMinView = null;
     self._endMinView = null;
-    self._expectedTimeSpan = null;
-
     self._element.width('85%');
 
     var prevLineView = null;
@@ -23,7 +21,6 @@ Timeline.EventView = function(timeSpan, color){
         stop: function( event, ui ) {
         },
         drag: function( event, ui ){
-            self._expectedTimeSpan = null;
             if(self._nextLineView){
                 self._nextLineView.showTimeIndicator(ui.helper.offset().top);
             }
@@ -37,19 +34,8 @@ Timeline.EventView = function(timeSpan, color){
         if(self.isFloating()){
             var time = Timeline.timeIndicator.data('timeline').time;
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
-            self._expectedTimeSpan = self._nextLineView.correctTimeSpan(newTimeSpan);
-            params.expectedTimeSpan = self._expectedTimeSpan;
-            if(self._expectedTimeSpan){
-                //move to correct offset
-                var offset = self._element.offset();
-                offset.top = self._nextLineView.getTopByTime(self._expectedTimeSpan.getStartTime());
-                //calc offset.left using dummy event elemnt
-                var dummy = self._element.clone().appendTo(self._nextLineView.getLineElement()).css('position', 'static');
-                offset.left = dummy.offset().left;
-                dummy.remove();
-                self._element.offset(offset);
-                self._nextLineView.showTimeIndicator(offset.top);
-            }
+            params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
+            params.lineView = self._nextLineView;
         }
         Timeline.frame.trigger('didClickEventView', [params]);
     });
@@ -68,6 +54,17 @@ Timeline.EventView.CLASS_ELEM = 'tlEventView';
 
 Timeline.EventView.create = function(start, end, type){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
+};
+
+Timeline.EventView.prototype.moveTo = function(time, timeLine){
+    var offset = this._element.offset();
+    offset.top = timeLine.getTopByTime(time);
+    //calc offset.left using dummy event elemnt
+    var dummy = this._element.clone().appendTo(timeLine.getLineElement()).css('position', 'static');
+    offset.left = dummy.offset().left;
+    dummy.remove();
+    this._element.offset(offset);
+    timeLine.showTimeIndicator(offset.top);
 };
 
 Timeline.EventView.prototype.setNextLineView = function(lineView){
@@ -97,16 +94,10 @@ Timeline.EventView.prototype.isFloating = function(){
     return this._element.hasClass('tlFloating');
 };
 
-Timeline.EventView.prototype.floatFix = function(){
-    if(this.isFloating(this._expectedTimeSpan)){
-        var newTimeSpan = this._expectedTimeSpan;
-        this._expectedTimeSpan = null;
-        if(!newTimeSpan){
-            return;
-        }
-
+Timeline.EventView.prototype.floatFix = function(timeSpan){
+    if(this.isFloating()){
         this._element.css('position', 'static');
-        this.setTimeSpan(newTimeSpan);
+        this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
         Timeline.frame.trigger('didFloatFixEventView', [{eventView:this}]);
