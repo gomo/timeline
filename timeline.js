@@ -81,11 +81,8 @@ Timeline.EventView = function(timeSpan, color){
     self._timeSpan = timeSpan;
     self._lineView = null;
     self._nextLineView = null;
-    self._prevOffset = null;
     self._element.css('position', 'relative');
     self._element.addClass(color);
-    self._startMinView = null;
-    self._endMinView = null;
     self._element.width('85%');
 
     var prevLineView = null;
@@ -113,6 +110,7 @@ Timeline.EventView = function(timeSpan, color){
             params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
             params.lineView = self._nextLineView;
         }
+
         Timeline.frame.trigger('didClickEventView', [params]);
     });
 
@@ -132,15 +130,17 @@ Timeline.EventView.create = function(start, end, type){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
 };
 
-Timeline.EventView.prototype.moveTo = function(time, timeLine){
+Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
+    var size = lineView.getSizeByTimeSpan(timeSpan);
     var offset = this._element.offset();
-    offset.top = timeLine.getTopByTime(time);
+    offset.top = size.top;
     //calc offset.left using dummy event elemnt
-    var dummy = this._element.clone().appendTo(timeLine.getLineElement()).css('position', 'static');
+    var dummy = this._element.clone().appendTo(lineView.getLineElement()).css('position', 'static');
     offset.left = dummy.offset().left;
     dummy.remove();
-    this._element.offset(offset);
-    timeLine.showTimeIndicator(offset.top);
+
+    this._element.offset(offset).height(size.height);
+    lineView.showTimeIndicator(offset.top);
 };
 
 Timeline.EventView.prototype.setNextLineView = function(lineView){
@@ -195,7 +195,6 @@ Timeline.EventView.prototype.toFloat = function(){
     }
 
     var offset = this._element.offset();
-    this._prevOffset = offset;
     this._element.width(this._element.width());
     this._element.css({
         position:'absolute',
@@ -237,27 +236,16 @@ Timeline.EventView.prototype.getLineView = function(lineView){
     return this._lineView;
 };
 
-Timeline.EventView.prototype.setStartMinView = function(minView){
-    this._startMinView = minView;
-    return this;
-};
-
-Timeline.EventView.prototype.setEndMinView = function(minView){
-    this._endMinView = minView;
-    return this;
-};
-
 Timeline.EventView.prototype._build = function(){
     this._lineView.getLineElement().append(this._element);
 };
 
 Timeline.EventView.prototype.updateDisplay = function(){
-    var startTop = this._startMinView.getTopByMin(this._timeSpan.getStartTime().getMin());
-    var endTop = this._endMinView.getTopByMin(this._timeSpan.getEndTime().getMin());
+    var size = this._lineView.getSizeByTimeSpan(this._timeSpan);
     var offset = this._element.offset();
-    offset.top = startTop;
+    offset.top = size.top;
     this._element.offset(offset);
-    this._element.height(endTop - startTop -1);
+    this._element.height(size.height);
 
     var times = this._element.find('.time');
     times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
@@ -658,21 +646,22 @@ Timeline.LineView.prototype.getHourViewByTop = function(top){
     return hourView;
 };
 
-Timeline.LineView.prototype.getTopByTime = function(time){
-    return this._getMinView(time).getTopByMin(time.getMin());
-};
-
 Timeline.LineView.prototype._postShow = function(){
     this._updateDisplay();
 };
 
 Timeline.LineView.prototype.addEventView = function(eventView){
     eventView.setLineView(this);
-    var timeSpan = eventView.getTimeSpan();
-    eventView.setStartMinView(this._getMinView(timeSpan.getStartTime()));
-    eventView.setEndMinView(this._getMinView(timeSpan.getEndTime()));
     eventView.render();
     return this;
+};
+
+Timeline.LineView.prototype.getSizeByTimeSpan = function(timeSpan){
+    var startMinView = this._getMinView(timeSpan.getStartTime());
+    var endMinView = this._getMinView(timeSpan.getEndTime());
+    var startTop = startMinView.getTopByMin(timeSpan.getStartTime().getMin());
+    var endTop = endMinView.getTopByMin(timeSpan.getEndTime().getMin());
+    return {top: startTop, height:endTop - startTop -1};
 };
 
 Timeline.LineView.prototype._getMinView = function(time){

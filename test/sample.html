@@ -37,7 +37,7 @@
           if(!params.check.ok && !params.check.suggestion){
             alert('You can\'t');
           } else {
-            params.eventView.moveTo(params.check.suggestion.getStartTime(), params.lineView);
+            params.eventView.moveTo(params.check.suggestion, params.lineView);
             if(confirm('OK')){
               params.eventView.floatFix(params.check.suggestion);
             } else {

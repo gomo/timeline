@@ -207,21 +207,22 @@ Timeline.LineView.prototype.getHourViewByTop = function(top){
     return hourView;
 };
 
-Timeline.LineView.prototype.getTopByTime = function(time){
-    return this._getMinView(time).getTopByMin(time.getMin());
-};
-
 Timeline.LineView.prototype._postShow = function(){
     this._updateDisplay();
 };
 
 Timeline.LineView.prototype.addEventView = function(eventView){
     eventView.setLineView(this);
-    var timeSpan = eventView.getTimeSpan();
-    eventView.setStartMinView(this._getMinView(timeSpan.getStartTime()));
-    eventView.setEndMinView(this._getMinView(timeSpan.getEndTime()));
     eventView.render();
     return this;
+};
+
+Timeline.LineView.prototype.getSizeByTimeSpan = function(timeSpan){
+    var startMinView = this._getMinView(timeSpan.getStartTime());
+    var endMinView = this._getMinView(timeSpan.getEndTime());
+    var startTop = startMinView.getTopByMin(timeSpan.getStartTime().getMin());
+    var endTop = endMinView.getTopByMin(timeSpan.getEndTime().getMin());
+    return {top: startTop, height:endTop - startTop -1};
 };
 
 Timeline.LineView.prototype._getMinView = function(time){
