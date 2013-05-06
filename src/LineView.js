@@ -3,6 +3,7 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
+    this._frameView = null;
     //display frame element
     this._lineElement = null;
     //HourView wrapper element(for culc height faster)
@@ -15,10 +16,17 @@ Timeline.LineView = function(timeSpan){
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
 Timeline.LineView.CLASS_ELEM = 'tlLineView';
 
-Timeline.timeIndicator = null;
-
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.setFrameView = function(frameView){
+    this._frameView = frameView;
+    return this;
+};
+
+Timeline.LineView.prototype.getFrameView = function(){
+    return this._frameView;
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
@@ -105,12 +113,6 @@ Timeline.LineView.prototype.getLineElement = function(){
 Timeline.LineView.prototype._build = function(){
     var self = this;
 
-    if(!Timeline.timeIndicator)
-    {
-        Timeline.timeIndicator = $('<div id="tlTimeIndicator" />').appendTo('body').css({position:'absolute'}).hide();
-        Timeline.timeIndicator.data('timeline', {});
-    }
-
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursElement = $('<div class="tlHours" />').appendTo(self._lineElement);
 
@@ -163,13 +165,14 @@ Timeline.LineView.prototype.showTimeIndicator = function(top){
     var time = this.getTimeByTop(top);
     if(time)
     {
-        Timeline.timeIndicator.data('timeline').time = time;
+        var indicator = this.getFrameView().getTimeIndicator();
+        indicator.data('timeline').time = time;
 
         var offset = this._hoursElement.offset();
-        offset.top = top - (Timeline.timeIndicator.height() / 2);
-        offset.left = offset.left - Timeline.timeIndicator.outerWidth();
-        Timeline.timeIndicator.offset(offset);
-        Timeline.timeIndicator.html(time.getDisplayTime());
+        offset.top = top - (indicator.height() / 2);
+        offset.left = offset.left - indicator.outerWidth();
+        indicator.offset(offset);
+        indicator.html(time.getDisplayTime());
     }
 };
 

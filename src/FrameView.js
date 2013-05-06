@@ -5,7 +5,9 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._timeSpan = timeSpan;
     this._timeLines = {};
     this._rulerInterval = 5;
-    Timeline.frame = this._element;
+
+    this._timeIndicator = $('<div id="tlTimeIndicator" />').appendTo(this._element).css({position:'absolute', zIndex:9999}).hide();
+    this._timeIndicator.data('timeline', {});
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -17,6 +19,10 @@ Timeline.FrameView.prototype._getClassName = function(){
 
 Timeline.FrameView.prototype._build = function(){
 
+};
+
+Timeline.FrameView.prototype.getTimeIndicator = function(value){
+    return this._timeIndicator;
 };
 
 Timeline.FrameView.prototype.setMinFixInterval = function(value){
@@ -54,7 +60,8 @@ Timeline.FrameView.prototype._postShow = function(){
         var timeline = new Timeline.LineView(self._timeSpan.clone());
         timeline
             .setLabel(data.label)
-            .setId(data.id);
+            .setId(data.id)
+            .setFrameView(self);
 
         if(self._timeLines[data.id]){
             throw 'Already exists timeline ' + data.id;

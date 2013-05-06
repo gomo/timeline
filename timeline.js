@@ -89,6 +89,7 @@ Timeline.EventView = function(timeSpan, color){
         create: function( event, ui ) {
         },
         start: function( event, ui ) {
+            self.getFrameView().getTimeIndicator().show();
         },
         stop: function( event, ui ) {
         },
@@ -104,13 +105,13 @@ Timeline.EventView = function(timeSpan, color){
     self._element.on('click', function(e){
         var params = {eventView:self};
         if(self.isFloating()){
-            var time = Timeline.timeIndicator.data('timeline').time;
+            var time = self.getFrameView().getTimeIndicator().data('timeline').time;
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
             params.lineView = self._nextLineView;
         }
 
-        Timeline.frame.trigger('didClickEventView', [params]);
+        self.getFrameView().getElement().trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -151,13 +152,13 @@ Timeline.EventView.prototype.setNextLineView = function(lineView){
 };
 
 Timeline.EventView.prototype._clearFloat = function(){
-    this._element.css('zIndex', 1000);
+    this._element.css('zIndex', 99);
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
     this._nextLineView = null;
     this.updateDisplay();
-    Timeline.timeIndicator.hide();
+    this.getFrameView().getTimeIndicator().hide();
 };
 
 Timeline.EventView.prototype.isFloating = function(){
@@ -169,7 +170,7 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
-        Timeline.frame.trigger('didFloatFixEventView', [{eventView:this}]);
+        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
     }
 };
 
@@ -188,23 +189,27 @@ Timeline.EventView.prototype.toFloat = function(){
 
     var offset = this._element.offset();
     this._element.width(this._element.width());
-    this._element.css('zIndex', 9999);
+    this._element.css('zIndex', 999);
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
-    Timeline.frame.append(this._element);
+    this.getFrameView().getElement().append(this._element);
 
     this._lineView.eachEventView(function(key, eventView){
         eventView.updateDisplay();
     });
 
     this.setNextLineView(this._lineView);
-    Timeline.timeIndicator.show();
+    this.getFrameView().getTimeIndicator().show();
     this._nextLineView.showTimeIndicator(this._element.offset().top);
 };
 
 Timeline.EventView.prototype._getClassName = function(){
     return Timeline.EventView.CLASS_ELEM;
+};
+
+Timeline.EventView.prototype.getFrameView = function(){
+    return this._lineView.getFrameView();
 };
 
 Timeline.EventView.prototype.getTimeSpan = function(){
@@ -269,7 +274,9 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._timeSpan = timeSpan;
     this._timeLines = {};
     this._rulerInterval = 5;
-    Timeline.frame = this._element;
+
+    this._timeIndicator = $('<div id="tlTimeIndicator" />').appendTo(this._element).css({position:'absolute', zIndex:9999}).hide();
+    this._timeIndicator.data('timeline', {});
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -281,6 +288,10 @@ Timeline.FrameView.prototype._getClassName = function(){
 
 Timeline.FrameView.prototype._build = function(){
 
+};
+
+Timeline.FrameView.prototype.getTimeIndicator = function(value){
+    return this._timeIndicator;
 };
 
 Timeline.FrameView.prototype.setMinFixInterval = function(value){
@@ -318,7 +329,8 @@ Timeline.FrameView.prototype._postShow = function(){
         var timeline = new Timeline.LineView(self._timeSpan.clone());
         timeline
             .setLabel(data.label)
-            .setId(data.id);
+            .setId(data.id)
+            .setFrameView(self);
 
         if(self._timeLines[data.id]){
             throw 'Already exists timeline ' + data.id;
@@ -439,6 +451,7 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
+    this._frameView = null;
     //display frame element
     this._lineElement = null;
     //HourView wrapper element(for culc height faster)
@@ -451,10 +464,17 @@ Timeline.LineView = function(timeSpan){
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
 Timeline.LineView.CLASS_ELEM = 'tlLineView';
 
-Timeline.timeIndicator = null;
-
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.setFrameView = function(frameView){
+    this._frameView = frameView;
+    return this;
+};
+
+Timeline.LineView.prototype.getFrameView = function(){
+    return this._frameView;
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
@@ -541,12 +561,6 @@ Timeline.LineView.prototype.getLineElement = function(){
 Timeline.LineView.prototype._build = function(){
     var self = this;
 
-    if(!Timeline.timeIndicator)
-    {
-        Timeline.timeIndicator = $('<div id="tlTimeIndicator" />').appendTo('body').css({position:'absolute'}).hide();
-        Timeline.timeIndicator.data('timeline', {});
-    }
-
     self._lineElement = $('<div class="tlTimeline" />').appendTo(self._element);
     self._hoursElement = $('<div class="tlHours" />').appendTo(self._lineElement);
 
@@ -599,13 +613,14 @@ Timeline.LineView.prototype.showTimeIndicator = function(top){
     var time = this.getTimeByTop(top);
     if(time)
     {
-        Timeline.timeIndicator.data('timeline').time = time;
+        var indicator = this.getFrameView().getTimeIndicator();
+        indicator.data('timeline').time = time;
 
         var offset = this._hoursElement.offset();
-        offset.top = top - (Timeline.timeIndicator.height() / 2);
-        offset.left = offset.left - Timeline.timeIndicator.outerWidth();
-        Timeline.timeIndicator.offset(offset);
-        Timeline.timeIndicator.html(time.getDisplayTime());
+        offset.top = top - (indicator.height() / 2);
+        offset.left = offset.left - indicator.outerWidth();
+        indicator.offset(offset);
+        indicator.html(time.getDisplayTime());
     }
 };
 
