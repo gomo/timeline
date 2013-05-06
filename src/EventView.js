@@ -34,7 +34,7 @@ Timeline.EventView = function(timeSpan, color){
             params.lineView = self._nextLineView;
         }
 
-        Timeline.frame.trigger('didClickEventView', [params]);
+        self._lineView.getFrameView().getElement().trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -93,7 +93,7 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
-        Timeline.frame.trigger('didFloatFixEventView', [{eventView:this}]);
+        this._lineView.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
     }
 };
 
@@ -116,7 +116,7 @@ Timeline.EventView.prototype.toFloat = function(){
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
-    Timeline.frame.append(this._element);
+    this._lineView.getFrameView().getElement().append(this._element);
 
     this._lineView.eachEventView(function(key, eventView){
         eventView.updateDisplay();

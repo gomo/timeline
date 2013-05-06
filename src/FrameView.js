@@ -5,7 +5,6 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._timeSpan = timeSpan;
     this._timeLines = {};
     this._rulerInterval = 5;
-    Timeline.frame = this._element;
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -54,7 +53,8 @@ Timeline.FrameView.prototype._postShow = function(){
         var timeline = new Timeline.LineView(self._timeSpan.clone());
         timeline
             .setLabel(data.label)
-            .setId(data.id);
+            .setId(data.id)
+            .setFrameView(self);
 
         if(self._timeLines[data.id]){
             throw 'Already exists timeline ' + data.id;

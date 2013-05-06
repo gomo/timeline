@@ -110,7 +110,7 @@ Timeline.EventView = function(timeSpan, color){
             params.lineView = self._nextLineView;
         }
 
-        Timeline.frame.trigger('didClickEventView', [params]);
+        self._lineView.getFrameView().getElement().trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -169,7 +169,7 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
-        Timeline.frame.trigger('didFloatFixEventView', [{eventView:this}]);
+        this._lineView.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
     }
 };
 
@@ -192,7 +192,7 @@ Timeline.EventView.prototype.toFloat = function(){
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
-    Timeline.frame.append(this._element);
+    this._lineView.getFrameView().getElement().append(this._element);
 
     this._lineView.eachEventView(function(key, eventView){
         eventView.updateDisplay();
@@ -269,7 +269,6 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._timeSpan = timeSpan;
     this._timeLines = {};
     this._rulerInterval = 5;
-    Timeline.frame = this._element;
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -318,7 +317,8 @@ Timeline.FrameView.prototype._postShow = function(){
         var timeline = new Timeline.LineView(self._timeSpan.clone());
         timeline
             .setLabel(data.label)
-            .setId(data.id);
+            .setId(data.id)
+            .setFrameView(self);
 
         if(self._timeLines[data.id]){
             throw 'Already exists timeline ' + data.id;
@@ -439,6 +439,7 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
+    this._frameView = null;
     //display frame element
     this._lineElement = null;
     //HourView wrapper element(for culc height faster)
@@ -455,6 +456,15 @@ Timeline.timeIndicator = null;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.setFrameView = function(frameView){
+    this._frameView = frameView;
+    return this;
+};
+
+Timeline.LineView.prototype.getFrameView = function(){
+    return this._frameView;
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){

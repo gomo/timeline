@@ -3,6 +3,7 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
+    this._frameView = null;
     //display frame element
     this._lineElement = null;
     //HourView wrapper element(for culc height faster)
@@ -19,6 +20,15 @@ Timeline.timeIndicator = null;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;
+};
+
+Timeline.LineView.prototype.setFrameView = function(frameView){
+    this._frameView = frameView;
+    return this;
+};
+
+Timeline.LineView.prototype.getFrameView = function(){
+    return this._frameView;
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){

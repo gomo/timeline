@@ -31,7 +31,7 @@
 
       $('#timeline').append(lv.render());
 
-      tl.frame.bind('didClickEventView', function(e, params){
+      lv.getElement().bind('didClickEventView', function(e, params){
         if(params.eventView.isFloating()){
 
           if(!params.check.ok && !params.check.suggestion){
@@ -50,7 +50,7 @@
         }
       });
 
-      tl.frame.bind('didFloatFixEventView', function(e, params){
+      lv.getElement().bind('didFloatFixEventView', function(e, params){
         console.log(params);
       });
 
