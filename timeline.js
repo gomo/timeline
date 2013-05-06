@@ -81,9 +81,8 @@ Timeline.EventView = function(timeSpan, color){
     self._timeSpan = timeSpan;
     self._lineView = null;
     self._nextLineView = null;
-    self._element.css('position', 'relative');
+    self._element.css('position', 'absolute');
     self._element.addClass(color);
-    self._element.width('85%');
 
     var prevLineView = null;
     self._element.draggable({
@@ -125,6 +124,7 @@ Timeline.EventView = function(timeSpan, color){
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
 Timeline.EventView.CLASS_ELEM = 'tlEventView';
+Timeline.EventView.MARGIN_SIDE = 4;
 
 Timeline.EventView.create = function(start, end, type){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
@@ -134,10 +134,7 @@ Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
     var size = lineView.getSizeByTimeSpan(timeSpan);
     var offset = this._element.offset();
     offset.top = size.top;
-    //calc offset.left using dummy event elemnt
-    var dummy = this._element.clone().appendTo(lineView.getLineElement()).css('position', 'static');
-    offset.left = dummy.offset().left;
-    dummy.remove();
+    offset.left = this._getPositionLeft(lineView);
 
     this._element.offset(offset).height(size.height);
     lineView.showTimeIndicator(offset.top);
@@ -154,15 +151,12 @@ Timeline.EventView.prototype.setNextLineView = function(lineView){
 };
 
 Timeline.EventView.prototype._clearFloat = function(){
-    this._element.css({
-        position:'relative',
-        zIndex:1000
-    });
-    this._element.width('85%');
+    this._element.css('zIndex', 1000);
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
     this._nextLineView = null;
+    this.updateDisplay();
     Timeline.timeIndicator.hide();
 };
 
@@ -172,7 +166,6 @@ Timeline.EventView.prototype.isFloating = function(){
 
 Timeline.EventView.prototype.floatFix = function(timeSpan){
     if(this.isFloating()){
-        this._element.css('position', 'static');
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
@@ -183,7 +176,6 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
 Timeline.EventView.prototype.floatCancel = function(){
     var self = this;
     if(self.isFloating()){
-        self._element.css('position', 'static');
         self._lineView.addEventView(self);
         self._clearFloat();
     }
@@ -196,10 +188,7 @@ Timeline.EventView.prototype.toFloat = function(){
 
     var offset = this._element.offset();
     this._element.width(this._element.width());
-    this._element.css({
-        position:'absolute',
-        zIndex:9999
-    });
+    this._element.css('zIndex', 9999);
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
@@ -243,14 +232,22 @@ Timeline.EventView.prototype._build = function(){
 Timeline.EventView.prototype.updateDisplay = function(){
     var size = this._lineView.getSizeByTimeSpan(this._timeSpan);
     var offset = this._element.offset();
+    var lineOffset = this._lineView.getLineElement().offset();
     offset.top = size.top;
+    offset.left = this._getPositionLeft(this._lineView);
     this._element.offset(offset);
     this._element.height(size.height);
+    this._element.outerWidth(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
 
     var times = this._element.find('.time');
     times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
     times.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
     this._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
+};
+
+Timeline.EventView.prototype._getPositionLeft = function(lineView){
+    var lineOffset = lineView.getLineElement().offset();
+    return lineOffset.left + (Timeline.EventView.MARGIN_SIDE / 2);
 };
 
 Timeline.EventView.prototype.setDisplayHtml = function(html){
@@ -679,12 +676,14 @@ Timeline.LineView.prototype._getMinView = function(time){
 Timeline.LineView.prototype.addLineWidth = function(amount){
     this._lineWidth += amount;
     this._updateDisplay();
+    this._updateEventsDisplay();
     return this;
 };
 
 Timeline.LineView.prototype.setLineWidth = function(width){
     this._lineWidth = width;
     this._updateDisplay();
+    this._updateEventsDisplay();
     return this;
 };
 

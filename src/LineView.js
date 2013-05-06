@@ -240,12 +240,14 @@ Timeline.LineView.prototype._getMinView = function(time){
 Timeline.LineView.prototype.addLineWidth = function(amount){
     this._lineWidth += amount;
     this._updateDisplay();
+    this._updateEventsDisplay();
     return this;
 };
 
 Timeline.LineView.prototype.setLineWidth = function(width){
     this._lineWidth = width;
     this._updateDisplay();
+    this._updateEventsDisplay();
     return this;
 };
 
