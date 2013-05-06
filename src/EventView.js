@@ -13,6 +13,7 @@ Timeline.EventView = function(timeSpan, color){
         create: function( event, ui ) {
         },
         start: function( event, ui ) {
+            self.getFrameView().getTimeIndicator().show();
         },
         stop: function( event, ui ) {
         },
@@ -28,13 +29,13 @@ Timeline.EventView = function(timeSpan, color){
     self._element.on('click', function(e){
         var params = {eventView:self};
         if(self.isFloating()){
-            var time = Timeline.timeIndicator.data('timeline').time;
+            var time = self.getFrameView().getTimeIndicator().data('timeline').time;
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
             params.lineView = self._nextLineView;
         }
 
-        self._lineView.getFrameView().getElement().trigger('didClickEventView', [params]);
+        self.getFrameView().getElement().trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -75,13 +76,13 @@ Timeline.EventView.prototype.setNextLineView = function(lineView){
 };
 
 Timeline.EventView.prototype._clearFloat = function(){
-    this._element.css('zIndex', 1000);
+    this._element.css('zIndex', 99);
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
     this._nextLineView = null;
     this.updateDisplay();
-    Timeline.timeIndicator.hide();
+    this.getFrameView().getTimeIndicator().hide();
 };
 
 Timeline.EventView.prototype.isFloating = function(){
@@ -93,7 +94,7 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
-        this._lineView.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
+        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
     }
 };
 
@@ -112,23 +113,27 @@ Timeline.EventView.prototype.toFloat = function(){
 
     var offset = this._element.offset();
     this._element.width(this._element.width());
-    this._element.css('zIndex', 9999);
+    this._element.css('zIndex', 999);
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');
-    this._lineView.getFrameView().getElement().append(this._element);
+    this.getFrameView().getElement().append(this._element);
 
     this._lineView.eachEventView(function(key, eventView){
         eventView.updateDisplay();
     });
 
     this.setNextLineView(this._lineView);
-    Timeline.timeIndicator.show();
+    this.getFrameView().getTimeIndicator().show();
     this._nextLineView.showTimeIndicator(this._element.offset().top);
 };
 
 Timeline.EventView.prototype._getClassName = function(){
     return Timeline.EventView.CLASS_ELEM;
+};
+
+Timeline.EventView.prototype.getFrameView = function(){
+    return this._lineView.getFrameView();
 };
 
 Timeline.EventView.prototype.getTimeSpan = function(){
