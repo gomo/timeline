@@ -44,7 +44,8 @@ Timeline.EventView = function(timeSpan, color){
     self._element.append(self._displayElement);
 
     self._element.append('<div class="end time" />');
-    self._element.find('.time').css({cursor:'default'});
+    self._timesElement = self._element.find('.time');
+    self._timesElement.css({cursor:'default'});
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -75,6 +76,27 @@ Timeline.EventView.prototype.setNextLineView = function(lineView){
     this._nextLineView = lineView;
 };
 
+Timeline.EventView.prototype.isFlexible = function(){
+    return this._element.hasClass('tlFlexible');
+};
+
+Timeline.EventView.prototype.toFlexible = function(){
+    this.getFrameView().getFlexibleHandle().enable(this);
+    this._element.addClass('tlFlexible');
+};
+
+Timeline.EventView.prototype.fix = function(timeSpan){
+    if(this.isFloating()){
+        this.setTimeSpan(timeSpan);
+        this._nextLineView.addEventView(this);
+        this._clearFloat();
+        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
+    } else if (this.isFlexible()) {
+        this.getFrameView().getFlexibleHandle().disable();
+        this._element.removeClass('tlFlexible');
+    }
+};
+
 Timeline.EventView.prototype._clearFloat = function(){
     this._element.css('zIndex', 99);
     this._element.removeClass('tlFloating');
@@ -87,15 +109,6 @@ Timeline.EventView.prototype._clearFloat = function(){
 
 Timeline.EventView.prototype.isFloating = function(){
     return this._element.hasClass('tlFloating');
-};
-
-Timeline.EventView.prototype.floatFix = function(timeSpan){
-    if(this.isFloating()){
-        this.setTimeSpan(timeSpan);
-        this._nextLineView.addEventView(this);
-        this._clearFloat();
-        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
-    }
 };
 
 Timeline.EventView.prototype.floatCancel = function(){
@@ -168,10 +181,13 @@ Timeline.EventView.prototype.updateDisplay = function(){
     this._element.height(size.height);
     this._element.outerWidth(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
 
-    var times = this._element.find('.time');
-    times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
-    times.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
-    this._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
+    this._timesElement.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
+    this._timesElement.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
+    this.updateDisplayHeight();
+};
+
+Timeline.EventView.prototype.updateDisplayHeight = function(html){
+    this._displayElement.outerHeight(this._element.height() - (this._timesElement.outerHeight() * 2) - 4);
 };
 
 Timeline.EventView.prototype._getPositionLeft = function(lineView){

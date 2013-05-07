@@ -74,6 +74,14 @@ Timeline.View.prototype.containsTop = function(top){
     return up <= top && top <= down;
 };
 
+Timeline.View.prototype.getBottom = function(){
+    return this._element.offset().top + this._element.outerHeight();
+};
+
+Timeline.View.prototype.getTop = function(){
+    return this._element.offset().top;
+};
+
 //EventView
 Timeline.EventView = function(timeSpan, color){
     var self = this;
@@ -120,7 +128,8 @@ Timeline.EventView = function(timeSpan, color){
     self._element.append(self._displayElement);
 
     self._element.append('<div class="end time" />');
-    self._element.find('.time').css({cursor:'default'});
+    self._timesElement = self._element.find('.time');
+    self._timesElement.css({cursor:'default'});
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -151,6 +160,27 @@ Timeline.EventView.prototype.setNextLineView = function(lineView){
     this._nextLineView = lineView;
 };
 
+Timeline.EventView.prototype.isFlexible = function(){
+    return this._element.hasClass('tlFlexible');
+};
+
+Timeline.EventView.prototype.toFlexible = function(){
+    this.getFrameView().getFlexibleHandle().enable(this);
+    this._element.addClass('tlFlexible');
+};
+
+Timeline.EventView.prototype.fix = function(timeSpan){
+    if(this.isFloating()){
+        this.setTimeSpan(timeSpan);
+        this._nextLineView.addEventView(this);
+        this._clearFloat();
+        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
+    } else if (this.isFlexible()) {
+        this.getFrameView().getFlexibleHandle().disable();
+        this._element.removeClass('tlFlexible');
+    }
+};
+
 Timeline.EventView.prototype._clearFloat = function(){
     this._element.css('zIndex', 99);
     this._element.removeClass('tlFloating');
@@ -163,15 +193,6 @@ Timeline.EventView.prototype._clearFloat = function(){
 
 Timeline.EventView.prototype.isFloating = function(){
     return this._element.hasClass('tlFloating');
-};
-
-Timeline.EventView.prototype.floatFix = function(timeSpan){
-    if(this.isFloating()){
-        this.setTimeSpan(timeSpan);
-        this._nextLineView.addEventView(this);
-        this._clearFloat();
-        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
-    }
 };
 
 Timeline.EventView.prototype.floatCancel = function(){
@@ -244,10 +265,13 @@ Timeline.EventView.prototype.updateDisplay = function(){
     this._element.height(size.height);
     this._element.outerWidth(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
 
-    var times = this._element.find('.time');
-    times.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
-    times.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
-    this._displayElement.outerHeight(this._element.height() - (times.outerHeight() * 2) - 4);
+    this._timesElement.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
+    this._timesElement.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
+    this.updateDisplayHeight();
+};
+
+Timeline.EventView.prototype.updateDisplayHeight = function(html){
+    this._displayElement.outerHeight(this._element.height() - (this._timesElement.outerHeight() * 2) - 4);
 };
 
 Timeline.EventView.prototype._getPositionLeft = function(lineView){
@@ -267,6 +291,84 @@ Timeline.EventView.prototype._postShow = function(){
     this.updateDisplay();
 };
 
+//FlexibleHandle
+Timeline.FlexibleHandle = function(frameView){
+    this._eventView = null;
+    this._frameView = frameView;
+    this._topElement = this._setupEventHandle($('<div class="tlEventTopHandle" />'));
+    this._downElement = this._setupEventHandle($('<div class="tlEventDownHandle" />'));
+};
+
+Timeline.FlexibleHandle.MARGIN = 4;
+
+Timeline.FlexibleHandle.prototype._setupEventHandle = function(handle){
+    var self = this;
+    handle
+        .appendTo(this._frameView.getElement())
+        .height('30px')
+        .css('position', 'absolute')
+        .hide()
+        .data('timeline', {})
+        .draggable({
+            axis: "y",
+            start: function(event, ui){
+                self._eventView.getFrameView().getTimeIndicator().show();
+            },
+            stop: function( event, ui ) {
+            },
+            drag: function( event, ui ) {
+                var offset = ui.helper.offset();
+                var eventElem = self._eventView.getElement();
+                var targetTop;
+                if(handle.hasClass('tlEventTopHandle')){
+                    targetTop = offset.top + ui.helper.outerHeight() + Timeline.FlexibleHandle.MARGIN;
+                    eventElem.outerHeight(eventElem.outerHeight() + eventElem.offset().top - targetTop);
+                    eventElem.offset({top: targetTop, left:offset.left});
+
+                } else if(handle.hasClass('tlEventDownHandle')) {
+                    targetTop = offset.top - Timeline.FlexibleHandle.MARGIN;
+                    var height = eventElem.outerHeight();
+                    eventElem.outerHeight(height + targetTop - (eventElem.offset().top + height));
+                }
+
+                self._eventView.getLineView().showTimeIndicator(targetTop);
+                self._eventView.updateDisplayHeight();
+                ui.helper.data('timeline').time = self._eventView.getFrameView().getTimeIndicator().data('timeline').time;
+            }
+        });
+    return handle;
+};
+
+Timeline.FlexibleHandle.prototype.disable = function(){
+        var newTimeSpan = new Timeline.TimeSpan(this._topElement.data('timeline').time, this._downElement.data('timeline').time);
+        this._eventView.setTimeSpan(newTimeSpan);
+        this._eventView.updateDisplay();
+        this._topElement.hide();
+        this._downElement.hide();
+        this._eventView.getFrameView().getTimeIndicator().hide();
+};
+
+Timeline.FlexibleHandle.prototype.enable = function(eventView){
+    this._eventView = eventView;
+    this._topElement.show();
+    this._downElement.show();
+
+    var eventElem = eventView.getElement();
+    var offset = eventElem.offset();
+
+    offset.top = offset.top - this._topElement.outerHeight() - Timeline.FlexibleHandle.MARGIN;
+    this._topElement.outerWidth(eventElem.outerWidth());
+    this._topElement.offset(offset);
+    this._topElement.data('timeline').time = eventView.getTimeSpan().getStartTime();
+
+
+    offset = eventElem.offset();
+    offset.top = offset.top + eventElem.outerHeight() + Timeline.FlexibleHandle.MARGIN;
+    this._downElement.outerWidth(eventElem.outerWidth());
+    this._downElement.offset(offset);
+    this._downElement.data('timeline').time = eventView.getTimeSpan().getEndTime();
+};
+
 //FrameView
 Timeline.FrameView = function(timeSpan, linesData){
     Timeline.FrameView.super_.call(this);
@@ -277,6 +379,8 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._timeIndicator = $('<div id="tlTimeIndicator" />').appendTo(this._element).css({position:'absolute', zIndex:9999}).hide();
     this._timeIndicator.data('timeline', {});
+
+    this._flexibleHandle = new Timeline.FlexibleHandle(this);
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -290,7 +394,11 @@ Timeline.FrameView.prototype._build = function(){
 
 };
 
-Timeline.FrameView.prototype.getTimeIndicator = function(value){
+Timeline.FrameView.prototype.getFlexibleHandle = function(){
+    return this._flexibleHandle;
+};
+
+Timeline.FrameView.prototype.getTimeIndicator = function(){
     return this._timeIndicator;
 };
 
@@ -504,17 +612,8 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
     });
 
     //search the next eventView and check fit in the gap.
-    var nextEv;
     var startTime = timeSpan.getStartTime();
-    this.eachEventView(function(key, eventView){
-        var stime = eventView.getTimeSpan().getStartTime();
-        if(startTime.compare(stime) <= 0){
-            if(!nextEv || nextEv.getTimeSpan().getStartTime().compare(stime) > 0){
-                nextEv = eventView;
-            }
-        }
-    });
-
+    var nextEv = this.getNextEventView(startTime);
     if(nextEv){
         result.space = new Timeline.TimeSpan(startTime, nextEv.getTimeSpan().getStartTime());
         var ol = timeSpan.overlapsTimeSpan(result.space);
@@ -524,6 +623,34 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
     } else {
         result.space = new Timeline.TimeSpan(startTime, this.getTimeSpan().getEndTime());
     }
+
+    return result;
+};
+
+Timeline.LineView.prototype.getNextEventView = function(time){
+    var result;
+    this.eachEventView(function(key, eventView){
+        var stime = eventView.getTimeSpan().getStartTime();
+        if(time.compare(stime) <= 0){
+            if(!result || result.getTimeSpan().getStartTime().compare(stime) > 0){
+                result = eventView;
+            }
+        }
+    });
+
+    return result;
+};
+
+Timeline.LineView.prototype.getPrevEventView = function(time){
+    var result;
+    this.eachEventView(function(key, eventView){
+        var stime = eventView.getTimeSpan().getEndTime();
+        if(time.compare(stime) >= 0){
+            if(!result || result.getTimeSpan().getEndTime().compare(stime) < 0){
+                result = eventView;
+            }
+        }
+    });
 
     return result;
 };

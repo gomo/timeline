@@ -56,17 +56,8 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
     });
 
     //search the next eventView and check fit in the gap.
-    var nextEv;
     var startTime = timeSpan.getStartTime();
-    this.eachEventView(function(key, eventView){
-        var stime = eventView.getTimeSpan().getStartTime();
-        if(startTime.compare(stime) <= 0){
-            if(!nextEv || nextEv.getTimeSpan().getStartTime().compare(stime) > 0){
-                nextEv = eventView;
-            }
-        }
-    });
-
+    var nextEv = this.getNextEventView(startTime);
     if(nextEv){
         result.space = new Timeline.TimeSpan(startTime, nextEv.getTimeSpan().getStartTime());
         var ol = timeSpan.overlapsTimeSpan(result.space);
@@ -76,6 +67,34 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
     } else {
         result.space = new Timeline.TimeSpan(startTime, this.getTimeSpan().getEndTime());
     }
+
+    return result;
+};
+
+Timeline.LineView.prototype.getNextEventView = function(time){
+    var result;
+    this.eachEventView(function(key, eventView){
+        var stime = eventView.getTimeSpan().getStartTime();
+        if(time.compare(stime) <= 0){
+            if(!result || result.getTimeSpan().getStartTime().compare(stime) > 0){
+                result = eventView;
+            }
+        }
+    });
+
+    return result;
+};
+
+Timeline.LineView.prototype.getPrevEventView = function(time){
+    var result;
+    this.eachEventView(function(key, eventView){
+        var stime = eventView.getTimeSpan().getEndTime();
+        if(time.compare(stime) >= 0){
+            if(!result || result.getTimeSpan().getEndTime().compare(stime) < 0){
+                result = eventView;
+            }
+        }
+    });
 
     return result;
 };

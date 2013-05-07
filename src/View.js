@@ -28,3 +28,11 @@ Timeline.View.prototype.containsTop = function(top){
     var down = up + this._element.outerHeight();
     return up <= top && top <= down;
 };
+
+Timeline.View.prototype.getBottom = function(){
+    return this._element.offset().top + this._element.outerHeight();
+};
+
+Timeline.View.prototype.getTop = function(){
+    return this._element.offset().top;
+};

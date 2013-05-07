@@ -8,6 +8,8 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._timeIndicator = $('<div id="tlTimeIndicator" />').appendTo(this._element).css({position:'absolute', zIndex:9999}).hide();
     this._timeIndicator.data('timeline', {});
+
+    this._flexibleHandle = new Timeline.FlexibleHandle(this);
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -21,7 +23,11 @@ Timeline.FrameView.prototype._build = function(){
 
 };
 
-Timeline.FrameView.prototype.getTimeIndicator = function(value){
+Timeline.FrameView.prototype.getFlexibleHandle = function(){
+    return this._flexibleHandle;
+};
+
+Timeline.FrameView.prototype.getTimeIndicator = function(){
     return this._timeIndicator;
 };
 
