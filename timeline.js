@@ -306,15 +306,23 @@ Timeline.FlexibleHandle.prototype._setupEventHandle = function(handle){
     handle
         .appendTo(this._frameView.getElement())
         .height('30px')
-        .css('position', 'absolute')
+        .css({'position': 'absolute', 'zIndex': 99999})
         .hide()
         .data('timeline', {})
         .draggable({
             axis: "y",
             start: function(event, ui){
-                self._eventView.getFrameView().getTimeIndicator().show();
+                self._frameView.getTimeIndicator().show();
             },
             stop: function( event, ui ) {
+                var containment;
+                if(handle.hasClass('tlEventTopHandle')){
+                    containment = self._downElement.draggable( "option", "containment");
+                    self._downElement.draggable('option', 'containment', self._calcDownContainment(containment));
+                } else if(handle.hasClass('tlEventDownHandle')) {
+                    containment = self._topElement.draggable( "option", "containment");
+                    self._topElement.draggable('option', 'containment', self._calcTopContainment(containment));
+                }
             },
             drag: function( event, ui ) {
                 var offset = ui.helper.offset();
@@ -324,7 +332,6 @@ Timeline.FlexibleHandle.prototype._setupEventHandle = function(handle){
                     targetTop = offset.top + ui.helper.outerHeight() + Timeline.FlexibleHandle.MARGIN;
                     eventElem.outerHeight(eventElem.outerHeight() + eventElem.offset().top - targetTop);
                     eventElem.offset({top: targetTop, left:offset.left});
-
                 } else if(handle.hasClass('tlEventDownHandle')) {
                     targetTop = offset.top - Timeline.FlexibleHandle.MARGIN;
                     var height = eventElem.outerHeight();
@@ -333,19 +340,19 @@ Timeline.FlexibleHandle.prototype._setupEventHandle = function(handle){
 
                 self._eventView.getLineView().showTimeIndicator(targetTop);
                 self._eventView.updateDisplayHeight();
-                ui.helper.data('timeline').time = self._eventView.getFrameView().getTimeIndicator().data('timeline').time;
+                ui.helper.data('timeline').time = self._frameView.getTimeIndicator().data('timeline').time;
             }
         });
     return handle;
 };
 
 Timeline.FlexibleHandle.prototype.disable = function(){
-        var newTimeSpan = new Timeline.TimeSpan(this._topElement.data('timeline').time, this._downElement.data('timeline').time);
-        this._eventView.setTimeSpan(newTimeSpan);
-        this._eventView.updateDisplay();
-        this._topElement.hide();
-        this._downElement.hide();
-        this._eventView.getFrameView().getTimeIndicator().hide();
+    var newTimeSpan = new Timeline.TimeSpan(this._topElement.data('timeline').time, this._downElement.data('timeline').time);
+    this._eventView.setTimeSpan(newTimeSpan);
+    this._eventView.updateDisplay();
+    this._topElement.hide();
+    this._downElement.hide();
+    this._frameView.getTimeIndicator().hide();
 };
 
 Timeline.FlexibleHandle.prototype.enable = function(eventView){
@@ -354,19 +361,50 @@ Timeline.FlexibleHandle.prototype.enable = function(eventView){
     this._downElement.show();
 
     var eventElem = eventView.getElement();
-    var offset = eventElem.offset();
 
-    offset.top = offset.top - this._topElement.outerHeight() - Timeline.FlexibleHandle.MARGIN;
+    //place top handle element
+    var topOffset = eventElem.offset();
+    topOffset.top = topOffset.top - this._topElement.outerHeight() - Timeline.FlexibleHandle.MARGIN;
     this._topElement.outerWidth(eventElem.outerWidth());
-    this._topElement.offset(offset);
+    this._topElement.offset(topOffset);
     this._topElement.data('timeline').time = eventView.getTimeSpan().getStartTime();
 
-
-    offset = eventElem.offset();
-    offset.top = offset.top + eventElem.outerHeight() + Timeline.FlexibleHandle.MARGIN;
+    //place bottom handle element
+    var downOffset = eventElem.offset();
+    downOffset.top = downOffset.top + eventElem.outerHeight() + Timeline.FlexibleHandle.MARGIN;
     this._downElement.outerWidth(eventElem.outerWidth());
-    this._downElement.offset(offset);
+    this._downElement.offset(downOffset);
     this._downElement.data('timeline').time = eventView.getTimeSpan().getEndTime();
+
+    //make containment for top
+    var prevEvent = eventView.getLineView().getPrevEventView(eventView.getTimeSpan().getStartTime());
+    var topLimit = prevEvent ? prevEvent.getBottom() : eventView.getLineView().getFirstHourView().getFirstMinView().getTop();
+    this._topElement.draggable( "option", "containment", this._calcTopContainment([
+        topOffset.left,
+        topLimit - (this._topElement.outerHeight() + Timeline.FlexibleHandle.MARGIN),
+        topOffset.left + this._topElement.outerWidth(),
+        undefined
+    ]));
+
+    //make containment for bottom
+    var nextEvent = eventView.getLineView().getNextEventView(eventView.getTimeSpan().getEndTime());
+    var downLimit = nextEvent ? nextEvent.getTop() : eventView.getLineView().getLastHourView().getLastMinView().getBottom();
+    this._downElement.draggable( "option", "containment", this._calcDownContainment([
+        downOffset.left,
+        undefined,
+        downOffset.left + this._topElement.outerWidth(),
+        downLimit + Timeline.FlexibleHandle.MARGIN
+    ]));
+};
+
+Timeline.FlexibleHandle.prototype._calcTopContainment = function(containment){
+    containment[3] = this._downElement.offset().top - this._downElement.outerHeight() - (Timeline.FlexibleHandle.MARGIN * 2);
+    return containment;
+};
+
+Timeline.FlexibleHandle.prototype._calcDownContainment = function(containment){
+    containment[1] = this._topElement.offset().top + this._topElement.outerHeight() + (Timeline.FlexibleHandle.MARGIN * 2);
+    return containment;
 };
 
 //FrameView
@@ -468,9 +506,10 @@ Timeline.FrameView.prototype._postShow = function(){
 };
 
 //Hour
-Timeline.HourView = function(lineView, hour){
+Timeline.HourView = function(lineView, hour, minLimit){
     Timeline.HourView.super_.call(this);
     this._hour = hour;
+    this._minLimit = minLimit;
     this._lineView = lineView;
     this._minViews = [];
 };
@@ -487,6 +526,14 @@ Timeline.HourView.prototype.setLabel = function(label){
         var elem = $('<div class="tlLabel">'+label+'</div>');
         this._element.append(elem).addClass('tlHasLabel');
     }
+};
+
+Timeline.HourView.prototype.getFirstMinView = function(){
+    return this._minViews[0];
+};
+
+Timeline.HourView.prototype.getLastMinView = function(){
+    return this._minViews[this._minViews.length - 1];
 };
 
 Timeline.HourView.prototype.getHour = function(){
@@ -546,7 +593,11 @@ Timeline.HourView.prototype._build = function(){
     var minUnit = 15;
     var count = 60/minUnit;
     for (var i = 0; i < count; i++) {
-        var min = new Timeline.MinView(this, i*minUnit, minUnit);
+        var targetMin = i*minUnit;
+        if(this._minLimit !== undefined && targetMin > this._minLimit){
+            break;
+        }
+        var min = new Timeline.MinView(this, targetMin, minUnit);
         this._minViews.push(min);
         this._element.append(min.render());
     }
@@ -704,8 +755,8 @@ Timeline.LineView.prototype._build = function(){
     });
 
     var hourView = null;
-    self._timeSpan.eachHour(function(key, hour){
-        hourView = new Timeline.HourView(self, hour);
+    self._timeSpan.eachHour(function(key, hour, minLimit){
+        hourView = new Timeline.HourView(self, hour, minLimit);
         if(key === 0 || key % 5 === 0)
         {
             hourView.setLabel(self._label);
@@ -713,27 +764,6 @@ Timeline.LineView.prototype._build = function(){
         self._hoursElement.append(hourView.render());
         self._hourViews.push(hourView);
     });
-
-    var selector = '.tlMinView';
-    var lastMin = self._timeSpan.getEndTime().getMin();
-    if(0 <= lastMin && lastMin < 15)
-    {
-        selector += ':not(._15)';
-    }
-    else if(15 <= lastMin && lastMin < 30)
-    {
-        selector += ':not(._15, ._30)';
-    }
-    else if(30 <= lastMin && lastMin < 45)
-    {
-        selector += ':not(._15, ._30, ._45)';
-    }
-    else if(45 <= lastMin && lastMin < 60)
-    {
-        selector += ':not(._15, ._30, ._45, ._60)';
-    }
-
-    hourView.getElement().children(selector).remove();
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(top){
@@ -827,6 +857,14 @@ Timeline.LineView.prototype.setLineWidth = function(width){
     this._updateDisplay();
     this._updateEventsDisplay();
     return this;
+};
+
+Timeline.LineView.prototype.getFirstHourView = function(){
+    return this._hourViews[0];
+};
+
+Timeline.LineView.prototype.getLastHourView = function(){
+    return this._hourViews[this._hourViews.length - 1];
 };
 
 Timeline.LineView.prototype.addHeightPerMin = function(amount){
@@ -1228,13 +1266,12 @@ Timeline.TimeSpan.prototype.eachHour = function(callback){
     var end = this.getEndTime().getHour();
     var key = 0;
 
-    while(true)
-    {
-        callback.call(hour, key, hour);
-
-        if(hour === end)
-        {
+    while(true){
+        if(hour === end){
+            callback.call(hour, key, hour, this.getEndTime().getMin());
             break;
+        } else {
+            callback.call(hour, key, hour);
         }
 
         hour += 1;
