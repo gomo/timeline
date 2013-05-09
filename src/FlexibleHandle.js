@@ -53,9 +53,16 @@ Timeline.FlexibleHandle.prototype._setupEventHandle = function(handle){
     return handle;
 };
 
-Timeline.FlexibleHandle.prototype.disable = function(){
+Timeline.FlexibleHandle.prototype.fix = function(){
     var newTimeSpan = new Timeline.TimeSpan(this._topElement.data('timeline').time, this._downElement.data('timeline').time);
     this._eventView.setTimeSpan(newTimeSpan);
+    this._eventView.updateDisplay();
+    this._topElement.hide();
+    this._downElement.hide();
+    this._frameView.getTimeIndicator().hide();
+};
+
+Timeline.FlexibleHandle.prototype.cancel = function(){
     this._eventView.updateDisplay();
     this._topElement.hide();
     this._downElement.hide();
