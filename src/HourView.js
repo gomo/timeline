@@ -1,7 +1,8 @@
 //Hour
-Timeline.HourView = function(lineView, hour){
+Timeline.HourView = function(lineView, hour, minLimit){
     Timeline.HourView.super_.call(this);
     this._hour = hour;
+    this._minLimit = minLimit;
     this._lineView = lineView;
     this._minViews = [];
 };
@@ -18,6 +19,14 @@ Timeline.HourView.prototype.setLabel = function(label){
         var elem = $('<div class="tlLabel">'+label+'</div>');
         this._element.append(elem).addClass('tlHasLabel');
     }
+};
+
+Timeline.HourView.prototype.getFirstMinView = function(){
+    return this._minViews[0];
+};
+
+Timeline.HourView.prototype.getLastMinView = function(){
+    return this._minViews[this._minViews.length - 1];
 };
 
 Timeline.HourView.prototype.getHour = function(){
@@ -77,7 +86,11 @@ Timeline.HourView.prototype._build = function(){
     var minUnit = 15;
     var count = 60/minUnit;
     for (var i = 0; i < count; i++) {
-        var min = new Timeline.MinView(this, i*minUnit, minUnit);
+        var targetMin = i*minUnit;
+        if(this._minLimit !== undefined && targetMin > this._minLimit){
+            break;
+        }
+        var min = new Timeline.MinView(this, targetMin, minUnit);
         this._minViews.push(min);
         this._element.append(min.render());
     }

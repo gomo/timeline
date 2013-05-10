@@ -72,13 +72,12 @@ Timeline.TimeSpan.prototype.eachHour = function(callback){
     var end = this.getEndTime().getHour();
     var key = 0;
 
-    while(true)
-    {
-        callback.call(hour, key, hour);
-
-        if(hour === end)
-        {
+    while(true){
+        if(hour === end){
+            callback.call(hour, key, hour, this.getEndTime().getMin());
             break;
+        } else {
+            callback.call(hour, key, hour);
         }
 
         hour += 1;

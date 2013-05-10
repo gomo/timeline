@@ -14,6 +14,8 @@
 .tlFrameView .tlLineView .tlTimeline .tlHourView.tlHasLabel{border-top:none}
 .tlFrameView .tlLineView .tlTimeline .tlMinView._15,.tlTimeline .tlMinView._45{border-bottom:1px dashed #ddd}
 .tlFrameView .tlLineView .tlTimeline .tlMinView._30{border-bottom:1px solid #ccc}
+.tlFrameView .tlEventTopHandle{background-color:#808080;border:1px solid #999;margin:0 auto}
+.tlFrameView .tlEventDownHandle{background-color:#808080;border:1px solid #999;margin:0 auto}
 .tlFrameView .tlEventView{opacity:.7;filter:alpha(opacity=70);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";-webkit-border-radius:8px;border-radius:8px;border:1px solid #555;margin:0 auto;text-align:center;line-height:17px;overflow:hidden}
 .tlFrameView .tlEventView.tlFloating{border:2px dotted #333}
 .tlFrameView .tlEventView.disable{background-color:#999;-webkit-border-radius:0;border-radius:0;width:100%}
