@@ -30,7 +30,7 @@ Timeline.LineView.prototype.getFrameView = function(){
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
-    var result = {ok:true, requsted:timeSpan, suggestion:timeSpan, space:undefined};
+    var result = {ok:true, requested:timeSpan, suggestion:timeSpan, space:undefined};
 
     //check overlap entire timeline
     if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){

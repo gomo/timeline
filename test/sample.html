@@ -11,7 +11,7 @@
     <script>
         $(function(){
             var tl = Timeline;
-            var lv = new tl.FrameView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)), [
+            var frame = new tl.FrameView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)), [
                 {label:'label1', id:'__1'},
                 {label:'label2', id:'__2'},
                 {label:'label3', id:'__3'},
@@ -29,65 +29,79 @@
                 {label:'label15', id:'__15'},
             ]);
 
-            $('#timeline').append(lv.render());
+            $('#timeline').append(frame.render());
 
-            lv.getElement().bind('didClickEventView', function(e, params){
-                if(params.eventView.isFloating()){
+            
+            var clickActionSelect = $('#actions .click_action');
+            var clickAction = clickActionSelect.val();
+            clickActionSelect.change(function(){
+                clickAction = clickActionSelect.val();
+            });
 
-                    if(!params.check.ok && !params.check.suggestion){
-                        alert('You can\'t');
-                    } else {
-                        params.eventView.moveTo(params.check.suggestion, params.lineView);
-                        if(confirm('OK')){
-                            params.eventView.floatFix(params.check.suggestion);
-                        } else {
-                            params.eventView.floatCancel();
-                        }
-                    }
-
-                } else if(params.eventView.isFlexible()){
-                    if(confirm('OK')){
-                        params.eventView.flexibleFix();
-                    } else {
-                        params.eventView.flexibleCancel();
-                    }
-                } else {
+            frame.addEventListener('didClickEventView', function(e, params){
+                if(clickAction == 'float'){
                     params.eventView.toFloat();
-                    // params.eventView.toFlexible();
+                } else {
+                    params.eventView.toFlexible();
                 }
             });
 
-            lv.getElement().bind('didFloatFixEventView', function(e, params){
-                console.log(params);
+            frame.addEventListener('didClickFloatingEventView', function(e, params){
+                if(!params.check.suggestion){
+                    alert('You can\'t');
+                } else {
+                    params.eventView.moveTo(params.check.suggestion, params.lineView);
+                    if(confirm('OK')){
+                        params.eventView.floatFix(params.check.suggestion);
+                    } else {
+                        params.eventView.floatCancel();
+                    }
+                }
             });
 
-            lv.addEventView('__1', tl.EventView.create([10,0], [12,00], 'disable'));
-            lv.addEventView('__1', tl.EventView.create([12,30], [14,30], 'green'));
-            lv.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
-            lv.addEventView('__3', tl.EventView.create([10,0], [11,00], 'disable'));
+            frame.addEventListener('didClickFlexibleEventView', function(e, params){
+                if(confirm('OK')){
+                    params.eventView.flexibleFix();
+                } else {
+                    params.eventView.flexibleCancel();
+                }
+            });
+
+            frame.addEventListener('didFixFloatingEventView', function(e, params){
+                console.log('floatFix', params);
+            });
+
+            frame.addEventListener('didFixFlexibleEventView', function(e, params){
+                console.log('flexibleFix', params);
+            });
+
+            frame.addEventView('__1', tl.EventView.create([10,0], [12,00], 'disable'));
+            frame.addEventView('__1', tl.EventView.create([12,30], [14,30], 'green'));
+            frame.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
+            frame.addEventView('__3', tl.EventView.create([10,0], [11,00], 'disable'));
 
             $("#actions button").click(function(){
                 var elem = $(this);
                 switch(elem.attr('class')){
                     case 'left':
-                        lv.addLineWidth(-2);
+                        frame.addLineWidth(-2);
                         break;
                     case 'right':
-                        lv.addLineWidth(2);
+                        frame.addLineWidth(2);
                         break;
                     case 'up':
-                        lv.addHeightPerMin(-0.1);
+                        frame.addHeightPerMin(-0.1);
                         break;
                     case 'down':
-                        lv.addHeightPerMin(0.1);
+                        frame.addHeightPerMin(0.1);
                         break;
                 }
             });
 
             var fixInterval = $('#actions .fix_interval');
-            fixInterval.val(lv.getMinFixInterval());
+            fixInterval.val(frame.getMinFixInterval());
             fixInterval.change(function(){
-                lv.setMinFixInterval(fixInterval.val());
+                frame.setMinFixInterval(fixInterval.val());
             });
 
         });
@@ -102,6 +116,10 @@
             <option value="10">10</option>
             <option value="15">15</option>
         </select>&nbsp;min.
+        <select name="click_action" class="click_action">
+            <option value="float">float</option>
+            <option value="flexible">flexible</option>
+        </select>
     </div>
     <div id="timeline"></div>
 </body>

@@ -117,9 +117,12 @@ Timeline.EventView = function(timeSpan, color){
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
             params.lineView = self._nextLineView;
+            self.getFrameView().triggerEvent('didClickFloatingEventView', params);
+        } else if(self.isFlexible()) {
+            self.getFrameView().triggerEvent('didClickFlexibleEventView', params);
+        } else {
+            self.getFrameView().triggerEvent('didClickEventView', params);
         }
-
-        self.getFrameView().getElement().trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -174,7 +177,7 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
-        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
+        this.getFrameView().triggerEvent('didFixFloatingEventView', {eventView:this});
     }
 };
 
@@ -182,6 +185,7 @@ Timeline.EventView.prototype.flexibleFix = function(timeSpan){
     if (this.isFlexible()) {
         this.getFrameView().getFlexibleHandle().fix();
         this._element.removeClass('tlFlexible');
+        this.getFrameView().triggerEvent('didFixFlexibleEventView', {eventView:this});
     }
 };
 
@@ -451,6 +455,16 @@ Timeline.FrameView.prototype._build = function(){
 
 };
 
+Timeline.FrameView.prototype.addEventListener = function(name, callback){
+    this._element.on(name, callback);
+    return this;
+};
+
+Timeline.FrameView.prototype.triggerEvent = function(name, params){
+    this._element.trigger(name, [params]);
+    return this;
+};
+
 Timeline.FrameView.prototype.getFlexibleHandle = function(){
     return this._flexibleHandle;
 };
@@ -656,7 +670,7 @@ Timeline.LineView.prototype.getFrameView = function(){
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
-    var result = {ok:true, requsted:timeSpan, suggestion:timeSpan, space:undefined};
+    var result = {ok:true, requested:timeSpan, suggestion:timeSpan, space:undefined};
 
     //check overlap entire timeline
     if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){

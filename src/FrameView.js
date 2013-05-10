@@ -23,6 +23,16 @@ Timeline.FrameView.prototype._build = function(){
 
 };
 
+Timeline.FrameView.prototype.addEventListener = function(name, callback){
+    this._element.on(name, callback);
+    return this;
+};
+
+Timeline.FrameView.prototype.triggerEvent = function(name, params){
+    this._element.trigger(name, [params]);
+    return this;
+};
+
 Timeline.FrameView.prototype.getFlexibleHandle = function(){
     return this._flexibleHandle;
 };

@@ -33,9 +33,12 @@ Timeline.EventView = function(timeSpan, color){
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
             params.lineView = self._nextLineView;
+            self.getFrameView().triggerEvent('didClickFloatingEventView', params);
+        } else if(self.isFlexible()) {
+            self.getFrameView().triggerEvent('didClickFlexibleEventView', params);
+        } else {
+            self.getFrameView().triggerEvent('didClickEventView', params);
         }
-
-        self.getFrameView().getElement().trigger('didClickEventView', [params]);
     });
 
     self._element.append('<div class="start time" />');
@@ -90,7 +93,7 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
         this.setTimeSpan(timeSpan);
         this._nextLineView.addEventView(this);
         this._clearFloat();
-        this.getFrameView().getElement().trigger('didFloatFixEventView', [{eventView:this}]);
+        this.getFrameView().triggerEvent('didFixFloatingEventView', {eventView:this});
     }
 };
 
@@ -98,6 +101,7 @@ Timeline.EventView.prototype.flexibleFix = function(timeSpan){
     if (this.isFlexible()) {
         this.getFrameView().getFlexibleHandle().fix();
         this._element.removeClass('tlFlexible');
+        this.getFrameView().triggerEvent('didFixFlexibleEventView', {eventView:this});
     }
 };
 
