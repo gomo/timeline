@@ -70,8 +70,9 @@ Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
 };
 
 Timeline.EventView.prototype.setNextLineView = function(lineView){
-    if(this._nextLineView){
-        this._nextLineView.getElement().removeClass('tlEventOver');
+    var oldLineView = this.getFrameView().swapCurrentDroppableLineView(lineView);
+    if(oldLineView){
+        oldLineView.getElement().removeClass('tlEventOver');
     }
 
     lineView.getElement().addClass('tlEventOver');
