@@ -3,12 +3,12 @@ Timeline.EventView = function(timeSpan, color){
     var self = this;
     Timeline.EventView.super_.call(self);
     self._timeSpan = timeSpan;
-    self._lineView = null;
-    self._nextLineView = null;
+    self._lineView = undefined;
+    self._nextLineView = undefined;
     self._element.css('position', 'absolute');
     self._element.addClass(color);
 
-    var prevLineView = null;
+    var prevLineView = undefined;
     self._element.draggable({
         create: function( event, ui ) {
         },
@@ -111,7 +111,7 @@ Timeline.EventView.prototype._clearFloat = function(){
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
-    this._nextLineView = null;
+    this._nextLineView = undefined;
     this.updateDisplay();
     this.getFrameView().getTimeIndicator().hide();
 };

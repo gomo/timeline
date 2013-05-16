@@ -1,7 +1,7 @@
 //RulerView
 Timeline.RulerView = function(){
     Timeline.RulerView.super_.call(this);
-    this._lineView = null;
+    this._lineView = undefined;
 };
 
 Timeline.Util.inherits(Timeline.RulerView, Timeline.View);

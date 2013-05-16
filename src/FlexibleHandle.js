@@ -1,6 +1,6 @@
 //FlexibleHandle
 Timeline.FlexibleHandle = function(frameView){
-    this._eventView = null;
+    this._eventView = undefined;
     this._frameView = frameView;
     this._topElement = this._setupEventHandle($('<div class="tlEventTopHandle" />'));
     this._downElement = this._setupEventHandle($('<div class="tlEventDownHandle" />'));

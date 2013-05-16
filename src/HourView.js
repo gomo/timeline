@@ -65,7 +65,7 @@ Timeline.HourView.prototype.setHeightPerMin = function(height){
 };
 
 Timeline.HourView.prototype.getMinViewByTop = function(top){
-    var minView = null;
+    var minView = undefined;
     $.each(this._minViews, function(){
 
         if(this.containsTop(top))

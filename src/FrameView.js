@@ -10,7 +10,7 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._timeIndicator.data('timeline', {});
 
     this._flexibleHandle = new Timeline.FlexibleHandle(this);
-    this._currentDroppableLineView = null;
+    this._currentDroppableLineView = undefined;
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);

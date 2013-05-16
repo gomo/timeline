@@ -5,7 +5,7 @@ if( Object.create === undefined ) {
     Object.create = function(o, props) {
         var newObj;
 
-        if (typeof(o) !== "object" && o !== null) throw new TypeError();
+        if (typeof(o) !== "object" && o !== undefined) throw new TypeError();
 
         function F() {}
         F.prototype = o;

@@ -3,12 +3,12 @@ Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
-    this._frameView = null;
+    this._frameView = undefined;
     //display frame element
-    this._lineElement = null;
+    this._lineElement = undefined;
     //HourView wrapper element(for culc height faster)
-    this._hoursElement = null;
-    this._rulerView = null;
+    this._hoursElement = undefined;
+    this._rulerView = undefined;
     this._lineWidth = 60;
     this._label = undefined;
 };
@@ -147,7 +147,7 @@ Timeline.LineView.prototype._build = function(){
         }
     });
 
-    var hourView = null;
+    var hourView = undefined;
     self._timeSpan.eachHour(function(key, hour, minLimit){
         hourView = new Timeline.HourView(self, hour, minLimit);
         if(key === 0 || key % 5 === 0)
@@ -180,22 +180,22 @@ Timeline.LineView.prototype.getTimeSpan = function(){
 
 Timeline.LineView.prototype.getTimeByTop = function(top){
     var hourView = this.getHourViewByTop(top);
-    if(hourView === null)
+    if(hourView === undefined)
     {
-        return null;
+        return undefined;
     }
 
     var minView = hourView.getMinViewByTop(top);
-    if(minView === null)
+    if(minView === undefined)
     {
-        return null;
+        return undefined;
     }
 
     return minView.getTimeByTop(top);
 };
 
 Timeline.LineView.prototype.getHourViewByTop = function(top){
-    var hourView = null;
+    var hourView = undefined;
 
     $.each(this._hourViews, function(){
         if(this.containsTop(top))
@@ -320,7 +320,7 @@ Timeline.LineView.prototype._updateEventsDisplay = function(){
 };
 
 Timeline.LineView.prototype._updateRulerDisplay = function(){
-    if(this._rulerView === null)
+    if(this._rulerView === undefined)
     {
         return;
     }
