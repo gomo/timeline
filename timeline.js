@@ -92,7 +92,6 @@ Timeline.EventView = function(timeSpan, color){
     self._element.css('position', 'absolute');
     self._element.addClass(color);
 
-    var prevLineView = undefined;
     self._element.draggable({
         create: function( event, ui ) {
         },
