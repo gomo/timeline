@@ -1,5 +1,4 @@
-Timeline = {};
-
+global.Timeline = {};
 //Compatibility for ecma3
 if( Object.create === undefined ) {
     Object.create = function(o, props) {
