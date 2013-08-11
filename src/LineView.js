@@ -1,5 +1,5 @@
 //Line
-Timeline.LineView = function(timeSpan){
+Timeline.LineView = function(timeSpan, lineWidth){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
@@ -9,7 +9,7 @@ Timeline.LineView = function(timeSpan){
     //HourView wrapper element(for culc height faster)
     this._hoursElement = undefined;
     this._rulerView = undefined;
-    this._lineWidth = 60;
+    this._lineWidth = lineWidth;
     this._label = undefined;
 };
 

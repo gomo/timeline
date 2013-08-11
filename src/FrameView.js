@@ -11,6 +11,7 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._flexibleHandle = new Timeline.FlexibleHandle(this);
     this._currentDroppableLineView = undefined;
+    this._defaultLineWidth = 60;
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -28,6 +29,16 @@ Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
     var current = this._currentDroppableLineView;
     this._currentDroppableLineView = lineView;
     return current;
+};
+
+Timeline.FrameView.prototype.setDefaultLineWidth = function(value){
+    this._defaultLineWidth = value;
+    return this;
+};
+
+Timeline.FrameView.prototype.setRulerInterval = function(value){
+    this._rulerInterval = value;
+    return this;
 };
 
 Timeline.FrameView.prototype.addEventListener = function(name, callback){
@@ -57,10 +68,14 @@ Timeline.FrameView.prototype.getMinFixInterval = function(){
 };
 
 Timeline.FrameView.prototype.addLineWidth = function(value){
+    var totalWidth = 0;
     for(var key in this._timeLines){
         var lineView = this._timeLines[key];
         lineView.addLineWidth(value);
+        totalWidth += lineView.getElement().outerWidth();
     }
+
+    this._element.width(totalWidth);
 };
 
 Timeline.FrameView.prototype.addHeightPerMin = function(value){
@@ -80,7 +95,7 @@ Timeline.FrameView.prototype._postShow = function(){
 
     var prevTimeline;
     $.each(self._linesData, function(key, data){
-        var timeline = new Timeline.LineView(self._timeSpan.clone());
+        var timeline = new Timeline.LineView(self._timeSpan.clone(), self._defaultLineWidth);
         timeline
             .setLabel(data.label)
             .setId(data.id)

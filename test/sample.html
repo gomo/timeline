@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../lib/timeline.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
@@ -28,6 +29,10 @@
                 {label:'label14', id:'__14'},
                 {label:'label15', id:'__15'},
             ]);
+
+            frame
+                .setDefaultLineWidth(56)
+                .setRulerInterval(4);
 
             $('#timeline').append(frame.render());
 
