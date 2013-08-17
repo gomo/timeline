@@ -125,7 +125,7 @@ Timeline.FrameView.prototype._postShow = function(){
         prevTimeline = timeline;
     });
 
-    prevTimeline.getElement().addClass('last');
+    prevTimeline.getElement().addClass('tlLast');
 
     self._element.width(totalWidth);
 };

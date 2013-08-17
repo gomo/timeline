@@ -1,6 +1,6 @@
 @import 'nib'
 
-.tlFrameView .tlLineView
+.tlLineView
 	clearfix();
 	float: left;
 	user-select(none);
@@ -19,68 +19,72 @@
 	background-repeat: no-repeat
 
 /* tlRuler */
-.tlFrameView .tlLineView .tlRulerView
+.tlRulerView
 	float: left
 	text-align: center
 	font-size: 14px
+	margin-top: -10px;
 
 /* tlTimeline */
-.tlFrameView .tlLineView.even .tlTimeline
+.tlLineView.even .tlTimeline
 	background-color: #f3f3f3;
 
-.tlFrameView .tlLineView.odd .tlTimeline
+.tlLineView.odd .tlTimeline
 	background-color: #fbfbfb;
 
 
 
-.tlFrameView .tlLineView.tlEventOver .tlTimeline
+.tlLineView.tlEventOver .tlTimeline
 	background-color: #FFFED6;
 
-.tlFrameView .tlLineView .tlTimeline
+.tlTimeline
 	float: left
-	margin-top: 10px;
 	
 
-.tlFrameView .tlLineView .tlTimeline .tlLabel
+.tlLabel
 	font-size: 11px
 	text-align: center
 	height 16px
 	line-height: 16px
 	color: #fff
-	background-color: #000
-	opacity: 0.4
+	background-color: #555
+	opacity: 0.6
+	position: relative;
+	z-index: 100;
+	padding: 1px;
+	overflow: hidden;
 
-.tlFrameView .tlLineView.tlHasRuler .tlTimeline .tlLabel
+.tlLineView.tlHasRuler .tlLabel
 	border-radius: 3px 0 0 3px
 
-.tlFrameView .tlLineView.tlPrevRuler .tlTimeline .tlLabel,
-.tlFrameView .tlLineView.last .tlTimeline .tlLabel
+.tlLineView.tlPrevRuler .tlLabel,
+.tlLineView.tlLast .tlLabel
 	border-radius: 0 3px 3px 0
 
-.tlFrameView .tlLineView .tlTimeline .tlHourView
+.tlHourView
 	border-top 1px solid #999
 
-.tlFrameView .tlLineView .tlTimeline .tlHourView.tlHasLabel
+.tlHourView.tlHasLabel
 	border-top none
 
-.tlFrameView .tlLineView .tlTimeline .tlMinView._15, .tlTimeline .tlMinView._45
+.tlMinView._15, .tlMinView._45
 	border-bottom 1px dashed #ddd
 
-.tlFrameView .tlLineView .tlTimeline .tlMinView._30
+.tlMinView._30
 	border-bottom 1px solid #ccc
 
-.tlFrameView .tlEventTopHandle
+.tlEventTopHandle
 	background url("../img/top-handle.png") no-repeat center
 	cursor: row-resize
 	margin 0 auto
 
-.tlFrameView .tlEventDownHandle
+.tlEventDownHandle
 	background url("../img/down-handle.png") no-repeat center
 	cursor: row-resize
 	margin 0 auto
 
 /* tlEventView */
-.tlFrameView .tlEventView
+.tlEventView
 	opacity: 0.7
 	border-radius: 8px
 	border: 1px solid #555;
@@ -89,15 +93,15 @@
 	line-height: 17px;
 	overflow: hidden
 
-.tlFrameView .tlEventView.tlFloating
+.tlEventView.tlFloating
 	border: 2px dotted #333;
 
-.tlFrameView .tlEventView.disable
+.tlEventView.disable
 	background-color #999
 	border-radius 0
 	width 100%
 
-.tlFrameView .tlEventView .time
+.tlEventView .time
 	border-radius: 6px
 	width: 85%;
 	margin 0 auto
@@ -108,30 +112,30 @@
 	box-shadow: -1px -1px 4px #555
 	font-size 85%
 
-.tlFrameView .tlEventView .time.start
+.tlEventView .time.start
 	top 3px
 
-.tlFrameView .tlEventView .time.end
+.tlEventView .time.end
 	margin-top: 1px
 
-.tlFrameView .tlEventView .display
+.tlEventView .display
 	overflow: hidden
 	line-height: 14px;
 	padding-top: 2px
 	font-size 80%
 
 /* color variation */
-.tlFrameView .tlEventView.blue
+.tlEventView.blue
 	background-color #A3CDE1
 
-.tlFrameView .tlEventView.pink
+.tlEventView.pink
 	background-color #FFB6B6
 
-.tlFrameView .tlEventView.green
+.tlEventView.green
 	background-color #B8F1AC
 
-.tlFrameView .tlEventView.yellow
+.tlEventView.yellow
 	background-color #FFFFB6
 
-.tlFrameView .tlEventView.orange
+.tlEventView.orange
 	background-color #FFDCB6
