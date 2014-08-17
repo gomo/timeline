@@ -85,6 +85,23 @@ Timeline.TimeSpan.prototype.eachHour = function(callback){
     }
 };
 
+Timeline.TimeSpan.prototype.eachTime = function(callback, minuteInterval){
+    var key = 0;
+    minuteInterval = minuteInterval ? minuteInterval : 60;
+
+    var time = this.getStartTime();
+    while(true){
+        if(time.compare(this.getEndTime()) > 0){
+            break;
+        }
+
+        callback.call(time, key, time);
+
+        time = time.addMin(minuteInterval);
+        ++key;
+    }
+};
+
 Timeline.TimeSpan.prototype.toString = function(){
     return this._startTime + '~' + this._endTime;
 };
