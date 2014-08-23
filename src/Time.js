@@ -5,12 +5,12 @@
 Timeline.Time = function(hour, min){
     this._hour = hour === undefined ? 0 : parseInt(hour, 10);
     this._min = min === undefined ? 0 : parseInt(min, 10);
-    if(this._min < 0){
+    while(this._min < 0){
         --this._hour;
         this._min = 60 + this._min;
     }
 
-    if(this._min > 59){
+    while(this._min > 59){
         ++this._hour;
         this._min = this._min - 60;
     }
@@ -33,28 +33,7 @@ Timeline.Time.prototype.clone = function(){
 };
 
 Timeline.Time.prototype.addMin = function(min){
-    var newHour = this.getHour();
-    var newMin = this.getMin();
-
-    newMin += min;
-    if(newMin > 59)
-    {
-        var plusHour = Math.floor(newMin / 60);
-        newHour += plusHour;
-        newMin = Math.abs(newMin % 60);
-    }
-    else if(newMin < 0)
-    {
-        var minusHour = Math.floor(newMin / 60);
-        newHour += minusHour;
-        newMin = 60 - Math.abs(newMin % 60);
-        if(newMin === 60)
-        {
-            newMin = 0;
-        }
-    }
-
-    return new Timeline.Time(newHour, newMin);
+    return new Timeline.Time(this.getHour(), this.getMin() + min);
 };
 
 Timeline.Time.prototype.isEqual = function(time){
@@ -92,7 +71,7 @@ Timeline.Time.prototype.getDistance = function(targetTime){
 };
 
 Timeline.Time.prototype.toString = function(){
-    return this._hour +':'+ (this._min < 10 ? '0'+this._min : this._min);
+    return this.getDisplayTime();
 };
 
 Timeline.Time.prototype.getDisplayHour = function(){
