@@ -25,6 +25,11 @@ class Timeline_Time{
     return new Timeline_Time($hour, $min);
   }
 
+
+  public function equals(Timeline_Time $time){
+    return $this->getHour() == $time->getHour() && $this->getMin() == $time->getMin();
+  }
+
   public function getHour(){
     return $this->_hour;
   }
@@ -34,7 +39,7 @@ class Timeline_Time{
   }
 
   public function getDayShift(){
-    return floor($this->_hour / 24);
+    return (int)floor($this->_hour / 24);
   }
 
   public function getDisplayHour(){
@@ -43,7 +48,7 @@ class Timeline_Time{
       $hour -= 24;
     }
 
-    return $hour;
+    return $hour.'';
   }
 
   public function getDisplayMin(){
@@ -78,6 +83,8 @@ class Timeline_Time{
             return -1;
         }
     }
+
+    return 0;
   }
 
   public function toString(){
