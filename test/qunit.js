@@ -89,38 +89,130 @@ test( "Line.create", function() {
 });
 
 test( "TimeSpan.overlapsTimeSpan", function() {
-    var ts1, ts2;
+    var timespan = tl.TimeSpan.create([10, 0], [15, 0]);
 
-    //check OVERLAP_START
-    ts1 = tl.TimeSpan.create([10, 0], [15, 0]);
-    ts2 = tl.TimeSpan.create([14, 59], [15, 10]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_START);
+    //equals
+    equal(
+        timespan.equals(tl.TimeSpan.create([10, 0], [15, 0])),
+        true
+    );
 
-    ts2 = tl.TimeSpan.create([15, 0], [15, 10]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_NO);
+    equal(
+        timespan.equals(tl.TimeSpan.create([10, 1], [15, 0])),
+        false
+    );
 
-    //check OVERLAP_END
-    ts1 = tl.TimeSpan.create([10, 0], [15, 0]);
-    ts2 = tl.TimeSpan.create([9, 0], [10, 1]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_END);
+    equal(
+        timespan.equals(tl.TimeSpan.create([9, 59], [15, 0])),
+        false
+    );
 
-    ts2 = tl.TimeSpan.create([9, 0], [10, 0]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_NO);
+    equal(
+        timespan.equals(tl.TimeSpan.create([10, 0], [15, 1])),
+        false
+    );
 
-    //check OVERLAP_CONTAIN
-    ts1 = tl.TimeSpan.create([10, 0], [15, 0]);
-    ts2 = tl.TimeSpan.create([10, 1], [14, 59]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_CONTAIN);
+    equal(
+        timespan.equals(tl.TimeSpan.create([10, 0], [14, 59])),
+        false
+    );
 
-    ts2 = tl.TimeSpan.create([10, 0], [15, 0]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_EQUAL);
-    ts2 = tl.TimeSpan.create([10, 0], [15, 1]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_START);
-    ts2 = tl.TimeSpan.create([9, 59], [15, 0]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_END);
-    ts2 = tl.TimeSpan.create([15, 1], [15, 20]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_NO);
-    ts2 = tl.TimeSpan.create([9, 59], [15, 1]);
-    equal(ts2.overlapsTimeSpan(ts1), Timeline.TimeSpan.OVERLAP_OVER);
+    //contains
+    equal(
+        timespan.contains(tl.TimeSpan.create([10, 1], [14, 59])),
+        true
+    );
 
+    equal(
+        timespan.contains(tl.TimeSpan.create([10, 0], [14, 59])),
+        true
+    );
+
+    equal(
+        timespan.contains(tl.TimeSpan.create([10, 1], [15, 0])),
+        true
+    );
+
+    equal(
+        timespan.contains(tl.TimeSpan.create([10, 0], [15, 0])),
+        true
+    );
+
+    equal(
+        timespan.contains(tl.TimeSpan.create([9, 59], [15, 0])),
+        false
+    );
+
+    equal(
+        timespan.contains(tl.TimeSpan.create([10, 0], [15, 1])),
+        false
+    );
+
+    equal(
+        timespan.contains(tl.TimeSpan.create([9, 59], [15, 1])),
+        false
+    );
+
+
+
+    //overlaps
+
+    //true
+    //エンドタイムが重なっている
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([9, 59], [14, 59])),
+        true
+    );
+
+    //同じ時間は重なってないとみなす
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([9, 0], [10, 0])),
+        false
+    );
+
+    //スタートタイムが重なっている
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([10, 1], [15, 1])),
+        true
+    );
+
+    //同じ時間は重なってない
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([15, 0], [16, 0])),
+        false
+    );
+
+    //覆っている
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([9, 59], [15, 0])),
+        true
+    );
+
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([9, 59], [15, 1])),
+        true
+    );
+
+    //含まれている
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([10, 1], [14, 59])),
+        true
+    );
+
+    //一致している
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([10, 0], [15, 0])),
+        true
+    );
+
+    //false
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([9, 0], [9, 59])),
+        false
+    );
+
+    equal(
+        timespan.overlaps(tl.TimeSpan.create([15, 1], [16, 0])),
+        false
+    );
 });

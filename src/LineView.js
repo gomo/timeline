@@ -30,16 +30,10 @@ Timeline.LineView.prototype.getFrameView = function(){
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
-    var result = {ok:true, requested:timeSpan, suggestion:timeSpan, space:undefined};
+    var result = {ok:true, requested:timeSpan, suggestion:timeSpan};
 
     //check overlap entire timeline
-    if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_END){
-        timeSpan = timeSpan.shiftStartTime(this.getTimeSpan().getStartTime());
-        result.ok = false;
-        result.suggestion = timeSpan;
-    }
-
-    if(timeSpan.overlapsTimeSpan(this.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
+    if(!this.getTimeSpan().contains(timeSpan)){
         timeSpan = timeSpan.shiftEndTime(this.getTimeSpan().getEndTime());
         result.ok = false;
         result.suggestion = timeSpan;
@@ -47,26 +41,29 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
 
     //check start time overlaps with other
     this.eachEventView(function(key, eventView){
-        if(timeSpan.overlapsTimeSpan(eventView.getTimeSpan()) === Timeline.TimeSpan.OVERLAP_START){
-            timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
-            result.ok = false;
-            result.suggestion = timeSpan;
-            return false;
+        if(timeSpan.overlaps(eventView.getTimeSpan())){
+            if(timeSpan.getStartTime().compare(eventView.getTimeSpan().getStartTime()) >= 0){
+                timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
+                result.ok = false;
+                result.suggestion = timeSpan;
+                return false;
+            } else if(timeSpan.getEndTime().compare(eventView.getTimeSpan().getEndTime()) <= 0){
+                timeSpan = timeSpan.shiftEndTime(eventView.getTimeSpan().getStartTime());
+                result.ok = false;
+                result.suggestion = timeSpan;
+                return false;
+            }
         }
     });
 
-    //search the next eventView and check fit in the gap.
-    var startTime = timeSpan.getStartTime();
-    var nextEv = this.getNextEventView(startTime);
-    if(nextEv){
-        result.space = new Timeline.TimeSpan(startTime, nextEv.getTimeSpan().getStartTime());
-        var ol = timeSpan.overlapsTimeSpan(result.space);
-        if(ol !== Timeline.TimeSpan.OVERLAP_CONTAIN && ol !== Timeline.TimeSpan.OVERLAP_EQUAL){
+    //何かと重なっていたら
+    this.eachEventView(function(key, eventView){
+        if(timeSpan.overlaps(eventView.getTimeSpan())){
+            result.ok = false;
             result.suggestion = undefined;
         }
-    } else {
-        result.space = new Timeline.TimeSpan(startTime, this.getTimeSpan().getEndTime());
-    }
+    });
+
 
     return result;
 };
