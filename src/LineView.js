@@ -41,7 +41,11 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
 
     //check start time overlaps with other
     this.eachEventView(function(key, eventView){
-        if(timeSpan.overlaps(eventView.getTimeSpan())){
+        if(eventView.getTimeSpan().contains(timeSpan)){
+            result.ok = false;
+            result.suggestion = undefined;
+            return false;
+        } else if(timeSpan.overlaps(eventView.getTimeSpan())){
             if(timeSpan.getStartTime().compare(eventView.getTimeSpan().getStartTime()) >= 0){
                 timeSpan = timeSpan.shiftStartTime(eventView.getTimeSpan().getEndTime());
                 result.ok = false;
