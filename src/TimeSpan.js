@@ -4,9 +4,8 @@
  */
 Timeline.TimeSpan = function(startTime, endTime){
 
-    if(startTime.compare(endTime) > 0)
-    {
-        throw 'The endTime is earlier than the startTime.';
+    while(startTime.compare(endTime) >= 0){
+        endTime = endTime.addMin(24 * 60);
     }
 
     this._startTime = startTime;
@@ -33,6 +32,7 @@ Timeline.TimeSpan.prototype.shiftEndTime = function(time){
 };
 
 Timeline.TimeSpan.prototype.shiftStartTime = function(time){
+    console.log(time);
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 

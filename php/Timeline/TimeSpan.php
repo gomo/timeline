@@ -17,9 +17,8 @@ class Timeline_TimeSpan{
   }
 
   public function __construct(Timeline_Time $start, Timeline_Time $end){
-    if($start->compare($end) >= 0)
-    {
-      throw new Timeline_Exception('The end time is earlier than the start time.');
+    while($start->compare($end) >= 0){
+      $end = $end->addMin(24 * 60);
     }
 
     $this->_start_time = $start;
