@@ -17,9 +17,9 @@ class Timeline_TimeSpan{
   }
 
   public function __construct(Timeline_Time $start, Timeline_Time $end){
-    if($start->compare($end) > 0)
+    if($start->compare($end) >= 0)
     {
-        throw new Timeline_Exception('The end time is earlier than the start time.');
+      throw new Timeline_Exception('The end time is earlier than the start time.');
     }
 
     $this->_start_time = $start;
@@ -60,5 +60,17 @@ class Timeline_TimeSpan{
     }
 
     return false;
+  }
+
+  public function getDistance(){
+    return $this->getStartTime()->getDistance($this->getEndTime());
+  }
+
+  public function toString(){
+    return sprintf('%s ~ %s', $this->getStartTime(), $this->getEndTime());
+  }
+
+  public function __toString(){
+    return $this->toString();
   }
 }

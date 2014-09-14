@@ -38,7 +38,7 @@ Timeline.TimeSelector.prototype.change = function(callback){
 };
 
 Timeline.TimeSelector.prototype.getTime = function(){
-  return Timeline.Time.create(this._hourElem.val(), this._minElem.val());
+  return new Timeline.Time(this._hourElem.val(), this._minElem.val());
 };
 
 Timeline.TimeSelector.prototype.setTimeWithLesserMin = function(time){
@@ -54,7 +54,7 @@ Timeline.TimeSelector.prototype.setTimeWithLesserMin = function(time){
 
 Timeline.TimeSelector.prototype.setTimeWithGreaterMin = function(time){
   var self = this;
-  
+
   self._hourElem.val(time.getHour());
   self._minElem.val(
     self._minInterval * Math.ceil(time.getMin() / self._minInterval)

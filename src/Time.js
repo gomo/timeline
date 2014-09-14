@@ -21,8 +21,8 @@ Timeline.Time = function(hour, min){
     }
 };
 
-Timeline.Time.create = function(hour, min){
-    return new Timeline.Time(hour, min);
+Timeline.Time.create = function(time){
+    return new Timeline.Time(time[0], time[1]);
 };
 
 Timeline.Time.prototype.getHour = function(){ return this._hour; };

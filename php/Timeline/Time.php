@@ -3,8 +3,8 @@ class Timeline_Time{
   private $_hour;
   private $_min;
   public function __construct($hour, $min){
-    $this->_hour = $hour;
-    $this->_min = $min;
+    $this->_hour = (int)$hour;
+    $this->_min = (int)$min;
 
     while($this->_min < 0){
       --$this->_hour;
@@ -21,8 +21,8 @@ class Timeline_Time{
     }
   }
 
-  public static function create($hour, $min){
-    return new Timeline_Time($hour, $min);
+  public static function create(array $time){
+    return new Timeline_Time($time[0], $time[1]);
   }
 
 
@@ -89,5 +89,9 @@ class Timeline_Time{
 
   public function toString(){
     return sprintf('%s:%s', $this->getDisplayHour(), $this->getDisplayMin());
+  }
+
+  public function __toString(){
+    return $this->toString();
   }
 }
