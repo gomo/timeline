@@ -87,6 +87,11 @@ class Timeline_Time{
     return 0;
   }
 
+  public function getTime()
+  {
+    return sprintf('%s:%s', $this->getHour(), $this->getMin());
+  }
+
   public function toString(){
     return sprintf('%s:%s', $this->getDisplayHour(), $this->getDisplayMin());
   }
