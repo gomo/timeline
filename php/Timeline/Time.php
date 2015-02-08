@@ -2,6 +2,12 @@
 class Timeline_Time{
   private $_hour;
   private $_min;
+
+  public static function createFromString($string){
+      list($hour, $min, ) = explode(':', $string);
+      return new Timeline_Time($hour, $min);
+  }
+
   public function __construct($hour, $min){
     $this->_hour = (int)$hour;
     $this->_min = (int)$min;
