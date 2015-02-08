@@ -72,4 +72,11 @@ class Timeline_TimeSpan{
   public function __toString(){
     return $this->toString();
   }
+
+  public function toArray(){
+    return array(
+      'start_time' => $this->getStartTime()->toArray(),
+      'end_time' => $this->getEndTime()->toArray(),
+    );
+  }
 }

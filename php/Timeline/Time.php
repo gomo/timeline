@@ -105,4 +105,11 @@ class Timeline_Time{
   public function __toString(){
     return $this->toString();
   }
+
+  public function toArray(){
+    return array(
+      'hour' => $this->getHour(),
+      'min' => $this->getMin(),
+    );
+  }
 }
