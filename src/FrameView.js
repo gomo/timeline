@@ -1,7 +1,13 @@
 //FrameView
 Timeline.FrameView = function(timeSpan, linesData){
     Timeline.FrameView.super_.call(this);
-    this._linesData = linesData;
+
+    if($.isArray(linesData)){
+        this._linesData = linesData;
+    } else {
+        this._linesData = [];
+    }
+
     this._timeSpan = timeSpan;
     this._timeLines = {};
     this._rulerInterval = 5;
@@ -89,43 +95,47 @@ Timeline.FrameView.prototype.addEventView = function(id, eventView){
     this._timeLines[id].addEventView(eventView);
 };
 
+Timeline.FrameView.prototype.addLine = function(id, label){
+    var self = this;
+    var key = Object.keys(self._timeLines).length;
+    var timeline = new Timeline.LineView(self._timeSpan.clone(), self._defaultLineWidth);
+    var prevLineElem = self._element.find('.tlLineView:last');
+    
+    timeline
+        .setLabel(label)
+        .setId(id)
+        .setFrameView(self);
+
+    if(self._timeLines[id]){
+        throw 'Already exists timeline ' + id;
+    }
+
+    self._timeLines[id] = timeline;
+    self._element.append(timeline.render());
+
+    if(key % self._rulerInterval === 0){
+        timeline.setRulerView(new Timeline.RulerView());
+        prevLineElem.addClass('tlPrevRuler');
+    }
+
+    if(key % 2 === 0){
+        timeline.getElement().addClass('even');
+    }else{
+        timeline.getElement().addClass('odd');
+    }
+
+
+    prevLineElem.removeClass('tlLast');
+    timeline.getElement().addClass('tlLast');
+
+    self._element.width(self._element.width() + timeline.getElement().outerWidth());
+};
+
 Timeline.FrameView.prototype._postShow = function(){
     var self = this;
     var totalWidth = 0;
 
-    var prevTimeline;
     $.each(self._linesData, function(key, data){
-        var timeline = new Timeline.LineView(self._timeSpan.clone(), self._defaultLineWidth);
-        timeline
-            .setLabel(data.label)
-            .setId(data.id)
-            .setFrameView(self);
-
-        if(self._timeLines[data.id]){
-            throw 'Already exists timeline ' + data.id;
-        }
-
-        self._timeLines[data.id] = timeline;
-        self._element.append(timeline.render());
-
-        if(key % self._rulerInterval === 0){
-            timeline.setRulerView(new Timeline.RulerView());
-            if(prevTimeline){
-                prevTimeline.getElement().addClass('tlPrevRuler');
-            }
-        }
-
-        if(key % 2 === 0){
-            timeline.getElement().addClass('even');
-        }else{
-            timeline.getElement().addClass('odd');
-        }
-
-        totalWidth += timeline.getElement().outerWidth();
-        prevTimeline = timeline;
-    });
-
-    prevTimeline.getElement().addClass('tlLast');
-
-    self._element.width(totalWidth);
+        self.addLineView(data.id, data.label);
+    });    
 };
