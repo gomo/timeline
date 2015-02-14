@@ -136,6 +136,6 @@ Timeline.FrameView.prototype._postShow = function(){
     var totalWidth = 0;
 
     $.each(self._linesData, function(key, data){
-        self.addLineView(data.id, data.label);
+        self.addLine(data.id, data.label);
     });    
 };
