@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         footer: '\n})(jQuery, (function(){return this;})());'
       },
       dist: {
-        src: ['src/*.js'],
+        src: ['src/Util.js', 'src/View.js', 'src/classes/*.js'],
         dest: 'lib/timeline.js'
       }
     },
