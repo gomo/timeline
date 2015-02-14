@@ -28,12 +28,6 @@ Timeline.RulerView.prototype._build = function(){
 Timeline.RulerView.prototype._adjustHeight = function(hourView, hourRuler){
     var hourElem = hourView.getElement();
     var height = hourElem.outerHeight();
-    if(hourElem.hasClass('tlHasLabel')){
-        var labelHeight = hourElem.find('.tlLabel').outerHeight();
-        height -= labelHeight;
-        hourRuler.css('paddingTop', labelHeight);
-    }
-
     hourRuler.height(height);
 };
 

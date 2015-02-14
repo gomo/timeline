@@ -14,12 +14,6 @@ Timeline.HourView.prototype._getClassName = function(){
     return Timeline.HourView.CLASS_ELEM;
 };
 
-Timeline.HourView.prototype.setLabel = function(label){
-    if(label){
-        var elem = $('<div class="tlLabel">'+label+'</div>');
-        this._element.append(elem).addClass('tlHasLabel');
-    }
-};
 
 Timeline.HourView.prototype.getFirstMinView = function(){
     return this._minViews[0];

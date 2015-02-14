@@ -28,7 +28,7 @@ Timeline.FrameView.prototype._getClassName = function(){
 };
 
 Timeline.FrameView.prototype._build = function(){
-
+    
 };
 
 Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
@@ -102,7 +102,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var prevLineElem = self._element.find('.tlLineView:last');
     
     timeline
-        .setLabel(label)
         .setId(id)
         .setFrameView(self);
 

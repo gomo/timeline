@@ -10,7 +10,6 @@ Timeline.LineView = function(timeSpan, lineWidth){
     this._hoursElement = undefined;
     this._rulerView = undefined;
     this._lineWidth = lineWidth;
-    this._label = undefined;
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
@@ -100,11 +99,6 @@ Timeline.LineView.prototype.getPrevEventView = function(time){
     return result;
 };
 
-Timeline.LineView.prototype.setLabel = function(label){
-    this._label = label;
-    return this;
-};
-
 Timeline.LineView.prototype.setId = function(id){
     this._element.data('timeline').id = id;
     this._element.addClass(id);
@@ -151,10 +145,6 @@ Timeline.LineView.prototype._build = function(){
     var hourView = undefined;
     self._timeSpan.eachHour(function(key, hour, minLimit){
         hourView = new Timeline.HourView(self, hour, minLimit);
-        if(key === 0 || key % 5 === 0)
-        {
-            hourView.setLabel(self._label);
-        }
         self._hoursElement.append(hourView.render());
         self._hourViews.push(hourView);
     });
