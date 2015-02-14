@@ -1,12 +1,15 @@
 //EventView
-Timeline.EventView = function(timeSpan, color){
+Timeline.EventView = function(timeSpan, cssClass){
     var self = this;
     Timeline.EventView.super_.call(self);
     self._timeSpan = timeSpan;
     self._lineView = undefined;
     self._nextLineView = undefined;
     self._element.css('position', 'absolute');
-    self._element.addClass(color);
+
+    if(cssClass){
+        self._element.addClass(cssClass);
+    }
 
     self._element.draggable({
         create: function( event, ui ) {
@@ -54,8 +57,8 @@ Timeline.Util.inherits(Timeline.EventView, Timeline.View);
 Timeline.EventView.CLASS_ELEM = 'tlEventView';
 Timeline.EventView.MARGIN_SIDE = 4;
 
-Timeline.EventView.create = function(start, end, type){
-    return new Timeline.EventView(Timeline.TimeSpan.create(start, end), type);
+Timeline.EventView.create = function(start, end, cssClass){
+    return new Timeline.EventView(Timeline.TimeSpan.create(start, end), cssClass);
 };
 
 Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
@@ -66,6 +69,10 @@ Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
 
     this._element.offset(offset).height(size.height);
     lineView.showTimeIndicator(offset.top);
+};
+
+Timeline.EventView.prototype.setBackgroundColor = function(color){
+    this._element.css('backgroundColor', color);
 };
 
 Timeline.EventView.prototype.setNextLineView = function(lineView){
