@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         footer: '\n})(jQuery, (function(){return this;})());'
       },
       dist: {
-        src: ['src/Util.js', 'src/View.js', 'src/classes/*.js'],
+        src: ['src/Util.js', 'src/View.js', 'src/scroll-events/jquery.scroll-events.js', 'src/classes/*.js'],
         dest: 'lib/timeline.js'
       }
     },
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     },
     watch: {
       scripts: {
-        files: ['src/*.js', 'css/*.styl'],
+        files: ['src/*.js', 'src/scroll-events/jquery.scroll-events.js', 'src/classes/*.js', 'css/*.styl'],
         tasks: ['concat', 'uglify', 'stylus']
       }
     }

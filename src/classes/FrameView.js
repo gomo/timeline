@@ -18,6 +18,8 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._flexibleHandle = new Timeline.FlexibleHandle(this);
     this._currentDroppableLineView = undefined;
     this._defaultLineWidth = 60;
+
+    this._labelView = undefined;
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -28,7 +30,9 @@ Timeline.FrameView.prototype._getClassName = function(){
 };
 
 Timeline.FrameView.prototype._build = function(){
-    
+    var self = this;
+    this._labelView = new Timeline.LabelView();
+    self._element.append(this._labelView.render());
 };
 
 Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
@@ -111,6 +115,8 @@ Timeline.FrameView.prototype.addLine = function(id, label){
 
     self._timeLines[id] = timeline;
     self._element.append(timeline.render());
+
+    self._labelView.addLabel(label);
 
     if(key % self._rulerInterval === 0){
         timeline.setRulerView(new Timeline.RulerView());

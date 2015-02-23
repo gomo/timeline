@@ -1,0 +1,3 @@
+[submodule "src/scroll-events"]
+	path = src/scroll-events
+	url = https://github.com/gomo/scroll-events.git
