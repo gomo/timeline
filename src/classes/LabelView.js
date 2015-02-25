@@ -1,7 +1,6 @@
 //LabelView
 Timeline.LabelView = function(){
     Timeline.LabelView.super_.call(this);
-
     this._fixedClone;
 };
 
@@ -40,14 +39,19 @@ Timeline.LabelView.prototype._postShow = function(){
         self._element.css('position', '');
         self._element.css('top', '');
       }
-      self._element.fadeOut(0);
-      self._element.css('visibility', 'visible');
-      self._element.fadeIn(100);
+
+      if(self._element.css('visibility') == 'hidden'){
+        self._element.fadeOut(0);
+        self._element.css('visibility', 'visible');
+        self._element.fadeIn(100); 
+      }
     });
   }, 0);
 };
 
-Timeline.LabelView.prototype.addLabel = function(label){
+Timeline.LabelView.prototype.addLabel = function(label, timeline){
   var self = this;
-  self._element.append('<div class="tlLabel">' + label + '</div>');
+  var labelElem = $('<div class="tlLabel">' + label + '</div>');
+  self._element.append(labelElem);
+  timeline.setLabelElement(labelElem);
 };

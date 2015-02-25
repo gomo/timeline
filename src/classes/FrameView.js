@@ -116,12 +116,12 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     self._timeLines[id] = timeline;
     self._element.append(timeline.render());
 
-    self._labelView.addLabel(label);
-
     if(key % self._rulerInterval === 0){
         timeline.setRulerView(new Timeline.RulerView());
         prevLineElem.addClass('tlPrevRuler');
     }
+
+    self._labelView.addLabel(label, timeline);
 
     if(key % 2 === 0){
         timeline.getElement().addClass('even');
