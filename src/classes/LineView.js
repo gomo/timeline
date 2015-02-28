@@ -311,9 +311,13 @@ Timeline.LineView.prototype.eachEventView = function(callback){
 };
 
 Timeline.LineView.prototype._updateEventsDisplay = function(){
-    this.eachEventView(function(key, eventView){
-        eventView.updateDisplay();
-    });
+    var self = this;
+    setTimeout(function(){
+        self.eachEventView(function(key, eventView){
+            eventView.updateDisplay();
+        });
+    }, 0);
+    
 };
 
 Timeline.LineView.prototype._updateRulerDisplay = function(){
