@@ -272,9 +272,10 @@ Timeline.LineView.prototype.setLabelElement = function(labelElem){
     var self = this;
     self._labelElement = labelElem;
     self._labelElement.outerWidth(self._lineWidth);
-    if(self.hasRulerView()){
-        self._labelElement.addClass('tlHasRuler');
-    }
+};
+
+Timeline.LineView.prototype.getLabelElement = function(){
+    return this._labelElement;
 };
 
 Timeline.LineView.prototype._updateDisplay = function(){

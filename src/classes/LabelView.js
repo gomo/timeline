@@ -49,9 +49,9 @@ Timeline.LabelView.prototype._postShow = function(){
   }, 0);
 };
 
-Timeline.LabelView.prototype.addLabel = function(label, timeline){
+Timeline.LabelView.prototype.addLabel = function(label){
   var self = this;
   var labelElem = $('<div class="tlLabel">' + label + '</div>');
   self._element.append(labelElem);
-  timeline.setLabelElement(labelElem);
+  return labelElem;
 };

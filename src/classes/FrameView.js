@@ -20,6 +20,7 @@ Timeline.FrameView = function(timeSpan, linesData){
     this._defaultLineWidth = 60;
 
     this._labelView = undefined;
+    this._prevTimeline = undefined;
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -103,7 +104,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var self = this;
     var key = Object.keys(self._timeLines).length;
     var timeline = new Timeline.LineView(self._timeSpan.clone(), self._defaultLineWidth);
-    var prevLineElem = self._element.find('.tlLineView:last');
     
     timeline
         .setId(id)
@@ -116,12 +116,19 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     self._timeLines[id] = timeline;
     self._element.append(timeline.render());
 
+    var labelElem = self._labelView.addLabel(label);
+    timeline.setLabelElement(labelElem);
+
     if(key % self._rulerInterval === 0){
         timeline.setRulerView(new Timeline.RulerView());
-        prevLineElem.addClass('tlPrevRuler');
-    }
 
-    self._labelView.addLabel(label, timeline);
+        timeline.getLabelElement().addClass('tlHasRuler');
+
+        if(self._prevTimeline){
+            self._prevTimeline.getElement().addClass('tlPrevRuler');
+            self._prevTimeline.getLabelElement().addClass('tlPrevRuler');
+        }
+    }
 
     if(key % 2 === 0){
         timeline.getElement().addClass('even');
@@ -129,11 +136,16 @@ Timeline.FrameView.prototype.addLine = function(id, label){
         timeline.getElement().addClass('odd');
     }
 
+    if(self._prevTimeline){
+        self._prevTimeline.getElement().removeClass('tlLast');
+        self._prevTimeline.getLabelElement().removeClass('tlLast');
+    }
 
-    prevLineElem.removeClass('tlLast');
     timeline.getElement().addClass('tlLast');
-
+    timeline.getLabelElement().addClass('tlLast');
     self._element.width(self._element.width() + timeline.getElement().outerWidth());
+
+    self._prevTimeline = timeline;
 };
 
 Timeline.FrameView.prototype._postShow = function(){
