@@ -6,6 +6,9 @@ Timeline.View = function(){
     var data = {};
     data.view = this;
     this._element.data('timeline', data);
+
+    this._width;
+    this._height;
 };
 
 Timeline.View.prototype.getElement = function(){
@@ -15,6 +18,22 @@ Timeline.View.prototype.getElement = function(){
 Timeline.View.prototype._build = function(){};
 
 Timeline.View.prototype._postShow = function(){};
+
+Timeline.View.prototype.width = function(width){
+    if(width === undefined){
+        return this._width;
+    }
+    this._width = width;
+    this._element.outerWidth(width);
+};
+
+Timeline.View.prototype.height = function(height){
+    if(height === undefined){
+        return this._height;
+    }
+    this._height = height;
+    this._element.outerHeight(height);
+};
 
 Timeline.View.prototype.render = function(){
     this._build();

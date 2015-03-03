@@ -143,7 +143,8 @@ Timeline.FrameView.prototype.addLine = function(id, label){
 
     timeline.getElement().addClass('tlLast');
     timeline.getLabelElement().addClass('tlLast');
-    self._element.width(self._element.width() + timeline.getElement().outerWidth());
+
+    self.width(self.width() + timeline.getElement().width());
 
     self._prevTimeline = timeline;
 };
