@@ -1,5 +1,5 @@
 //Line
-Timeline.LineView = function(timeSpan, lineWidth){
+Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
@@ -9,7 +9,6 @@ Timeline.LineView = function(timeSpan, lineWidth){
     //HourView wrapper element(for culc height faster)
     this._hoursElement = undefined;
     this._rulerView = undefined;
-    this._lineWidth = lineWidth;
     this._labelElement = undefined;
 };
 
@@ -227,14 +226,14 @@ Timeline.LineView.prototype._getMinView = function(time){
 };
 
 Timeline.LineView.prototype.addLineWidth = function(amount){
-    this._lineWidth += amount;
+    this.width(this.width() + amount);
     this._updateDisplay();
     this._updateEventsDisplay();
     return this;
 };
 
 Timeline.LineView.prototype.setLineWidth = function(width){
-    this._lineWidth = width;
+    this.width() = width;
     this._updateDisplay();
     this._updateEventsDisplay();
     return this;
@@ -271,7 +270,7 @@ Timeline.LineView.prototype.setHeightPerMin = function(height){
 Timeline.LineView.prototype.setLabelElement = function(labelElem){
     var self = this;
     self._labelElement = labelElem;
-    self._labelElement.outerWidth(self._lineWidth);
+    self._labelElement.outerWidth(self.width());
 };
 
 Timeline.LineView.prototype.getLabelElement = function(){
@@ -280,26 +279,15 @@ Timeline.LineView.prototype.getLabelElement = function(){
 
 Timeline.LineView.prototype._updateDisplay = function(){
     var self = this;
-    self._lineElement.width(self._lineWidth);
+    self._lineElement.width(self.width());
 
     if(self._rulerView){
-        self._element.width(self._lineWidth + self._rulerView.getElement().outerWidth());
-    } else {
-        self._element.width(self._lineWidth);
+        self._element.width(self.width() + self._rulerView.getElement().outerWidth());
     }
 
     if(self._labelElement){
-        self._labelElement.outerWidth(self._lineWidth);
+        self._labelElement.outerWidth(self.width());
     }
-
-    setTimeout(function(){
-        var height = self._hoursElement.height();
-
-        self._lineElement.css({
-            height: height,
-            overflow: "hidden"
-        });
-    }, 0);
 };
 
 Timeline.LineView.prototype.eachEventView = function(callback){

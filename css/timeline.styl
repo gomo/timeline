@@ -22,12 +22,13 @@
 	background-repeat: no-repeat
 
 /* tlRuler */
+$ruler_width = 50px;
 .tlRulerView
 	float: left
 	text-align: center
 	font-size: 14px
 	margin-top: -10px;
-	width: 50px;
+	width: $ruler_width;
 
 /* tlTimeline */
 .tlLineView.even .tlTimeline
@@ -60,7 +61,7 @@
 	float: left;
 
 .tlLabel.tlHasRuler
-	margin-left: 50px;
+	margin-left: $ruler_width;
 	border-radius: 3px 0 0 3px
 
 .tlLabel.tlPrevRuler, .tlLabel.tlLast

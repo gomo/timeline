@@ -103,9 +103,10 @@ Timeline.FrameView.prototype.addEventView = function(id, eventView){
 Timeline.FrameView.prototype.addLine = function(id, label){
     var self = this;
     var key = Object.keys(self._timeLines).length;
-    var timeline = new Timeline.LineView(self._timeSpan.clone(), self._defaultLineWidth);
+    var timeline = new Timeline.LineView(self._timeSpan.clone());
     
     timeline
+        .width(self._defaultLineWidth)
         .setId(id)
         .setFrameView(self);
 

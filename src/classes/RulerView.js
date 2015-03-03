@@ -6,7 +6,6 @@ Timeline.RulerView = function(){
 
 Timeline.Util.inherits(Timeline.RulerView, Timeline.View);
 Timeline.RulerView.CLASS_ELEM = 'tlRulerView';
-Timeline.RulerView.DEFAULT_WIDTH = 50;
 
 Timeline.RulerView.prototype._getClassName = function(){
     return Timeline.RulerView.CLASS_ELEM;
@@ -14,7 +13,6 @@ Timeline.RulerView.prototype._getClassName = function(){
 
 Timeline.RulerView.prototype._build = function(){
     var self = this;
-    // self._element.width(Timeline.RulerView.DEFAULT_WIDTH);
 
     self._lineView.eachHourView(function(key, hourView){
         var hourRuler = $('<div class="hour">'+hourView.getDisplayHour()+':00'+'</div>');
