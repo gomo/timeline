@@ -142,9 +142,8 @@ Timeline.LineView.prototype._build = function(){
         }
     });
 
-    var hourView = undefined;
     self._timeSpan.eachHour(function(key, hour, minLimit){
-        hourView = new Timeline.HourView(self, hour, minLimit);
+        var hourView = new Timeline.HourView(self, hour, minLimit);
         self._hoursElement.append(hourView.render());
         self._hourViews.push(hourView);
     });
