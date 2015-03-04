@@ -300,6 +300,8 @@ Timeline.LineView.prototype.eachEventView = function(callback){
 
 Timeline.LineView.prototype._updateEventsDisplay = function(){
     var self = this;
+    //イベントの位置調整でTimeline.MinView.prototype.getTopByMinの`this._element.offset()`が
+    //どうしても変な値を返すので`setTimeout`しています。
     setTimeout(function(){
         self.eachEventView(function(key, eventView){
             eventView.updateDisplay();
