@@ -31,6 +31,7 @@ Timeline.MinView.prototype.getHourView = function(){
 
 Timeline.MinView.prototype.getTopByMin = function(min){
     var offset = this._element.offset();
+    console.log(offset);
     var percent = (min % this._minUnit) / this._minUnit;
     return offset.top + (this.height() * percent) - 1;
 };
