@@ -1,5 +1,5 @@
 //Line
-Timeline.LineView = function(timeSpan, lineWidth){
+Timeline.LineView = function(timeSpan){
     Timeline.LineView.super_.call(this);
     this._timeSpan = timeSpan;
     this._hourViews = [];
@@ -9,7 +9,6 @@ Timeline.LineView = function(timeSpan, lineWidth){
     //HourView wrapper element(for culc height faster)
     this._hoursElement = undefined;
     this._rulerView = undefined;
-    this._lineWidth = lineWidth;
     this._labelElement = undefined;
 };
 
@@ -143,9 +142,8 @@ Timeline.LineView.prototype._build = function(){
         }
     });
 
-    var hourView = undefined;
     self._timeSpan.eachHour(function(key, hour, minLimit){
-        hourView = new Timeline.HourView(self, hour, minLimit);
+        var hourView = new Timeline.HourView(self, hour, minLimit);
         self._hoursElement.append(hourView.render());
         self._hourViews.push(hourView);
     });
@@ -227,17 +225,24 @@ Timeline.LineView.prototype._getMinView = function(time){
 };
 
 Timeline.LineView.prototype.addLineWidth = function(amount){
-    this._lineWidth += amount;
-    this._updateDisplay();
-    this._updateEventsDisplay();
+    this.setLineWidth(this.width() + amount);
     return this;
 };
 
 Timeline.LineView.prototype.setLineWidth = function(width){
-    this._lineWidth = width;
-    this._updateDisplay();
-    this._updateEventsDisplay();
-    return this;
+    var self = this;
+    self.width(width);
+    self._updateDisplay();
+    self._updateEventsDisplay();
+    if(self._labelElement){
+        //イベントの位置調整でTimeline.MinView.prototype.getTopByMinの`this._element.offset()`が
+        //どうしても変な値を返すので`setTimeout`しています。
+        //イベントの位置調整後なのに・・・
+        setTimeout(function(){
+            self._labelElement.outerWidth(width);
+        }, 0);
+    }
+    return self;
 };
 
 Timeline.LineView.prototype.getFirstHourView = function(){
@@ -271,7 +276,7 @@ Timeline.LineView.prototype.setHeightPerMin = function(height){
 Timeline.LineView.prototype.setLabelElement = function(labelElem){
     var self = this;
     self._labelElement = labelElem;
-    self._labelElement.outerWidth(self._lineWidth);
+    self._labelElement.outerWidth(self.width());
 };
 
 Timeline.LineView.prototype.getLabelElement = function(){
@@ -280,26 +285,10 @@ Timeline.LineView.prototype.getLabelElement = function(){
 
 Timeline.LineView.prototype._updateDisplay = function(){
     var self = this;
-    self._lineElement.width(self._lineWidth);
-
+    self._lineElement.width(self.width());
     if(self._rulerView){
-        self._element.width(self._lineWidth + self._rulerView.getElement().outerWidth());
-    } else {
-        self._element.width(self._lineWidth);
+        self._element.width(self.width() + self._rulerView.getElement().outerWidth());
     }
-
-    if(self._labelElement){
-        self._labelElement.outerWidth(self._lineWidth);
-    }
-
-    setTimeout(function(){
-        var height = self._hoursElement.height();
-
-        self._lineElement.css({
-            height: height,
-            overflow: "hidden"
-        });
-    }, 0);
 };
 
 Timeline.LineView.prototype.eachEventView = function(callback){
@@ -313,12 +302,9 @@ Timeline.LineView.prototype.eachEventView = function(callback){
 
 Timeline.LineView.prototype._updateEventsDisplay = function(){
     var self = this;
-    setTimeout(function(){
-        self.eachEventView(function(key, eventView){
-            eventView.updateDisplay();
-        });
-    }, 0);
-    
+    self.eachEventView(function(key, eventView){
+        eventView.updateDisplay();
+    });
 };
 
 Timeline.LineView.prototype._updateRulerDisplay = function(){
