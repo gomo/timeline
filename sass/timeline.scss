@@ -1,0 +1,186 @@
+@import "compass";
+
+.tlFrameView{
+  @include pie-clearfix;
+}
+
+.tlLineView{
+  @include pie-clearfix;
+  float: left;
+}
+
+/* tlTimeIndicator */
+#tlTimeIndicator{
+  width: 70px;
+  height: 24px;
+  line-height: 24px;
+  color: #ddd;
+  font-size: 12px;
+  text-align: center;
+  padding-right: 10px;
+  font-weight: bold;
+  background-image: url('../img/indicator.png');
+  background-repeat: no-repeat;
+}
+
+/* tlRuler */
+$ruler_width: 30px;
+.tlRulerView{
+  float: left;
+  text-align: center;
+  font-size: 14px;
+  margin-top: -10px;
+  width: $ruler_width;
+}
+
+/* tlTimeline */
+.tlLineView.even .tlTimeline{
+  background-color: #f3f3f3;
+}
+
+.tlLineView.odd .tlTimeline{
+  background-color: #fbfbfb;
+}
+
+
+
+.tlLineView.tlEventOver .tlTimeline{
+  background-color: #FFFED6;
+}
+
+.tlTimeline{
+  float: left;
+}
+
+.tlLabelView{
+  @include pie-clearfix;
+  z-index: 1000;
+}
+
+.tlLabel{
+  font-size: 11px;
+  text-align: center;
+  height: 16px;
+  line-height: 16px;
+  color: #fff;
+  @include background-image(linear-gradient(top, adjust-lightness(#0574fc, 20), #0574fc));
+  padding: 1px;
+  overflow: hidden;
+  float: left;
+  border-right: 1px solid adjust-lightness(rgba(9, 115, 251, 0.5), -10);
+}
+
+.tlLabel.tlHasRuler{
+  margin-left: $ruler_width;
+  border-radius: 3px 0 0 3px;
+}
+
+.tlLabel.tlPrevRuler, .tlLabel.tlLast{
+  border-radius: 0 3px 3px 0;
+}
+
+.tlLineView.tlHasRuler .tlLabel{
+  border-radius: 3px 0 0 3px;
+}
+
+.tlLineView.tlPrevRuler .tlLabel,
+.tlLineView.tlLast .tlLabel{
+  border-radius: 0 3px 3px 0;
+}
+
+.tlHourView{
+  border-top: 1px solid #999;
+}
+
+.tlHourView.tlHasLabel{
+  border-top: none;
+}
+
+.tlMinView._15, .tlMinView._45{
+  border-bottom: 1px dashed #ddd;
+}
+
+.tlMinView._30{
+  border-bottom: 1px solid #ccc;
+}
+
+.tlEventTopHandle{
+  background: url("../img/top-handle.png") no-repeat center;
+  cursor: row-resize;
+  margin: 0 auto;
+}
+
+.tlEventDownHandle{
+  background: url("../img/down-handle.png") no-repeat center;
+  cursor: row-resize;
+  margin: 0 auto;
+}
+
+/* tlEventView */
+.tlEventView{
+  opacity: 0.7;
+  border-radius: 8px;
+  border: 1px solid #777;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 17px;
+  overflow: hidden;
+}
+
+.tlEventView.tlFloating{
+  border: 2px dotted #333;
+}
+
+.tlEventView.disable{
+  background-color: #999;
+  border-radius: 0;
+  width: 100%;
+}
+
+.tlEventView .time{
+  border-radius: 5px;
+  width: 85%;
+  margin: 0 auto;
+  position: relative;
+  background-color: #fff;
+  opacity: 0.7;
+  border: 1px solid #888;
+  font-size: 70%;
+  line-height: 15px;
+}
+
+.tlEventView .time.start{
+  top: 3px;
+}
+
+.tlEventView .time.end{
+  margin-top: 1px;
+}
+
+.tlEventView .display{
+  overflow: hidden;
+  line-height: 14px;
+  padding-top: 2px;
+  font-size: 80%;
+}
+
+/* color variation */
+.tlEventView.blue{
+  background-color: #A3CDE1;
+}
+
+.tlEventView.pink{
+  background-color: #FFB6B6;
+}
+
+.tlEventView.green{
+  background-color: #B8F1AC;
+}
+
+.tlEventView.yellow{
+  background-color: #FFFFB6;
+}
+
+.tlEventView.orange{
+  background-color: #FFDCB6;
+}
