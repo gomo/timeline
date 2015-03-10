@@ -1,5 +1,8 @@
 @import 'nib'
 
+.tlFrameView
+	clearfix();
+
 .tlLineView
 	clearfix();
 	float: left;
@@ -19,11 +22,13 @@
 	background-repeat: no-repeat
 
 /* tlRuler */
+$ruler_width = 30px;
 .tlRulerView
 	float: left
 	text-align: center
 	font-size: 14px
 	margin-top: -10px;
+	width: $ruler_width;
 
 /* tlTimeline */
 .tlLineView.even .tlTimeline
@@ -39,7 +44,10 @@
 
 .tlTimeline
 	float: left
-	
+
+.tlLabelView
+	clearfix();
+	z-index: 1000;
 
 .tlLabel
 	font-size: 11px
@@ -47,12 +55,17 @@
 	height 16px
 	line-height: 16px
 	color: #fff
-	background-color: #555
-	opacity: 0.6
-	position: relative;
-	z-index: 100;
+	background-color: #777
 	padding: 1px;
 	overflow: hidden;
+	float: left;
+
+.tlLabel.tlHasRuler
+	margin-left: $ruler_width;
+	border-radius: 3px 0 0 3px
+
+.tlLabel.tlPrevRuler, .tlLabel.tlLast
+	border-radius: 0 3px 3px 0
 
 .tlLineView.tlHasRuler .tlLabel
 	border-radius: 3px 0 0 3px
@@ -87,7 +100,7 @@
 .tlEventView
 	opacity: 0.7
 	border-radius: 8px
-	border: 1px solid #555;
+	border: 1px solid #777;
 	margin: 0 auto
 	text-align: center
 	line-height: 17px;
@@ -102,15 +115,15 @@
 	width 100%
 
 .tlEventView .time
-	border-radius: 6px
+	border-radius: 5px
 	width: 85%;
 	margin 0 auto
 	position relative
 	background-color #fff
 	opacity: 0.7
 	border: 1px solid #888
-	box-shadow: -1px -1px 4px #555
-	font-size 85%
+	font-size 70%
+	line-height: 15px;
 
 .tlEventView .time.start
 	top 3px

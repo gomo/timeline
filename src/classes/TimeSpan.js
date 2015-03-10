@@ -32,7 +32,6 @@ Timeline.TimeSpan.prototype.shiftEndTime = function(time){
 };
 
 Timeline.TimeSpan.prototype.shiftStartTime = function(time){
-    console.log(time);
     return new Timeline.TimeSpan(time, time.addMin(this.getDistance()));
 };
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../lib/timeline.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-    <script src="https://rawgithub.com/furf/jquery-ui-touch-punch/master/jquery.ui.touch-punch.min.js"></script>
+    <script src="../lib/jquery.ui.touch-punch.min.js"></script>
     <script src="../lib/timeline.js"></script>
     <script>
         $(function(){
@@ -31,7 +31,7 @@
             ]);
 
             frame
-                .setDefaultLineWidth(56)
+                .setDefaultLineWidth(64)
                 .setRulerInterval(4);
 
             $('#timeline').append(frame.render());
@@ -111,6 +111,11 @@
 
         });
     </script>
+    <style>
+        #timeline .tlFrameView{
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
     <div id="actions">

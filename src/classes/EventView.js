@@ -201,8 +201,8 @@ Timeline.EventView.prototype.updateDisplay = function(){
     offset.top = size.top;
     offset.left = this._getPositionLeft(this._lineView);
     this._element.offset(offset);
-    this._element.height(size.height);
-    this._element.outerWidth(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
+    this.height(size.height);
+    this.width(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
 
     this._timesElement.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
     this._timesElement.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());

@@ -53,3 +53,5 @@ Timeline.Util.inherits = function(childClass, superClass){
     childClass.super_ = superClass;
     childClass.prototype = Object.create(superClass.prototype);
 };
+
+Timeline.window = $(window);
