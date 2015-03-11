@@ -21,7 +21,10 @@ Timeline.View.prototype._postShow = function(){};
 
 Timeline.View.prototype.width = function(width){
     if(width === undefined){
-        return this._width || 0;
+        if(this._width === undefined){
+            this._width = this._element.outerWidth();
+        }
+        return this._width;
     }
     this._width = width;
     this._element.outerWidth(width);
@@ -30,6 +33,9 @@ Timeline.View.prototype.width = function(width){
 
 Timeline.View.prototype.height = function(height){
     if(height === undefined){
+        if(this._height === undefined){
+            this._height = this._element.outerHeight();
+        }
         return this._height;
     }
     this._height = height;

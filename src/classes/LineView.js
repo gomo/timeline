@@ -67,7 +67,6 @@ Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
         }
     });
 
-
     return result;
 };
 
@@ -107,13 +106,6 @@ Timeline.LineView.prototype.setId = function(id){
 
 Timeline.LineView.prototype.hasRulerView = function(){
     return !!this._rulerView;
-};
-
-Timeline.LineView.prototype.setRulerView = function(rulerView){
-    this._rulerView = rulerView;
-    this._rulerView.setLineView(this);
-    this._element.prepend(this._rulerView.render());
-    this._updateDisplay();
 };
 
 Timeline.LineView.prototype.eachHourView = function(callback){
@@ -258,7 +250,6 @@ Timeline.LineView.prototype.addHeightPerMin = function(amount){
     $.each(this._hourViews, function(key, hourView){
         hourView.addHeightPerMin(amount);
     });
-    this._updateRulerDisplay();
     this._updateEventsDisplay();
     this._updateDisplay();
     return this;
@@ -268,7 +259,6 @@ Timeline.LineView.prototype.setHeightPerMin = function(height){
     $.each(this._hourViews, function(key, hourView){
         hourView.setHeightPerMin(height);
     });
-    this._updateRulerDisplay();
     this._updateEventsDisplay();
     this._updateDisplay();
     return this;
@@ -287,9 +277,6 @@ Timeline.LineView.prototype.getLabelElement = function(){
 Timeline.LineView.prototype._updateDisplay = function(){
     var self = this;
     self._lineElement.width(self.width());
-    if(self._rulerView){
-        self._element.width(self.width() + self._rulerView.getElement().outerWidth());
-    }
 };
 
 Timeline.LineView.prototype.eachEventView = function(callback){
@@ -306,12 +293,4 @@ Timeline.LineView.prototype._updateEventsDisplay = function(){
     self.eachEventView(function(key, eventView){
         eventView.updateDisplay();
     });
-};
-
-Timeline.LineView.prototype._updateRulerDisplay = function(){
-    if(this._rulerView === undefined){
-        return;
-    }
-
-    this._rulerView.updateDisplay();
 };
