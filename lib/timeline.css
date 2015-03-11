@@ -107,47 +107,48 @@
 /* line 78, ../sass/timeline.scss */
 .tlLabel.tlPrevRuler, .tlLabel.tlLast {
   border-radius: 0 3px 3px 0;
+  border-right: 1px solid #fff;
 }
 
-/* line 82, ../sass/timeline.scss */
+/* line 83, ../sass/timeline.scss */
 .tlLineView.tlHasRuler .tlLabel {
   border-radius: 3px 0 0 3px;
 }
 
-/* line 86, ../sass/timeline.scss */
+/* line 87, ../sass/timeline.scss */
 .tlLineView.tlPrevRuler .tlLabel,
 .tlLineView.tlLast .tlLabel {
   border-radius: 0 3px 3px 0;
 }
 
-/* line 91, ../sass/timeline.scss */
+/* line 92, ../sass/timeline.scss */
 .tlHourView {
   border-top: 1px solid #999;
 }
 
-/* line 95, ../sass/timeline.scss */
+/* line 96, ../sass/timeline.scss */
 .tlHourView.tlHasLabel {
   border-top: none;
 }
 
-/* line 99, ../sass/timeline.scss */
+/* line 100, ../sass/timeline.scss */
 .tlMinView._15, .tlMinView._45 {
   border-bottom: 1px dashed #ddd;
 }
 
-/* line 103, ../sass/timeline.scss */
+/* line 104, ../sass/timeline.scss */
 .tlMinView._30 {
   border-bottom: 1px solid #ccc;
 }
 
-/* line 107, ../sass/timeline.scss */
+/* line 108, ../sass/timeline.scss */
 .tlEventTopHandle {
   background: url("../img/top-handle.png") no-repeat center;
   cursor: row-resize;
   margin: 0 auto;
 }
 
-/* line 113, ../sass/timeline.scss */
+/* line 114, ../sass/timeline.scss */
 .tlEventDownHandle {
   background: url("../img/down-handle.png") no-repeat center;
   cursor: row-resize;
@@ -155,7 +156,7 @@
 }
 
 /* tlEventView */
-/* line 120, ../sass/timeline.scss */
+/* line 121, ../sass/timeline.scss */
 .tlEventView {
   opacity: 0.7;
   border-radius: 8px;
@@ -166,19 +167,19 @@
   overflow: hidden;
 }
 
-/* line 130, ../sass/timeline.scss */
+/* line 131, ../sass/timeline.scss */
 .tlEventView.tlFloating {
   border: 2px dotted #333;
 }
 
-/* line 134, ../sass/timeline.scss */
+/* line 135, ../sass/timeline.scss */
 .tlEventView.disable {
   background-color: #999;
   border-radius: 0;
   width: 100%;
 }
 
-/* line 140, ../sass/timeline.scss */
+/* line 141, ../sass/timeline.scss */
 .tlEventView .time {
   border-radius: 5px;
   width: 85%;
@@ -191,17 +192,17 @@
   line-height: 15px;
 }
 
-/* line 152, ../sass/timeline.scss */
+/* line 153, ../sass/timeline.scss */
 .tlEventView .time.start {
   top: 3px;
 }
 
-/* line 156, ../sass/timeline.scss */
+/* line 157, ../sass/timeline.scss */
 .tlEventView .time.end {
   margin-top: 1px;
 }
 
-/* line 160, ../sass/timeline.scss */
+/* line 161, ../sass/timeline.scss */
 .tlEventView .display {
   overflow: hidden;
   line-height: 14px;
@@ -210,27 +211,27 @@
 }
 
 /* color variation */
-/* line 168, ../sass/timeline.scss */
+/* line 169, ../sass/timeline.scss */
 .tlEventView.blue {
   background-color: #A3CDE1;
 }
 
-/* line 172, ../sass/timeline.scss */
+/* line 173, ../sass/timeline.scss */
 .tlEventView.pink {
   background-color: #FFB6B6;
 }
 
-/* line 176, ../sass/timeline.scss */
+/* line 177, ../sass/timeline.scss */
 .tlEventView.green {
   background-color: #B8F1AC;
 }
 
-/* line 180, ../sass/timeline.scss */
+/* line 181, ../sass/timeline.scss */
 .tlEventView.yellow {
   background-color: #FFFFB6;
 }
 
-/* line 184, ../sass/timeline.scss */
+/* line 185, ../sass/timeline.scss */
 .tlEventView.orange {
   background-color: #FFDCB6;
 }
