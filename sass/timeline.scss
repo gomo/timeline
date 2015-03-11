@@ -7,6 +7,7 @@
 .tlLineView{
   @include pie-clearfix;
   float: left;
+  overflow: hidden;
 }
 
 /* tlTimeIndicator */
@@ -68,6 +69,7 @@ $ruler_width: 30px;
   overflow: hidden;
   float: left;
   border-right: 1px solid adjust-lightness(rgba(9, 115, 251, 0.5), -10);
+  @include user-select(none);
 }
 
 .tlLabel.tlHasRuler{

@@ -10,6 +10,7 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._timeSpan = timeSpan;
     this._timeLines = {};
+    this._rulers = [];
     this._rulerInterval = 5;
 
     this._timeIndicator = $('<div id="tlTimeIndicator" />').appendTo(this._element).css({position:'absolute', zIndex:9999}).hide();
@@ -34,6 +35,7 @@ Timeline.FrameView.prototype._build = function(){
     var self = this;
     this._labelView = new Timeline.LabelView();
     self._element.append(this._labelView.render());
+    self.width(0);
 };
 
 Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
@@ -86,6 +88,11 @@ Timeline.FrameView.prototype.addLineWidth = function(value){
         totalWidth += lineView.getElement().outerWidth();
     }
 
+    $.each(this._rulers, function(){
+        var rulerView = this;
+        totalWidth += rulerView.width();
+    });
+
     this._element.width(totalWidth);
 };
 
@@ -104,6 +111,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var self = this;
     var key = Object.keys(self._timeLines).length;
     var timeline = new Timeline.LineView(self._timeSpan.clone());
+    var width = 0;
     
     timeline
         .width(self._defaultLineWidth)
@@ -119,16 +127,21 @@ Timeline.FrameView.prototype.addLine = function(id, label){
 
     var labelElem = self._labelView.addLabel(label);
     timeline.setLabelElement(labelElem);
-
     if(key % self._rulerInterval === 0){
-        timeline.setRulerView(new Timeline.RulerView());
+        var rulerView = new Timeline.RulerView();
+        rulerView.setLineView(timeline);
+        this._rulers.push(rulerView);
+        timeline.getElement().before(rulerView.render());
 
+        timeline.getElement().addClass('tlHasRuler');
         timeline.getLabelElement().addClass('tlHasRuler');
 
         if(self._prevTimeline){
             self._prevTimeline.getElement().addClass('tlPrevRuler');
             self._prevTimeline.getLabelElement().addClass('tlPrevRuler');
         }
+
+        width += rulerView.getElement().outerWidth();
     }
 
     if(key % 2 === 0){
@@ -145,7 +158,8 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     timeline.getElement().addClass('tlLast');
     timeline.getLabelElement().addClass('tlLast');
 
-    self.width(self.width() + timeline.getElement().width());
+    width += timeline.getElement().outerWidth();
+    self.width(self.width() + width);
 
     self._prevTimeline = timeline;
 };
