@@ -5,7 +5,7 @@ Timeline.EventView = function(timeSpan, cssClass){
     self._timeSpan = timeSpan;
     self._lineView = undefined;
     self._nextLineView = undefined;
-    self._element.css('position', 'absolute');
+    self._element.css('position', 'relative');
 
     if(cssClass){
         self._element.addClass(cssClass);
@@ -114,6 +114,7 @@ Timeline.EventView.prototype.flexibleFix = function(timeSpan){
 
 Timeline.EventView.prototype._clearFloat = function(){
     this._element.css('zIndex', 99);
+    this._element.css('position', 'relative');
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
@@ -150,6 +151,7 @@ Timeline.EventView.prototype.toFloat = function(){
     var offset = this._element.offset();
     this._element.width(this._element.width());
     this._element.css('zIndex', 999);
+    this._element.css('position', 'absolute');
     this._element.offset({top: offset.top + 3, left: offset.left + 3});
     this._element.addClass('tlFloating');
     this._element.draggable('enable');

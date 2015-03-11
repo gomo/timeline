@@ -196,6 +196,7 @@ Timeline.LineView.prototype.getHourViewByTop = function(top){
 
 Timeline.LineView.prototype._postShow = function(){
     this._updateDisplay();
+    this.height(this._element.height());
 };
 
 Timeline.LineView.prototype.addEventView = function(eventView){
