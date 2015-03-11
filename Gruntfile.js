@@ -19,24 +19,16 @@ module.exports = function(grunt) {
         dest: 'lib/timeline.min.js'
       }
     },
-    stylus:{
-      dist:{
-        files: {
-          'lib/timeline.min.css':['css/*.styl']
-        }
-      }
-    },
     watch: {
       scripts: {
-        files: ['src/*.js', 'src/scroll-events/jquery.scroll-events.js', 'src/classes/*.js', 'css/*.styl'],
-        tasks: ['concat', 'uglify', 'stylus']
+        files: ['src/*.js', 'src/scroll-events/jquery.scroll-events.js', 'src/classes/*.js'],
+        tasks: ['concat', 'uglify']
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task.
