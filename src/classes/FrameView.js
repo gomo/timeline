@@ -141,7 +141,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
             self._prevTimeline.getLabelElement().addClass('tlPrevRuler');
         }
 
-        width += rulerView.getElement().outerWidth();
+        width += rulerView.width();
     }
 
     if(key % 2 === 0){
@@ -158,7 +158,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     timeline.getElement().addClass('tlLast');
     timeline.getLabelElement().addClass('tlLast');
 
-    width += timeline.getElement().outerWidth();
+    width += timeline.width();
     self.width(self.width() + width);
 
     self._prevTimeline = timeline;

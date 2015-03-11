@@ -80,10 +80,8 @@
   background-image: -moz-linear-gradient(top, #6aacfd, #0574fc);
   background-image: -webkit-linear-gradient(top, #6aacfd, #0574fc);
   background-image: linear-gradient(to bottom, #6aacfd, #0574fc);
-  padding: 1px;
   overflow: hidden;
   float: left;
-  border-right: 1px solid rgba(3, 92, 206, 0.5);
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   -webkit-user-select: none;
@@ -97,7 +95,6 @@
 
 .tlLabel.tlPrevRuler, .tlLabel.tlLast {
   border-radius: 0 3px 3px 0;
-  border-right: 1px solid #fff;
 }
 
 .tlLineView.tlHasRuler .tlLabel {

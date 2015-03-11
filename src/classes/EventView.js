@@ -217,7 +217,7 @@ Timeline.EventView.prototype.updateDisplayHeight = function(html){
 
 Timeline.EventView.prototype._getPositionLeft = function(lineView){
     var lineOffset = lineView.getLineElement().offset();
-    return lineOffset.left + (Timeline.EventView.MARGIN_SIDE / 2);
+    return lineOffset.left;
 };
 
 Timeline.EventView.prototype.setDisplayHtml = function(html){
