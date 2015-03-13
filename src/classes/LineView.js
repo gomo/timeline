@@ -202,7 +202,7 @@ Timeline.LineView.prototype.getSizeByTimeSpan = function(timeSpan){
     var endMinView = this._getMinView(timeSpan.getEndTime());
     var startTop = startMinView.getTopByMin(timeSpan.getStartTime().getMin());
     var endTop = endMinView.getTopByMin(timeSpan.getEndTime().getMin());
-    return {top: startTop, height:endTop - startTop -1};
+    return {top: startTop, height:endTop - startTop + 1};
 };
 
 Timeline.LineView.prototype._getMinView = function(time){
