@@ -226,15 +226,10 @@ Timeline.LineView.prototype.setLineWidth = function(width){
     var self = this;
     self.width(width);
     self._updateDisplay();
-    //イベントの位置調整でTimeline.MinView.prototype.getTopByMinの`this._element.offset()`が
-    //どうしても変な値を返すので`setTimeout`しています。
-    setTimeout(function(){
-        self._updateEventsDisplay();
-        if(self._labelElement){
-            self._labelElement.outerWidth(width);
-        }
-    }, 0);
-
+    self._updateEventsDisplay();
+    if(self._labelElement){
+        self._labelElement.outerWidth(width);
+    }
     return self;
 };
 
