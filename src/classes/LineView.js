@@ -246,24 +246,6 @@ Timeline.LineView.prototype.getLastHourView = function(){
     return this._hourViews[this._hourViews.length - 1];
 };
 
-Timeline.LineView.prototype.addHeightPerMin = function(amount){
-    $.each(this._hourViews, function(key, hourView){
-        hourView.addHeightPerMin(amount);
-    });
-    this._updateEventsDisplay();
-    this._updateDisplay();
-    return this;
-};
-
-Timeline.LineView.prototype.setHeightPerMin = function(height){
-    $.each(this._hourViews, function(key, hourView){
-        hourView.setHeightPerMin(height);
-    });
-    this._updateEventsDisplay();
-    this._updateDisplay();
-    return this;
-};
-
 Timeline.LineView.prototype.setLabelElement = function(labelElem){
     var self = this;
     self._labelElement = labelElem;

@@ -50,29 +50,6 @@ Timeline.MinView.prototype.getTimeByTop = function(top){
     return new Timeline.Time(this._hourView.getHour(), min);
 };
 
-Timeline.MinView.prototype.addHeightPerMin = function(amount){
-    var current = this._heightPerMin;
-    current += amount;
-    if(current < 0.1){
-        current = 0.1;
-    }
-
-    this.setHeightPerMin(current);
-
-    return this;
-};
-
-Timeline.MinView.prototype.setHeightPerMin = function(height){
-    if(this._heightPerMin == height){
-        return;
-    }
-
-    this._heightPerMin = height;
-    this._updateDisplay();
-
-    return this;
-};
-
 Timeline.MinView.prototype._updateDisplay = function(){
     this.height(this._heightPerMin * this._minUnit);
 };

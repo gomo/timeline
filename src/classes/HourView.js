@@ -44,20 +44,6 @@ Timeline.HourView.prototype.getMinView = function(min){
     return result;
 };
 
-Timeline.HourView.prototype.addHeightPerMin = function(amount){
-    $.each(this._minViews, function(key, minView){
-        minView.addHeightPerMin(amount);
-    });
-    return this;
-};
-
-Timeline.HourView.prototype.setHeightPerMin = function(height){
-    $.each(this._minViews, function(key, minView){
-        minView.setHeightPerMin(height);
-    });
-    return this;
-};
-
 Timeline.HourView.prototype.getMinViewByTop = function(top){
     var minView = undefined;
     $.each(this._minViews, function(){

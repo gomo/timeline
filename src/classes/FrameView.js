@@ -80,29 +80,6 @@ Timeline.FrameView.prototype.getMinFixInterval = function(){
     return Timeline.MinView.FIX_INTERVAL;
 };
 
-Timeline.FrameView.prototype.addLineWidth = function(value){
-    var totalWidth = 0;
-    for(var key in this._timeLines){
-        var lineView = this._timeLines[key];
-        lineView.addLineWidth(value);
-        totalWidth += lineView.getElement().outerWidth();
-    }
-
-    $.each(this._rulers, function(){
-        var rulerView = this;
-        totalWidth += rulerView.width();
-    });
-
-    this._element.width(totalWidth);
-};
-
-Timeline.FrameView.prototype.addHeightPerMin = function(value){
-    for(var key in this._timeLines){
-        var lineView = this._timeLines[key];
-        lineView.addHeightPerMin(value);
-    }
-};
-
 Timeline.FrameView.prototype.addEventView = function(id, eventView){
     this._timeLines[id].addEventView(eventView);
 };

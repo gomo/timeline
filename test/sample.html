@@ -16,7 +16,8 @@
 
             frame
                 .setDefaultLineWidth(64)
-                .setRulerInterval(4);
+                .setRulerInterval(4)
+                ;
 
             $('#timeline').append(frame.render());
 
@@ -88,24 +89,6 @@
             frame.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
             frame.addEventView('__3', tl.EventView.create([10,0], [11,00], 'disable'));
 
-            $("#actions button").click(function(){
-                var elem = $(this);
-                switch(elem.attr('class')){
-                    case 'left':
-                        frame.addLineWidth(-2);
-                        break;
-                    case 'right':
-                        frame.addLineWidth(2);
-                        break;
-                    case 'up':
-                        frame.addHeightPerMin(-0.1);
-                        break;
-                    case 'down':
-                        frame.addHeightPerMin(0.1);
-                        break;
-                }
-            });
-
             var fixInterval = $('#actions .fix_interval');
             fixInterval.val(frame.getMinFixInterval());
             fixInterval.change(function(){
@@ -122,7 +105,6 @@
 </head>
 <body>
     <div id="actions">
-        <button class="left">←</button><button class="right">→</button><button class="up">↑</button><button class="down">↓</button>
         <select name="fix_interval" class="fix_interval">
             <option value="1">1</option>
             <option value="5">5</option>
