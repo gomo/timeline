@@ -18,7 +18,6 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._flexibleHandle = new Timeline.FlexibleHandle(this);
     this._currentDroppableLineView = undefined;
-    this._defaultLineWidth = 60;
 
     this._labelView = undefined;
     this._prevTimeline = undefined;
@@ -42,11 +41,6 @@ Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
     var current = this._currentDroppableLineView;
     this._currentDroppableLineView = lineView;
     return current;
-};
-
-Timeline.FrameView.prototype.setDefaultLineWidth = function(value){
-    this._defaultLineWidth = value;
-    return this;
 };
 
 Timeline.FrameView.prototype.setRulerInterval = function(value){
@@ -91,7 +85,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var width = 0;
     
     timeline
-        .width(self._defaultLineWidth)
         .setId(id)
         .setFrameView(self);
 

@@ -19,31 +19,35 @@ Timeline.LabelView.prototype._build = function(){
 Timeline.LabelView.prototype._postShow = function(){
   var self = this;
 
-  //https://github.com/gomo/scroll-events
-  Timeline.window.observeScrollEvents();
+  //self._element.offset()が正しい値を返さないのでsetTimeoutをしています。
+  setTimeout(function(){
+    //https://github.com/gomo/scroll-events
+    Timeline.window.observeScrollEvents();
 
-  var labelOffset = self._element.offset();
-  Timeline.window.on('warp-scroll-start', function(e, params){
-    if(self._element.css('position') == 'relative'){
-      self._element.css('visibility', 'hidden');        
-    }
-  });
+    var labelOffset = self._element.offset();
+    Timeline.window.on('warp-scroll-start', function(e, params){
+      if(self._element.css('position') == 'relative'){
+        self._element.css('visibility', 'hidden');        
+      }
+    });
 
-  Timeline.window.on('scroll-stop', function(e, params){
-    if(params.top > labelOffset.top){
-      self._element.css('position', 'relative');
-      self._element.css('top', params.top - labelOffset.top + 'px');
-    } else {
-      self._element.css('position', '');
-      self._element.css('top', '');
-    }
+    Timeline.window.on('scroll-stop', function(e, params){
+      if(params.top > labelOffset.top){
+        self._element.css('position', 'relative');
+        self._element.css('top', params.top - labelOffset.top + 'px');
+      } else {
+        self._element.css('position', '');
+        self._element.css('top', '');
+      }
 
-    if(self._element.css('visibility') == 'hidden'){
-      self._element.fadeOut(0);
-      self._element.css('visibility', 'visible');
-      self._element.fadeIn(100); 
-    }
-  });
+      if(self._element.css('visibility') == 'hidden'){
+        self._element.fadeOut(0);
+        self._element.css('visibility', 'visible');
+        self._element.fadeIn(100); 
+      }
+    });  
+  }, 100);
+  
 };
 
 Timeline.LabelView.prototype.addLabel = function(label){

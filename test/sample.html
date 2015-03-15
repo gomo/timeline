@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" name="viewport" />
     <link rel="stylesheet" href="../lib/timeline.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
@@ -14,9 +14,9 @@
             var tl = Timeline;
             var frame = new tl.FrameView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)));
 
-            frame
-                .setDefaultLineWidth(64)
-                .setRulerInterval(4)
+            Timeline.MinView.HEIGHT = 1.2;
+            Timeline.LineView.WIDTH = 62;
+            frame.setRulerInterval(4)
                 ;
 
             $('#timeline').append(frame.render());

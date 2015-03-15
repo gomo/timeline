@@ -10,10 +10,12 @@ Timeline.LineView = function(timeSpan){
     this._hoursElement = undefined;
     this._rulerView = undefined;
     this._labelElement = undefined;
+    this.width(Timeline.LineView.WIDTH);
 };
 
 Timeline.Util.inherits(Timeline.LineView, Timeline.View);
 Timeline.LineView.CLASS_ELEM = 'tlLineView';
+Timeline.LineView.WIDTH = 60;
 
 Timeline.LineView.prototype._getClassName = function(){
     return Timeline.LineView.CLASS_ELEM;

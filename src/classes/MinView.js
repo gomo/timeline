@@ -4,12 +4,13 @@ Timeline.MinView = function(hourView, min, minUnit){
     this._hourView = hourView;
     this._min = min;
     this._minUnit = minUnit;
-    this._heightPerMin = 1;
+    this._heightPerMin = Timeline.MinView.HEIGHT;
 };
 
 Timeline.Util.inherits(Timeline.MinView, Timeline.View);
 Timeline.MinView.CLASS_ELEM = 'tlMinView';
 Timeline.MinView.FIX_INTERVAL = 5;
+Timeline.MinView.HEIGHT = 1;
 
 Timeline.MinView.prototype._getClassName = function(){
     return Timeline.MinView.CLASS_ELEM;
