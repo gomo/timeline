@@ -64,7 +64,7 @@ $ruler_width: 30px;
   height: 16px;
   line-height: 16px;
   color: #fff;
-  @include background-image(linear-gradient(top, adjust-lightness(#0574fc, 20), #0574fc));
+  @include background-image(linear-gradient(top, adjust-lightness(#337ab7, 8), #337ab7));
   overflow: hidden;
   float: left;
   @include user-select(none);
@@ -130,12 +130,6 @@ $ruler_width: 30px;
 
 .tlEventView.tlFloating{
   border: 2px dotted #333;
-}
-
-.tlEventView.disable{
-  background-color: #999;
-  border-radius: 0;
-  width: 100%;
 }
 
 .tlEventView .time{
