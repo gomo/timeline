@@ -84,10 +84,10 @@
                 console.log('flexibleFix', params);
             });
 
-            frame.addEventView('__1', tl.EventView.create([10,0], [12,00], 'disable'));
-            frame.addEventView('__1', tl.EventView.create([12,30], [14,30], 'green'));
-            frame.addEventView('__2', tl.EventView.create([12,0], [13,30], 'pink'));
-            frame.addEventView('__3', tl.EventView.create([10,0], [11,00], 'disable'));
+            frame.addEventView('__1', tl.EventView.create([10,0], [12,00]).setBackgroundColor('#FFB6B6'));
+            frame.addEventView('__1', tl.EventView.create([12,30], [14,30]).setBackgroundColor('#B8F1AC'));
+            frame.addEventView('__2', tl.EventView.create([12,0], [13,30]).setBackgroundColor('#FFDCB6'));
+            frame.addEventView('__3', tl.EventView.create([10,0], [11,00]).setBackgroundColor('#A3CDE1'));
 
             var fixInterval = $('#actions .fix_interval');
             fixInterval.val(frame.getMinFixInterval());

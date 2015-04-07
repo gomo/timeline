@@ -176,24 +176,3 @@
   padding-top: 2px;
   font-size: 80%;
 }
-
-/* color variation */
-.tlEventView.blue {
-  background-color: #A3CDE1;
-}
-
-.tlEventView.pink {
-  background-color: #FFB6B6;
-}
-
-.tlEventView.green {
-  background-color: #B8F1AC;
-}
-
-.tlEventView.yellow {
-  background-color: #FFFFB6;
-}
-
-.tlEventView.orange {
-  background-color: #FFDCB6;
-}
