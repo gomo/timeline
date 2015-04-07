@@ -26,9 +26,11 @@ Timeline.LabelView.prototype._postShow = function(){
     if(!wrapper.length){
       wrapper = Timeline.window;
     }
-    wrapper.observeScrollEvents();
+    wrapper.observeScrollEvents({
+      warpAllowance: 5
+    });
 
-    var labelOffset = self._element.offset();
+    var startPosition = self._element.position();
     wrapper.on('warp-scroll-start', function(e, params){
       if(self._element.css('position') == 'relative'){
         self._element.css('visibility', 'hidden');
@@ -36,32 +38,18 @@ Timeline.LabelView.prototype._postShow = function(){
     });
 
     wrapper.on('scroll-stop', function(e, params){
-      if(params.top > labelOffset.top){
+      if(params.top > startPosition.top){
         self._element.css('position', 'relative');
-        self._element.css('top', params.top - labelOffset.top + 'px');
+        self._element.css('top', params.top - startPosition.top + 'px');
       } else {
         self._element.css('position', '');
         self._element.css('top', '');
       }
 
       if(self._element.css('visibility') == 'hidden'){
-        self._element.fadeOut(0);
         self._element.css('visibility', 'visible');
-        self._element.fadeIn(100);
       }
     });
-
-    //上下に5px異常ずれていたら修正する
-    setInterval(function(){
-      var labelOffset = self._element.offset();
-      if(self._element.css('visibility') == 'visible'){
-        if(Math.abs(labelOffset.top) > 5){
-          labelOffset.top = 0;
-          self._element.offset(labelOffset);
-        }
-      }
-    }, 600);
-
   }, 0);
 
 };

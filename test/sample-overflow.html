@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <meta content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" name="viewport" />
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
     <link rel="stylesheet" href="../lib/timeline.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
@@ -98,24 +97,19 @@
         });
     </script>
     <style>
-        #timeline .tlFrameView{
-            margin: 0 auto;
+        #wrapper{
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            overflow: auto;
+            width: 500px;
+            height: 500px;
         }
     </style>
 </head>
 <body>
-    <div id="actions">
-        <select name="fix_interval" class="fix_interval">
-            <option value="1">1</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-        </select>&nbsp;min.
-        <select name="click_action" class="click_action">
-            <option value="float">float</option>
-            <option value="flexible">flexible</option>
-        </select>
+    <div id="wrapper" class="tlTimelineScrollWrapper">
+        <div id="timeline"></div>
     </div>
-    <div id="timeline"></div>
 </body>
 </html>
