@@ -34,7 +34,6 @@ Timeline.FrameView.prototype._build = function(){
     var self = this;
     this._labelView = new Timeline.LabelView();
     self._element.append(this._labelView.render());
-    self.width(0);
 };
 
 Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
@@ -77,8 +76,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var self = this;
     var key = Object.keys(self._timeLines).length;
     var timeline = new Timeline.LineView(self._timeSpan.clone());
-    var width = 0;
-    
+
     timeline
         .setId(id)
         .setFrameView(self);
@@ -105,8 +103,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
             self._prevTimeline.getElement().addClass('tlPrevRuler');
             self._prevTimeline.getLabelElement().addClass('tlPrevRuler');
         }
-
-        width += rulerView.width();
     }
 
     if(key % 2 === 0){
@@ -123,9 +119,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     timeline.getElement().addClass('tlLast');
     timeline.getLabelElement().addClass('tlLast');
 
-    width += timeline.width();
-    self.width(self.width() + width);
-
     self._prevTimeline = timeline;
 };
 
@@ -135,5 +128,5 @@ Timeline.FrameView.prototype._postShow = function(){
 
     $.each(self._linesData, function(key, data){
         self.addLine(data.id, data.label);
-    });    
+    });
 };
