@@ -47,14 +47,6 @@
                 clickAction = clickActionSelect.val();
             });
 
-            frame.addEventListener('didClickEventView', function(e, params){
-                if(clickAction == 'float'){
-                    params.eventView.toFloat();
-                } else {
-                    params.eventView.toFlexible();
-                }
-            });
-
             frame.addEventListener('didClickFloatingEventView', function(e, params){
                 if(!params.check.suggestion){
                     alert('You can\'t');
@@ -82,6 +74,17 @@
 
             frame.addEventListener('didFixFlexibleEventView', function(e, params){
                 console.log('flexibleFix', params);
+            });
+
+            frame.addEventListener('didClickLineView', function(e, params){
+                if(params.eventView){
+                    if(clickAction == 'float'){
+                        params.eventView.toFloat();
+                    } else {
+                        params.eventView.toFlexible();
+                    }
+                }
+                console.log('didClickLineView', params);
             });
 
             frame.addEventView('__1', tl.EventView.create([10,0], [12,00]).setBackgroundColor('#FFB6B6'));

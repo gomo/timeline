@@ -34,8 +34,6 @@ Timeline.EventView = function(timeSpan){
             self.getFrameView().triggerEvent('didClickFloatingEventView', params);
         } else if(self.isFlexible()) {
             self.getFrameView().triggerEvent('didClickFlexibleEventView', params);
-        } else {
-            self.getFrameView().triggerEvent('didClickEventView', params);
         }
     });
 

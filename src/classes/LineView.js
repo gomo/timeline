@@ -141,6 +141,23 @@ Timeline.LineView.prototype._build = function(){
         self._hoursElement.append(hourView.render());
         self._hourViews.push(hourView);
     });
+
+    self._lineElement.click(function(e){
+        var time = self.getTimeByTop(e.pageY);
+        var clickedEventView;
+        self.eachEventView(function(){
+            var eventView = this;
+            if(eventView.getTimeSpan().containsTime(time)){
+                clickedEventView = eventView;
+                return;
+            }
+        });
+        self._frameView.triggerEvent('didClickLineView', {
+            lineView: self,
+            eventView: clickedEventView,
+            time: time
+        });
+    });
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(top){
