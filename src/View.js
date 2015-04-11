@@ -9,6 +9,7 @@ Timeline.View = function(){
 
     this._width;
     this._height;
+    this._vars = {};
 };
 
 Timeline.View.prototype.getElement = function(){
@@ -61,4 +62,16 @@ Timeline.View.prototype.getBottom = function(){
 
 Timeline.View.prototype.getTop = function(){
     return this._element.offset().top;
+};
+
+Timeline.View.prototype.setVar = function(name, value){
+    this._vars[name] = value;
+};
+
+Timeline.View.prototype.getVar = function(name, defaultValue){
+    if(this._vars[name] === undefined){
+        return defaultValue;
+    }
+
+    return this._vars[name];
 };

@@ -153,7 +153,7 @@ Timeline.LineView.prototype._build = function(){
             }
         });
         self._frameView.triggerEvent('didClickLineView', {
-            lineView: self,
+            minView: self._getMinView(time),
             eventView: clickedEventView,
             time: time
         });

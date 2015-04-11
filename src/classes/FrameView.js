@@ -120,6 +120,8 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     timeline.getLabelElement().addClass('tlLast');
 
     self._prevTimeline = timeline;
+
+    return timeline;
 };
 
 Timeline.FrameView.prototype._postShow = function(){
