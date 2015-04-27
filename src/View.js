@@ -20,6 +20,8 @@ Timeline.View.prototype._build = function(){};
 
 Timeline.View.prototype._postShow = function(){};
 
+//TODO このメソッドはjQuery::width()と見間違うので早めに名前を変える。
+//あるいはアプリケーションハンガリアンを導入する
 Timeline.View.prototype.width = function(width){
     if(width === undefined){
         if(this._width === undefined){

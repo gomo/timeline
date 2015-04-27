@@ -20,6 +20,8 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._labelView = undefined;
     this._prevTimeline = undefined;
+
+    this.width(0)
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -76,6 +78,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var self = this;
     var key = Object.keys(self._timeLines).length;
     var timeline = new Timeline.LineView(self._timeSpan.clone());
+    var width = 0;
 
     timeline
         .setId(id)
@@ -95,6 +98,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
         rulerView.setLineView(timeline);
         this._rulers.push(rulerView);
         timeline.getElement().before(rulerView.render());
+        width += rulerView.width();
 
         timeline.getElement().addClass('tlHasRuler');
         timeline.getLabelElement().addClass('tlHasRuler');
@@ -121,7 +125,15 @@ Timeline.FrameView.prototype.addLine = function(id, label){
 
     self._prevTimeline = timeline;
 
+    width += timeline.width();
+    self.width(self.width() + width);
+    self._labelView.width(self._labelView.width() + width);
+
     return timeline;
+};
+
+Timeline.FrameView.prototype.expandWidth = function(width){
+    this._wrapperFrame.width(this._wrapperFrame.width() + width);
 };
 
 Timeline.FrameView.prototype._postShow = function(){
