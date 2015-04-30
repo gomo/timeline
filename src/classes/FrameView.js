@@ -132,10 +132,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     return timeline;
 };
 
-Timeline.FrameView.prototype.expandWidth = function(width){
-    this._wrapperFrame.width(this._wrapperFrame.width() + width);
-};
-
 Timeline.FrameView.prototype._postShow = function(){
     var self = this;
     var totalWidth = 0;
