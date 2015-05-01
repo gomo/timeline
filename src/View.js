@@ -77,3 +77,15 @@ Timeline.View.prototype.getVar = function(name, defaultValue){
 
     return this._vars[name];
 };
+
+Timeline.View.prototype.hide = function(top){
+  this._element.css({
+    "visibility": 'hidden'
+  });
+}
+
+Timeline.View.prototype.show = function(top){
+  this._element.css({
+    "visibility": 'visible'
+  });
+}

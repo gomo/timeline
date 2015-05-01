@@ -14,12 +14,15 @@ Timeline.LabelView.prototype._getClassName = function(){
 Timeline.LabelView.prototype._build = function(){
   var self = this;
   $(window).on("scroll", function(){
-    self._element.css({
-      "-webkit-transform": 'translate3d(0px, '+$(window).scrollTop()+'px, 1000px)'
-      // "transform": "translateZ(1000px)"
-    });
+    self.top($(window).scrollTop());
   });
 };
+
+Timeline.LabelView.prototype.top = function(top){
+  this._element.css({
+    "-webkit-transform": 'translate3d(0px, '+ top +'px, 1000px)'
+  });
+}
 
 Timeline.LabelView.prototype.addLabel = function(label){
   var self = this;

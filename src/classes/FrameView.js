@@ -38,6 +38,10 @@ Timeline.FrameView.prototype._build = function(){
     self._element.append(this._labelView.render());
 };
 
+Timeline.FrameView.prototype.getLabelView = function(){
+    return this._labelView;
+}
+
 Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
     var current = this._currentDroppableLineView;
     this._currentDroppableLineView = lineView;
