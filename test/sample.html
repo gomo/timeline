@@ -13,11 +13,14 @@
     <script>
         $(function(){
             var tl = Timeline;
-            var frame = new tl.FrameView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)));
 
             Timeline.MinView.HEIGHT = 1.2;
             Timeline.LineView.WIDTH = 62;
             Timeline.FrameView.RULER_INTERVAL = 4;
+
+            var frame = new tl.FrameView(new tl.TimeSpan(new tl.Time(10, 0), new tl.Time(25.0)));
+            frame.addWidth(80);//左側のパディング分を足す
+
 
             $('#timeline').append(frame.render());
 
@@ -107,6 +110,7 @@
             left: 0;
             height: 100%;
             width: 80px;
+            z-index: 1000;
         }
         #timeline .tlFrameView{
             padding-left: 80px;

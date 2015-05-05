@@ -20,6 +20,8 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._labelView = undefined;
     this._prevTimeline = undefined;
+
+    this.width(0)
 };
 
 Timeline.Util.inherits(Timeline.FrameView, Timeline.View);
@@ -34,6 +36,10 @@ Timeline.FrameView.prototype._build = function(){
     var self = this;
     this._labelView = new Timeline.LabelView();
     self._element.append(this._labelView.render());
+};
+
+Timeline.FrameView.prototype.addWidth = function(value){
+    this.width(this.width() + value);
 };
 
 Timeline.FrameView.prototype.swapCurrentDroppableLineView = function(lineView){
@@ -76,6 +82,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     var self = this;
     var key = Object.keys(self._timeLines).length;
     var timeline = new Timeline.LineView(self._timeSpan.clone());
+    var width = 0;
 
     timeline
         .setId(id)
@@ -95,6 +102,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
         rulerView.setLineView(timeline);
         this._rulers.push(rulerView);
         timeline.getElement().before(rulerView.render());
+        width += rulerView.width();
 
         timeline.getElement().addClass('tlHasRuler');
         timeline.getLabelElement().addClass('tlHasRuler');
@@ -120,6 +128,9 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     timeline.getLabelElement().addClass('tlLast');
 
     self._prevTimeline = timeline;
+
+    width += timeline.width();
+    self.width(self.width() + width);
 
     return timeline;
 };

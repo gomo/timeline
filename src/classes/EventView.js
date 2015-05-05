@@ -27,12 +27,14 @@ Timeline.EventView = function(timeSpan){
     self._element.on('click', function(e){
         var params = {eventView:self};
         if(self.isFloating()){
+            e.stopPropagation();
             var time = self.getFrameView().getTimeIndicator().data('timeline').time;
             var newTimeSpan = self.getTimeSpan().shiftStartTime(time);
             params.check = self._nextLineView.checkTimeSpan(newTimeSpan);
             params.lineView = self._nextLineView;
             self.getFrameView().triggerEvent('didClickFloatingEventView', params);
         } else if(self.isFlexible()) {
+            e.stopPropagation();
             self.getFrameView().triggerEvent('didClickFlexibleEventView', params);
         }
     });
