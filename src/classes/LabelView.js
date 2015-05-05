@@ -14,15 +14,11 @@ Timeline.LabelView.prototype._getClassName = function(){
 Timeline.LabelView.prototype._build = function(){
   var self = this;
   Timeline.window.on("scroll", function(){
-    self.top(Timeline.window.scrollTop());
+    self._element.css({
+      "top": Timeline.window.scrollTop() + 'px'
+    });
   });
 };
-
-Timeline.LabelView.prototype.top = function(top){
-  this._element.css({
-    "top": top + 'px'
-  });
-}
 
 Timeline.LabelView.prototype.addLabel = function(label){
   var self = this;
