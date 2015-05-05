@@ -10,7 +10,6 @@
 .tlLineView {
   *zoom: 1;
   float: left;
-  padding-top: 16px;
 }
 .tlLineView:after {
   content: "";
@@ -60,9 +59,8 @@
 
 .tlLabelView {
   *zoom: 1;
+  position: relative;
   z-index: 1000;
-  position: fixed;
-  top: 0;
 }
 .tlLabelView:after {
   content: "";
