@@ -7,7 +7,6 @@
 .tlLineView{
   @include pie-clearfix;
   float: left;
-  padding-top: 16px;
 }
 
 /* tlTimeIndicator */
@@ -30,7 +29,7 @@ $ruler_width: 30px;
   float: left;
   text-align: center;
   font-size: 14px;
-  margin-top: 6px;
+  margin-top: -9px;
   width: $ruler_width;
 }
 
@@ -55,9 +54,8 @@ $ruler_width: 30px;
 
 .tlLabelView{
   @include pie-clearfix;
+  position: relative;
   z-index: 1000;
-  position: fixed;
-  top: 0;
 }
 
 .tlLabel{
@@ -66,7 +64,7 @@ $ruler_width: 30px;
   height: 16px;
   line-height: 16px;
   color: #fff;
-  @include background-image(linear-gradient(top, adjust-lightness(#337ab7, 8), #337ab7));
+  background-color: #337ab7;
   overflow: hidden;
   float: left;
   @include user-select(none);
@@ -74,22 +72,13 @@ $ruler_width: 30px;
 
 .tlLabel.tlHasRuler{
   margin-left: $ruler_width;
-  border-radius: 3px 0 0 3px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
 }
 
 .tlLabel.tlPrevRuler, .tlLabel.tlLast{
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-
-.tlLineView.tlHasRuler .tlLabel{
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-
-.tlLineView.tlPrevRuler .tlLabel,
-.tlLineView.tlLast .tlLabel{
-  border-radius: 0 3px 3px 0;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 .tlHourView{
