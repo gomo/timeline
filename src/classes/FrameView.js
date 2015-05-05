@@ -131,7 +131,6 @@ Timeline.FrameView.prototype.addLine = function(id, label){
 
     width += timeline.width();
     self.width(self.width() + width);
-    self._labelView.width(self._labelView.width() + width);
 
     return timeline;
 };

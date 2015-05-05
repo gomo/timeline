@@ -195,7 +195,6 @@ Timeline.EventView.prototype._build = function(){
 Timeline.EventView.prototype.updateDisplay = function(){
     var size = this._lineView.getSizeByTimeSpan(this._timeSpan);
     var offset = this._element.offset();
-    var lineOffset = this._lineView.getLineElement().offset();
     offset.top = size.top;
     offset.left = this._getPositionLeft(this._lineView) + (Timeline.EventView.MARGIN_SIDE / 2);
     this._element.offset(offset);
