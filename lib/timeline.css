@@ -10,11 +10,19 @@
 .tlLineView {
   *zoom: 1;
   float: left;
+  overflow: hidden;
 }
 .tlLineView:after {
   content: "";
   display: table;
   clear: both;
+}
+
+.tlLinesWrapper {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: visible;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* tlTimeIndicator */
@@ -36,7 +44,6 @@
   float: left;
   text-align: center;
   font-size: 14px;
-  margin-top: -9px;
   width: 30px;
 }
 

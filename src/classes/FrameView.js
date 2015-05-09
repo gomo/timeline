@@ -20,6 +20,7 @@ Timeline.FrameView = function(timeSpan, linesData){
 
     this._labelView = undefined;
     this._prevTimeline = undefined;
+    this._linesWrapper = undefined;
 
     this.width(0)
 };
@@ -34,8 +35,15 @@ Timeline.FrameView.prototype._getClassName = function(){
 
 Timeline.FrameView.prototype._build = function(){
     var self = this;
-    this._labelView = new Timeline.LabelView();
+    self._labelView = new Timeline.LabelView();
     self._element.append(this._labelView.render());
+
+    self._linesWrapper = $('<div class="tlLinesWrapper">');
+    self._element.append(this._linesWrapper);
+
+    Timeline.window.resize(function(){
+        self._linesWrapper.outerHeight(Timeline.window.height() - self._labelView.height());
+    });
 };
 
 Timeline.FrameView.prototype.addWidth = function(value){
@@ -93,7 +101,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     }
 
     self._timeLines[id] = timeline;
-    self._element.append(timeline.render());
+    self._linesWrapper.append(timeline.render());
 
     var labelElem = self._labelView.addLabel(label);
     timeline.setLabelElement(labelElem);
@@ -142,4 +150,7 @@ Timeline.FrameView.prototype._postShow = function(){
     $.each(self._linesData, function(key, data){
         self.addLine(data.id, data.label);
     });
+    setTimeout(function(){
+        self._linesWrapper.outerHeight(Timeline.window.height() - self._labelView.height());
+    }, 0);
 };

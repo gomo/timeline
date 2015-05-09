@@ -180,6 +180,8 @@ Timeline.LineView.prototype._build = function(){
             time: time
         });
     });
+
+    self.height(self._element.outerHeight());
 };
 
 Timeline.LineView.prototype.showTimeIndicator = function(top){
@@ -289,6 +291,18 @@ Timeline.LineView.prototype.setLabelElement = function(labelElem){
     var self = this;
     self._labelElement = labelElem;
     self._labelElement.outerWidth(self.width());
+};
+
+Timeline.LineView.prototype.detachEventView = function(eventView){
+    var key;
+    for (var i = 0; i < this.eventViews.length; i++) {
+        if(this.eventViews[i] == eventView){
+            key = i;
+            break;
+        }
+    };
+
+    this.eventViews.remove(key);
 };
 
 Timeline.LineView.prototype.getLabelElement = function(){

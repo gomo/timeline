@@ -7,6 +7,14 @@
 .tlLineView{
   @include pie-clearfix;
   float: left;
+  overflow: hidden;
+}
+
+.tlLinesWrapper{
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: visible;
+  -webkit-overflow-scrolling:touch;
 }
 
 /* tlTimeIndicator */
@@ -29,7 +37,6 @@ $ruler_width: 30px;
   float: left;
   text-align: center;
   font-size: 14px;
-  margin-top: -9px;
   width: $ruler_width;
 }
 
