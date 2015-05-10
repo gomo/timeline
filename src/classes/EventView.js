@@ -89,6 +89,7 @@ Timeline.EventView.prototype.isFlexible = function(){
 
 Timeline.EventView.prototype.toFlexible = function(){
     this.getFrameView().getFlexibleHandle().enable(this);
+    this._lineView.enableFlexible(this);
     this._element.addClass('tlFlexible');
 };
 
@@ -104,13 +105,14 @@ Timeline.EventView.prototype.floatFix = function(timeSpan){
 Timeline.EventView.prototype.flexibleFix = function(timeSpan){
     if (this.isFlexible()) {
         this.getFrameView().getFlexibleHandle().fix();
+        this._lineView.disableFlexible(this);
         this._element.removeClass('tlFlexible');
         this.getFrameView().triggerEvent('didFixFlexibleEventView', {eventView:this});
     }
 };
 
 Timeline.EventView.prototype._clearFloat = function(){
-    this._element.css({'zIndex':99, 'position': 'relative'});
+    this._element.css({'position': 'relative'});
     this._element.removeClass('tlFloating');
     this._element.draggable('disable');
     this._nextLineView.getElement().removeClass('tlEventOver');
@@ -135,6 +137,7 @@ Timeline.EventView.prototype.flexibleCancel = function(){
     var self = this;
     if(self.isFlexible()){
         this.getFrameView().getFlexibleHandle().cancel();
+        self._lineView.disableFlexible(self);
         this._element.removeClass('tlFlexible');
     }
 };
