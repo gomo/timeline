@@ -153,4 +153,11 @@ Timeline.FrameView.prototype._postShow = function(){
     setTimeout(function(){
         self._linesWrapper.outerHeight(Timeline.window.height() - self._labelView.height());
     }, 0);
+
+    //scrollbarの分広げる（Macは広げなくてもエレメントの上にスクロールバーが出るがwindowsは崩れる。Macは見た目的に少しずらした）
+    if(navigator.platform.indexOf('Mac') > -1){
+        self.width(self.width() + 11);
+    } else {
+        self.width(self.width() + 17);
+    }
 };
