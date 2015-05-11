@@ -56,6 +56,13 @@ Timeline.View.prototype.containsTop = function(top){
     return up <= top && top <= down;
 };
 
+Timeline.View.prototype.containsPoint = function(point){
+    var offset = this._element.offset();
+    var down = offset.top + this.height();
+    var right = offset.left + this.width();
+    return offset.top <= point.y && point.y <= down && point.x >= offset.left && point.x <= right;
+};
+
 Timeline.View.prototype.getBottom = function(){
     return this._element.offset().top + this._element.outerHeight();
 };

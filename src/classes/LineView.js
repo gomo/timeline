@@ -10,6 +10,7 @@ Timeline.LineView = function(timeSpan){
     this._hoursElement = undefined;
     this._rulerView = undefined;
     this._labelElement = undefined;
+    this._flexibleHolderElement = undefined;
     this.width(Timeline.LineView.WIDTH);
     this.eventViews = [];
 };
@@ -29,6 +30,10 @@ Timeline.LineView.prototype.setFrameView = function(frameView){
 
 Timeline.LineView.prototype.getFrameView = function(){
     return this._frameView;
+};
+
+Timeline.LineView.prototype.getFlexibleHolderElement = function(){
+    return this._flexibleHolderElement;
 };
 
 Timeline.LineView.prototype.checkTimeSpan = function(timeSpan){
@@ -172,15 +177,51 @@ Timeline.LineView.prototype._build = function(){
     });
 
     self._lineElement.click(function(e){
-        var time = self.getTimeByTop(e.pageY);
-        var clickedEventView = self.getEventView(time);
-        self._frameView.triggerEvent('didClickLineView', {
-            minView: self._getMinView(time),
-            eventView: clickedEventView,
-            time: time
-        });
+        self._fireClickEvent(e);
+    });
+
+    self.height(self._element.outerHeight());
+
+    self._flexibleHolderElement = $('<div class="tlFlexibleHolder">')
+        .appendTo(self._element)
+        .css({position:"relative", top:0, zIndex:'-1'})
+        .outerWidth(this.width())
+        .outerHeight(this.height())
+        .click(function(e){//flexible中はholderが上にある。lineElementと同じイベントを発生させる
+            self._fireClickEvent(e);
+        })
+        ;
+};
+
+Timeline.LineView.prototype._fireClickEvent = function(e){
+    var time = this.getTimeByTop(e.pageY);
+    var clickedEventView = this.getEventView(time);
+    this._frameView.triggerEvent('didClickLineView', {
+        minView: this._getMinView(time),
+        eventView: clickedEventView,
+        time: time
     });
 };
+
+//eventをrelativeにしたのでflexible中は_flexibleHolderElementに移動しないと他のイベントが動いてしまう
+Timeline.LineView.prototype.enableFlexible = function(eventView){
+    var self = this;
+    self._flexibleHolderElement
+        .css('zIndex', '')
+        .append(eventView.getElement());
+
+    self._updateEventsDisplay();
+};
+
+Timeline.LineView.prototype.disableFlexible = function(eventView){
+    var self = this;
+    self._flexibleHolderElement
+        .css('zIndex', '-1');
+
+    self.getLineElement().append(eventView.getElement());
+    self._updateEventsDisplay();
+};
+
 
 Timeline.LineView.prototype.showTimeIndicator = function(top){
     var time = this.getTimeByTop(top);
@@ -289,6 +330,18 @@ Timeline.LineView.prototype.setLabelElement = function(labelElem){
     var self = this;
     self._labelElement = labelElem;
     self._labelElement.outerWidth(self.width());
+};
+
+Timeline.LineView.prototype.detachEventView = function(eventView){
+    var key;
+    for (var i = 0; i < this.eventViews.length; i++) {
+        if(this.eventViews[i] == eventView){
+            key = i;
+            break;
+        }
+    };
+
+    this.eventViews.remove(key);
 };
 
 Timeline.LineView.prototype.getLabelElement = function(){

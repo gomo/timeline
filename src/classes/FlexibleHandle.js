@@ -2,18 +2,18 @@
 Timeline.FlexibleHandle = function(frameView){
     this._eventView = undefined;
     this._frameView = frameView;
-    this._topElement = this._setupEventHandle($('<div class="tlEventTopHandle" />'));
-    this._downElement = this._setupEventHandle($('<div class="tlEventDownHandle" />'));
+    this._topElement = this._setupEventHandle($('<div class="tlEventTopHandle tlFlexibleHandle"></div>'));
+    this._downElement = this._setupEventHandle($('<div class="tlEventDownHandle tlFlexibleHandle"></div>'));
 };
 
-Timeline.FlexibleHandle.MARGIN = 4;
+Timeline.FlexibleHandle.MARGIN = -25;
 
 Timeline.FlexibleHandle.prototype._setupEventHandle = function(handle){
     var self = this;
     handle
         .appendTo(this._frameView.getElement())
-        .height('30px')
-        .css({'position': 'absolute', 'zIndex': 99999})
+        .height('21px')
+        .css({'position': 'relative', 'zIndex': 99999})
         .hide()
         .data('timeline', {})
         .draggable({
@@ -70,6 +70,14 @@ Timeline.FlexibleHandle.prototype.cancel = function(){
 };
 
 Timeline.FlexibleHandle.prototype.enable = function(eventView){
+    if(this._eventView){
+        this._eventView.flexibleCancel();
+    }
+
+    var holderElem = eventView.getLineView().getFlexibleHolderElement();
+    holderElem.append(this._topElement);
+    holderElem.append(this._downElement);
+
     this._eventView = eventView;
     this._topElement.show();
     this._downElement.show();
