@@ -74,14 +74,6 @@ Timeline.FrameView.prototype.getTimeIndicator = function(){
     return this._timeIndicator;
 };
 
-Timeline.FrameView.prototype.setMinFixInterval = function(value){
-    Timeline.MinView.FIX_INTERVAL = value;
-};
-
-Timeline.FrameView.prototype.getMinFixInterval = function(){
-    return Timeline.MinView.FIX_INTERVAL;
-};
-
 Timeline.FrameView.prototype.addEventView = function(id, eventView){
     this._timeLines[id].addEventView(eventView);
 };

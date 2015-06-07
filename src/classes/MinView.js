@@ -42,7 +42,6 @@ Timeline.MinView.prototype.getTopByMin = function(min){
 
 Timeline.MinView.prototype.getTimeByTop = function(top){
     var min = this._min + ((top - this._element.offset().top) * (this._minUnit / this.height()));
-
     if(Timeline.MinView.FIX_INTERVAL > 1){
         var rem = min % Timeline.MinView.FIX_INTERVAL;
         if(rem > Timeline.MinView.FIX_INTERVAL / 2){

@@ -21,6 +21,17 @@ Timeline.Time = function(hour, min){
     }
 };
 
+Timeline.Time.eachMin = function(callback, minuteInterval){
+    var count = 60 / minuteInterval;
+    for (var i = 0; i < count; i++) {
+        var min = i * minuteInterval;
+        if(min < 60){
+            var displayMin = min < 10 ? '0' + min : min + '';
+            callback.call(min, i, min, displayMin);
+        }
+    };
+};
+
 Timeline.Time.create = function(time){
     return new Timeline.Time(time[0], time[1]);
 };
