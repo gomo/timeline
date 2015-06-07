@@ -79,4 +79,57 @@ class Timeline_TimeSpan{
       'end_time' => $this->getEndTime()->toArray(),
     );
   }
+
+  public function remove(Timeline_TimeSpan $timespan = null){
+    if($timespan === null){
+      return array($this);
+    }
+
+    if($this->equals($timespan)){
+      return array();
+    }
+
+    //引数の方がすっぽり覆っている
+    if($timespan->contains($this)){
+      return array();
+    }
+
+    //全く重なっていない
+    if(!$this->overlaps($timespan)){
+      return array($this);
+    }
+
+    //引数の方が含まれている
+    if($this->contains($timespan)){
+      if($this->getStartTime()->equals($timespan->getStartTime())){
+        return array(new Timeline_TimeSpan($timespan->getEndTime(), $this->getEndTime()));
+      }
+
+      if($this->getEndTime()->equals($timespan->getEndTime())){
+        return array(new Timeline_TimeSpan($this->getStartTime(), $timespan->getStartTime()));
+      }
+
+      return array(
+        new Timeline_TimeSpan($this->getStartTime(), $timespan->getStartTime()),
+        new Timeline_TimeSpan($timespan->getEndTime(), $this->getEndTime()),
+      );
+    }
+
+    //引数の方が前（イコール含む）
+    if($this->getStartTime()->compare($timespan->getStartTime()) >= 0){
+      return array(
+        new Timeline_TimeSpan($timespan->getEndTime(), $this->getEndTime())
+      );
+    }
+
+    //引数の方が後ろ（イコール含む）
+    if($this->getStartTime()->compare($timespan->getStartTime()) <= 0){
+      return array(
+        new Timeline_TimeSpan($this->getStartTime(), $timespan->getStartTime())
+      );
+    }
+
+    //ここに来るはずはない。来たら組み合わせパターンの想定漏れなので実装する
+    throw new Timeline_Exception("Unexpected combination.");
+  }
 }

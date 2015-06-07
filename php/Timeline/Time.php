@@ -65,6 +65,13 @@ class Timeline_Time{
     return ($time->getHour() - $this->getHour()) * 60 + ($time->getMin() - $this->getMin());
   }
 
+  /**
+   * 00:00からの分を返す
+   */
+  public function getZeroDistance(){
+    return ($this->getHour() * 60) + $this->getMin();
+  }
+
   public function addMin($min){
     return new Timeline_Time($this->getHour(), $this->getMin() + $min);
   }
