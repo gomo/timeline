@@ -53,6 +53,16 @@ Array.prototype.remove = function(from, to) {
   return this.push.apply(this, rest);
 };
 
+Array.range = function(from, to, step) {
+  var result = [];
+  step = step||1;
+  for (var i = from; i <= to; i = i + step) {
+      result.push(i);
+  };
+
+  return result;
+};
+
 //Util
 Timeline.Util = {};
 Timeline.Util.inherits = function(childClass, superClass){

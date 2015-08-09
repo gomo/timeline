@@ -65,6 +65,7 @@ Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
 
     this._element.offset(offset).height(size.height);
     lineView.showTimeIndicator(offset.top);
+    this.updateDisplayHeight();
 };
 
 Timeline.EventView.prototype.setBackgroundColor = function(color){
@@ -230,4 +231,10 @@ Timeline.EventView.prototype.setDisplayHtml = function(html){
 
 Timeline.EventView.prototype._postShow = function(){
     this.updateDisplay();
+};
+
+Timeline.EventView.prototype.remove = function(){
+    this._lineView.detachEventView(this);
+    this._lineView = undefined;
+    this._element.remove();
 };
