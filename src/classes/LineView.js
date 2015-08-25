@@ -210,7 +210,7 @@ Timeline.LineView.prototype.enableFlexible = function(eventView){
         .css('zIndex', '')
         .append(eventView.getElement());
 
-    self._updateEventsDisplay();
+    self.updateEventsDisplay();
 };
 
 Timeline.LineView.prototype.disableFlexible = function(eventView){
@@ -219,7 +219,7 @@ Timeline.LineView.prototype.disableFlexible = function(eventView){
         .css('zIndex', '-1');
 
     self.getLineElement().append(eventView.getElement());
-    self._updateEventsDisplay();
+    self.updateEventsDisplay();
 };
 
 
@@ -311,7 +311,7 @@ Timeline.LineView.prototype.setLineWidth = function(width){
     var self = this;
     self.width(width);
     self._updateDisplay();
-    self._updateEventsDisplay();
+    self.updateEventsDisplay();
     if(self._labelElement){
         self._labelElement.outerWidth(width);
     }
@@ -341,7 +341,9 @@ Timeline.LineView.prototype.detachEventView = function(eventView){
         }
     };
 
-    this.eventViews.remove(key);
+    if(key){
+        this.eventViews.remove(key);
+    }
 };
 
 Timeline.LineView.prototype.getLabelElement = function(){
@@ -361,7 +363,7 @@ Timeline.LineView.prototype.eachEventView = function(callback){
     });
 };
 
-Timeline.LineView.prototype._updateEventsDisplay = function(){
+Timeline.LineView.prototype.updateEventsDisplay = function(){
     var self = this;
     self.eachEventView(function(key, eventView){
         eventView.updateDisplay();

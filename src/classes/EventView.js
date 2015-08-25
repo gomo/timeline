@@ -58,9 +58,15 @@ Timeline.EventView.create = function(start, end){
 };
 
 Timeline.EventView.prototype.moveTo = function(timeSpan, lineView){
-    this._timeSpan = timeSpan;
-    this._lineView = lineView;
-    this.render();
+    if(!this.isFloating()) throw "You can use `moveTo` only when floating";
+    var size = lineView.getSizeByTimeSpan(timeSpan);
+    var offset = this._element.offset();
+    offset.top = size.top;
+    offset.left = this._getPositionLeft(lineView);
+
+    this._element.offset(offset).height(size.height);
+    lineView.showTimeIndicator(offset.top);
+    this.updateDisplayHeight();
 };
 
 Timeline.EventView.prototype.setBackgroundColor = function(color){
@@ -153,9 +159,7 @@ Timeline.EventView.prototype.toFloat = function(){
 
     this._lineView.detachEventView(this);
 
-    this._lineView.eachEventView(function(key, eventView){
-        eventView.updateDisplay();
-    });
+    this._lineView.updateEventsDisplay();
 
     this.setNextLineView(this._lineView);
     this.getFrameView().getTimeIndicator().show();
@@ -205,6 +209,13 @@ Timeline.EventView.prototype.updateDisplay = function(){
     this._timesElement.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
     this._timesElement.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
     this.updateDisplayHeight();
+};
+
+Timeline.EventView.prototype.updateTimeSpan = function(timeSpan){
+    var self = this;
+
+    self.setTimeSpan(timeSpan);
+    self._lineView.updateEventsDisplay();
 };
 
 Timeline.EventView.prototype.updateDisplayHeight = function(html){

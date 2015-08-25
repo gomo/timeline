@@ -97,7 +97,6 @@
             frame.addEventView('__3', tl.EventView.create([10,0], [11,00]).setBackgroundColor('#A3CDE1'));
 
             var fixInterval = $('#actions .fix_interval');
-            fixInterval.val(frame.getMinFixInterval());
             fixInterval.change(function(){
                 frame.setMinFixInterval(fixInterval.val());
             });
