@@ -368,4 +368,12 @@ Timeline.LineView.prototype.updateEventsDisplay = function(){
     self.eachEventView(function(key, eventView){
         eventView.updateDisplay();
     });
+
+    //一列に４つ以上になると２回やらないとづれる。
+    //取得するoffsetはあってるがセットした時に連れるのでjQuery側の問題か？これ以上の調査は断念
+    //eventViewをabsoluteにすると起こらないためrelativeにしたのと関係がありそうではあるが、labelの動き的に今のほうが望ましい。
+    //ひとまず２回やると回避できることがわかったのでこれで行く。
+    self.eachEventView(function(key, eventView){
+        eventView.updateDisplay();
+    });
 };

@@ -201,6 +201,7 @@ Timeline.EventView.prototype.updateDisplay = function(){
     var offset = this._element.offset();
     offset.top = size.top;
     offset.left = this._getPositionLeft(this._lineView) + (Timeline.EventView.MARGIN_SIDE / 2);
+
     this._element.offset(offset);
     this.height(size.height);
     this.width(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
