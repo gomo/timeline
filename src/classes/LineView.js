@@ -333,7 +333,7 @@ Timeline.LineView.prototype.setLabelElement = function(labelElem){
 };
 
 Timeline.LineView.prototype.detachEventView = function(eventView){
-    var key;
+    var key = -1;
     for (var i = 0; i < this.eventViews.length; i++) {
         if(this.eventViews[i] == eventView){
             key = i;
@@ -341,8 +341,8 @@ Timeline.LineView.prototype.detachEventView = function(eventView){
         }
     };
 
-    if(key){
-        this.eventViews.remove(key);
+    if(key != -1){
+        this.eventViews.splice(key, 1);
     }
 };
 
