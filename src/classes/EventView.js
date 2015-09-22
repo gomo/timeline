@@ -51,7 +51,7 @@ Timeline.EventView = function(timeSpan){
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
 Timeline.EventView.CLASS_ELEM = 'tlEventView';
-Timeline.EventView.MARGIN_SIDE = 4;
+Timeline.EventView.MARGIN_SIDE = 2;
 
 Timeline.EventView.create = function(start, end){
     return new Timeline.EventView(Timeline.TimeSpan.create(start, end));
