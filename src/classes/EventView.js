@@ -241,6 +241,7 @@ Timeline.EventView.prototype._postShow = function(){
 
 Timeline.EventView.prototype.remove = function(){
     this._lineView.detachEventView(this);
-    this._lineView = undefined;
     this._element.remove();
+    this._lineView.updateEventsDisplay();
+    this._lineView = undefined;
 };
