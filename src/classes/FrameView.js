@@ -95,7 +95,7 @@ Timeline.FrameView.prototype.addLine = function(id, label){
     self._timeLines[id] = timeline;
     self._linesWrapper.append(timeline.render());
 
-    var labelElem = self._labelView.addLabel(label);
+    var labelElem = self._labelView.addLabel(label, id);
     timeline.setLabelElement(labelElem);
     if(key % Timeline.FrameView.RULER_INTERVAL === 0){
         var rulerView = new Timeline.RulerView();
@@ -152,4 +152,18 @@ Timeline.FrameView.prototype._postShow = function(){
     } else {
         self.width(self.width() + 17);
     }
+};
+
+
+Timeline.FrameView.prototype.eachLineView = function(callback){
+    var self = this;
+    var noBreaked = true;
+    $.each(this._timeLines, function(key, view){
+        if(callback.call(view, key, view) === false){
+            noBreaked = false;
+            return false;
+        }
+    });
+
+    return noBreaked;
 };

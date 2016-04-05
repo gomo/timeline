@@ -12,9 +12,9 @@ Timeline.LabelView.prototype._getClassName = function(){
 };
 
 
-Timeline.LabelView.prototype.addLabel = function(label){
+Timeline.LabelView.prototype.addLabel = function(label, id){
   var self = this;
-  var labelElem = $('<div class="tlLabel">' + label + '</div>');
+  var labelElem = $('<div class="tlLabel" data-line-id="'+id+'">' + label + '</div>');
   self._element.append(labelElem);
   return labelElem;
 };

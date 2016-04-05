@@ -136,7 +136,7 @@ Timeline.LineView.prototype.getPrevEventView = function(time){
 
 Timeline.LineView.prototype.setId = function(id){
     this._element.data('timeline').id = id;
-    this._element.addClass(id);
+    this._element.attr('data-line-id', id);
     return this;
 };
 
@@ -356,11 +356,15 @@ Timeline.LineView.prototype._updateDisplay = function(){
 };
 
 Timeline.LineView.prototype.eachEventView = function(callback){
+    var noBreaked = true;
     $.each(this.eventViews, function(key, view){
         if(callback.call(view, key, view) === false){
+            noBreaked = false;
             return false;
         }
     });
+
+    return noBreaked;
 };
 
 Timeline.LineView.prototype.updateEventsDisplay = function(){
