@@ -355,9 +355,19 @@ Timeline.LineView.prototype._updateDisplay = function(){
     self._lineElement.width(self.width());
 };
 
-Timeline.LineView.prototype.eachEventView = function(callback){
+/**
+ * @param  {Function} callback 引数はkey, eventViewです。falseを返すとbreakします。
+ * @param  {boolean}  clone    まわす前に配列をシャローコピーします。foreach中に削除する場合はtrueにする必要があります。
+ * @return {boolean}           途中でbreakされたかどうかを返します。
+ */
+Timeline.LineView.prototype.eachEventView = function(callback, clone){
     var noBreaked = true;
-    $.each(this.eventViews, function(key, view){
+    if(clone){
+      var events = this.eventViews.slice(0);
+    } else {
+      var events = this.eventViews;
+    }
+    $.each(events, function(key, view){
         if(callback.call(view, key, view) === false){
             noBreaked = false;
             return false;
