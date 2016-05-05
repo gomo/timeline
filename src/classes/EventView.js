@@ -39,14 +39,9 @@ Timeline.EventView = function(timeSpan){
         }
     });
 
-    self._element.append('<div class="start time" />');
-
     self._displayElement = $('<div class="display" />');
     self._element.append(self._displayElement);
-
-    self._element.append('<div class="end time" />');
-    self._timesElement = self._element.find('.time');
-    self._timesElement.css({cursor:'default'});
+    self._displayRows = {};
 };
 
 Timeline.Util.inherits(Timeline.EventView, Timeline.View);
@@ -206,8 +201,6 @@ Timeline.EventView.prototype.updateDisplay = function(){
     this.height(size.height);
     this.width(this._lineView.getLineElement().width() - Timeline.EventView.MARGIN_SIDE);
 
-    this._timesElement.filter('.start').html(this._timeSpan.getStartTime().getDisplayTime());
-    this._timesElement.filter('.end').html(this._timeSpan.getEndTime().getDisplayTime());
     this.updateDisplayHeight();
 };
 
@@ -219,7 +212,7 @@ Timeline.EventView.prototype.updateTimeSpan = function(timeSpan){
 };
 
 Timeline.EventView.prototype.updateDisplayHeight = function(html){
-    this._displayElement.outerHeight(this._element.height() - (this._timesElement.outerHeight() * 2) - 4);
+    this._displayElement.outerHeight(this._element.height());
 };
 
 Timeline.EventView.prototype._getPositionLeft = function(lineView){
@@ -244,4 +237,16 @@ Timeline.EventView.prototype.remove = function(){
     this._element.remove();
     this._lineView.updateEventsDisplay();
     this._lineView = undefined;
+};
+
+
+Timeline.EventView.prototype.setDisplayRow = function(key, value){
+  var self = this;
+  if(!self._displayRows[key]){
+    self._displayRows[key] = $('<div class="display-row '+key+'" />');
+    self._displayElement.append(self._displayRows[key]);
+  }
+  self._displayRows[key].html(value);
+
+  return self._displayRows[key];
 };

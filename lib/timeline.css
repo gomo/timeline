@@ -141,29 +141,8 @@
   border: 2px dotted #333;
 }
 
-.tlEventView .time {
-  border-radius: 5px;
-  width: 85%;
-  margin: 0 auto;
-  position: relative;
-  background-color: #fff;
-  opacity: 0.7;
-  border: 1px solid #888;
-  font-size: 70%;
-  line-height: 15px;
-}
-
-.tlEventView .time.start {
-  top: 3px;
-}
-
-.tlEventView .time.end {
-  margin-top: 1px;
-}
-
 .tlEventView .display {
   overflow: hidden;
-  line-height: 14px;
-  padding-top: 2px;
-  font-size: 80%;
+  line-height: 12px;
+  padding: 3px;
 }
